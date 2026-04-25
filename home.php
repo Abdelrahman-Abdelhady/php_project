@@ -46,7 +46,7 @@
     <div class="card">
         <?php
             // Confirmation Message
-            echo "<h1>PHP is working magda!</h1>";
+            echo "<h1>PHP is working magda!!</h1>";
             
             echo "<p>Your server is correctly processing PHP scripts.</p>";
 
