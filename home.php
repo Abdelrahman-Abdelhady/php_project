@@ -5,35 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RentIt - Marketplace</title>
     <style>
-        /* 1. Global Reset & Body Setup */
+        
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f4f7f6;
     margin: 0;
     display: flex;
     flex-direction: column; 
-    min-height: 100vh; /* Stay at 100% of the viewport height */
-    font-size: 100%; /* Sets base for 1rem = 16px */
+    min-height: 100vh; 
+    font-size: 100%; 
 }
 
-/* 2. The Navbar Wrapper */
+
 .page-wrapper {
     background-color: white;
     width: 100%;
-    border-bottom: 0.06rem solid #eee; /* Thin line scales well */
+    border-bottom: 0.06rem solid #eee; 
     box-shadow: 0 0.125rem 0.3rem rgba(0,0,0,0.05);
 }
 
 .navbar {
-    width: 100%; /* Forces it to fill the screen */
-    padding: 1rem 3%; /* 4% padding keeps items from touching the literal glass */
+    width: 100%; 
+    padding: 1rem 3%; 
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-sizing: border-box; /* Crucial: ensures padding doesn't push the width past 100% */
+    box-sizing: border-box; 
 }
 
-/* Navbar Layout Sections */
+
 .nav-section { display: flex; flex-direction: column; }
 .nav-left { align-items: flex-start; }
 .nav-center { align-items: center; flex-grow: 1; }
@@ -43,10 +43,10 @@ body {
 .site-title { font-size: 0.8rem; font-weight: bold; color: #666; }
 
 .search-bar {
-    width: 90%; /* Scale to the container */
+    width: 90%; 
     max-width: 25rem; 
     padding: 0.5rem 1rem;
-    border-radius: 2rem; /* Keeps the pill shape regardless of screen */
+    border-radius: 2rem; 
     border: 0.06rem solid #ccc;
     margin-bottom: 0.3rem;
 }
@@ -58,13 +58,13 @@ body {
     color: #333;
 }
 
-/* 3. Main Content Area */
+
 .main-content {
     flex-grow: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 5vh 5vw; /* Padding based on screen height and width */
+    padding: 5vh 5vw; 
 }
 
 .card {
@@ -78,7 +78,7 @@ body {
     max-width: 25rem;
 }
 
-/* 4. Side Drawer */
+
 .side-drawer {
     height: 100vh;
     width: 0;
@@ -115,7 +115,7 @@ body {
     <div class="page-wrapper">
         <nav class="navbar">
             <div class="nav-section nav-left">
-                <div class="logo">🚀</div>
+                <div class="logo">🚘</div>
                 <span class="site-title">RentIt</span>
             </div>
 
