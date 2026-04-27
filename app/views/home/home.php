@@ -124,6 +124,7 @@ body {
                 <div class="nav-links">
                     <a href="#">Browse</a>
                     <a href="#">Categories</a>
+                    <a href="http://localhost/Project/app/views/home/contactUS.html">Contact us</a>
                 </div>
             </div>
 
