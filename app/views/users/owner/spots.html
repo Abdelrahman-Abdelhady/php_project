@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CitySlot - My Parking Spots</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            display: flex;
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
+
+        /* --- الـ Side Bar: أبيض وأسود محترف (شمال) --- */
+        .side-drawer {
+            height: 100vh;
+            width: 0;
+            position: fixed;
+            z-index: 2000;
+            top: 0;
+            left: 0;
+            background-color: #000000;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 3rem;
+        }
+        .side-drawer a {
+            padding: 1rem 2rem;
+            text-decoration: none;
+            font-size: 1rem;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+            border-bottom: 1px solid #111;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .side-drawer a i { margin-right: 15px; width: 20px; text-align: center; color: #888; }
+        .side-drawer a:hover { background-color: #ffffff; color: #000000; }
+        .side-drawer a:hover i { color: #000000; }
+        .close-btn { color: #666 !important; text-align: left !important; font-size: 0.8rem !important; cursor: pointer; }
+
+        /* --- Navbar --- */
+        .page-wrapper { background-color: white; border-bottom: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .navbar { padding: 1rem 3%; display: flex; justify-content: space-between; align-items: center; }
+        .site-title { font-weight: bold; color: #4F5D95; font-size: 1.2rem; }
+        .menu-icon { font-size: 1.5rem; cursor: pointer; color: #4F5D95; }
+
+        /* --- Spots Cards Styling --- */
+        .main-content { flex-grow: 1; padding: 2rem 5vw; }
+        .spot-card {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: 0.3s;
+            border: none;
+            border-top: 5px solid #4F5D95; 
+            margin-bottom: 2rem;
+            height: 100%;
+        }
+        .spot-card:hover { transform: translateY(-10px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .spot-img { width: 100%; height: 200px; object-fit: cover; background-color: #f8f9fa; border-bottom: 1px solid #eee; }
+        
+        .btn-manage {
+            background-color: #4F5D95;
+            color: white;
+            border-radius: 0.5rem;
+            width: 100%;
+            border: none;
+            padding: 0.6rem;
+            font-weight: 600;
+        }
+
+        .border-dashed { 
+            border: 2px dashed #4F5D95 !important;
+            color: #4F5D95 !important;
+            min-height: 385px;
+            background: transparent;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sideDrawer" class="side-drawer">
+        <a href="javascript:void(0)" class="close-btn" onclick="toggleSidebar()">Close Menu ×</a>
+        <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="spots.html"><i class="fas fa-parking"></i> My Spots</a> 
+        <a href="earnings.html"><i class="fas fa-wallet"></i> Earnings</a>
+        <a href="reviews.html"><i class="fas fa-star"></i> Reviews</a>
+        <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+    </div>
+
+    <div class="page-wrapper">
+        <nav class="navbar">
+            <div class="menu-icon" onclick="toggleSidebar()">☰</div>
+            <div class="d-flex align-items-center">
+                <span class="site-title">CitySlot</span>
+                <span style="font-size: 1.5rem; margin-left: 10px;">🚘</span>
+            </div>
+        </nav>
+    </div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <h2 class="fw-bold mb-4">My Parking Spots</h2>
+            
+            <div class="row">
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card spot-card d-flex align-items-center justify-content-center border-dashed" onclick="window.location.href='dashboard.html'">
+                        <div class="text-center">
+                            <div style="font-size: 3.5rem; margin-bottom: 10px;">+</div>
+                            <p class="fw-bold text-uppercase">Add Another Spot</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            const drawer = document.getElementById("sideDrawer");
+            drawer.style.width = (drawer.style.width === "260px") ? "0" : "260px";
+        }
+    </script>
+</body>
+</html>
