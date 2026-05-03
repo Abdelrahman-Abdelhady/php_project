@@ -1,0 +1,137 @@
+<html lang="en" dir="ltr" data-lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CitySlot — Browse Spots</title>
+  <meta name="description" content="Find and book your parking spot easily with CitySlot">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="browse.html" class="logo">
+        <span class="logo-icon">🚘</span>
+        <div>
+          <div>CitySlot</div>
+          <div class="tagline">Book your spot easily</div>
+        </div>
+      </a>
+      <div class="header-actions">
+        <a href="/app/views/users/Driver/Favourites.html" class="btn btn-secondary">Favorites</a>
+        <a href="/app/views/users/Driver/Wallet.html" class="btn btn-secondary">Wallet</a>
+        <a href="/app/views/users/Driver/Profile.html" class="btn btn-secondary">👤 Profile</a>
+        <button class="btn-ghost">Arabic</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="search-section">
+    <div class="search-intro">
+      <h1>Find your perfect parking spot</h1>
+      <p>Book secure parking spots anywhere in Cairo</p>
+    </div>
+    <div class="search-bar">
+      <svg class="search-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="search" type="text" placeholder="Search for a spot...">
+    </div>
+  </section>
+
+  <div class="filters">
+    <button class="chip active" data-filter="all">All</button>
+    <button class="chip" data-filter="available">Available</button>
+    <button class="chip" data-filter="covered">Covered</button>
+    <button class="chip" data-filter="ev">EV Charging</button>
+    <button class="chip" data-filter="top">Top Rated</button>
+  </div>
+
+  <main class="spots-grid">
+    <!-- Card 1 -->
+    <article class="spot-card" data-tags="available,covered,ev,top">
+      <div class="spot-image">
+        <img src="images/225-Seminole-01B-crop.jpg" alt="Developers Central Parking">
+        <span class="badge badge-success"><span class="badge-dot"></span>Available</span>
+      </div>
+      <div class="spot-info">
+        <h3 class="spot-name">Developers Central Parking</h3>
+        <p class="spot-address">📍 Downtown - Tahrir Street</p>
+        <div class="spot-meta">
+          <span class="meta-pill">⭐ 4.9</span>
+          <span class="meta-pill">🚗 26/80</span>
+          <span class="meta-pill">🕐 24/7</span>
+        </div>
+        <div class="spot-footer">
+          <div class="price">20 <small>EGP/hr</small></div>
+          <a href="spot_details.html" class="btn btn-primary btn-sm">View</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 2 -->
+    <article class="spot-card" data-tags="available">
+      <div class="spot-image">
+        <img src="images//5c73c1ed3312827c263ddc0b_IMG_8753 (1).jpg" alt="Nile Plaza Parking">
+        <span class="badge badge-success"><span class="badge-dot"></span>Available</span>
+      </div>
+      <div class="spot-info">
+        <h3 class="spot-name">Nile Plaza Parking</h3>
+        <p class="spot-address">📍 Nile Corniche - Zamalek</p>
+        <div class="spot-meta">
+          <span class="meta-pill">⭐ 4.6</span>
+          <span class="meta-pill">🚗 12/50</span>
+        </div>
+        <div class="spot-footer">
+          <div class="price">25 <small>EGP/hr</small></div>
+          <a href="spot_details.html?id=2" class="btn btn-primary btn-sm">View</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 3 -->
+    <article class="spot-card" data-tags="covered,ev,top">
+      <div class="spot-image">
+        <img src="images/fig-6-Final-prod-pkg-lane-walkway.jpg" alt="Maadi Tower Parking">
+        <span class="badge badge-danger"><span class="badge-dot"></span>Full</span>
+      </div>
+      <div class="spot-info">
+        <h3 class="spot-name">Maadi Tower Parking</h3>
+        <p class="spot-address">📍 Maadi - 9th Street</p>
+        <div class="spot-meta">
+          <span class="meta-pill">⭐ 4.7</span>
+          <span class="meta-pill">🚗 0/120</span>
+          <span class="meta-pill">🕐 24/7</span>
+        </div>
+        <div class="spot-footer">
+          <div class="price">18 <small>EGP/hr</small></div>
+          <a href="spot_details.html?id=3" class="btn btn-primary btn-sm">View</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 4 -->
+    <article class="spot-card" data-tags="available,ev,covered,top">
+      <div class="spot-image">
+        <img src="images/car_3_big-500x500.webp" alt="Smart Charging Station">
+        <span class="badge badge-success"><span class="badge-dot"></span>Available</span>
+      </div>
+      <div class="spot-info">
+        <h3 class="spot-name">Smart Charging Station</h3>
+        <p class="spot-address">📍 5th Settlement - 90th Street</p>
+        <div class="spot-meta">
+          <span class="meta-pill">⭐ 4.8</span>
+          <span class="meta-pill">🚗 8/30</span>
+          <span class="meta-pill">⚡ EV</span>
+        </div>
+        <div class="spot-footer">
+          <div class="price">30 <small>EGP/hr</small></div>
+          <a href="spot_details.html?id=4" class="btn btn-primary btn-sm">View</a>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

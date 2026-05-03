@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CitySlot — Reserve Spot</title>
+  <meta name="description" content="Book your spot in simple steps">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="browse.html" class="logo">
+        <span class="logo-icon">🚘</span>
+        <div><div>CitySlot</div></div>
+      </a>
+      <button class="btn-ghost" data-lang-toggle>
+        العربية
+      </button>
+    </div>
+  </header>
+
+  <main class="form-container">
+    <a href="spot_details.html" class="btn btn-secondary btn-sm" style="margin-bottom:1rem">
+      ← Back to details
+    </a>
+
+    <div class="summary">
+      <img src="images/225-Seminole-01B-crop.jpg" alt="Parking">
+      <div>
+        <h3>
+          Developers Central Parking
+        </h3>
+        <p>📍 Downtown - Tahrir Street</p>
+        <p style="margin-top:0.4rem"><strong id="price-per-hour" data-price="20">20 EGP</strong> / hour</p>
+      </div>
+    </div>
+
+    <form class="card" onsubmit="event.preventDefault(); document.getElementById('success').style.display='block'; window.scrollTo({top:0,behavior:'smooth'});">
+      <h2 class="section-title">
+        Reservation Details
+      </h2>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" name="full_name" required>
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="tel" name="phone" required>
+        </div>
+        <div class="form-group">
+          <label>Plate Number</label>
+          <input type="text" name="plate" required>
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" name="date" required>
+        </div>
+        <div class="form-group">
+          <label>Start Time</label>
+          <input type="time" name="start_time" required>
+        </div>
+        <div class="form-group">
+          <label>Duration (hours)</label>
+          <select id="duration" name="duration" required>
+            <option value="1">1</option>
+            <option value="2" selected>2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="6">6</option>
+            <option value="12">12</option>
+            <option value="24">24</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="total-box">
+        <span>Total</span>
+        <strong><span id="total">40</span> EGP</strong>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">
+        Confirm Reservation
+      </button>
+    </form>
+
+    <div id="success" class="card" style="display:none; text-align:center; background:var(--sky-soft); border:2px solid var(--success); margin-top:1rem">
+      <div style="font-size:3rem">✅</div>
+      <h2 style="color:var(--navy); margin:0.5rem 0">
+        Reservation Confirmed!
+      </h2>
+      <p style="color:var(--muted)">
+        We'll contact you soon to confirm.
+      </p>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
