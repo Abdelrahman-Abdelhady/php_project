@@ -11,11 +11,11 @@ class User
     }
 
     /* CREATE USER */
-    public function createUser($name,  $email, $password, $role)
+    public function createUser($name, $age, $email, $password, $userType)
     {
-        $sql = "INSERT INTO user (name,  email, password, role) VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO user (name, age, email, password, userType) VALUES (?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
-        $stmt->bind_param("sisss", $name,  $email, $password, $role);
+        $stmt->bind_param("sisss", $name, $age, $email, $password, $userType);
 
         return $stmt->execute();
     }
@@ -32,8 +32,8 @@ class User
         return $stmt->get_result()->fetch_assoc();
     }
 
-    /* GET ALL user */
-    public function getAllusers()
+    /* GET ALL USERS */
+    public function getAllUsers()
     {
         $sql = "SELECT * FROM users ORDER BY id DESC";
         $result = $this->db->query($sql);
@@ -41,15 +41,26 @@ class User
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    /* LOGIN SUPPORT */
+    public function findByEmail($email)
+    {
+        $sql = "SELECT * FROM users WHERE email = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("s", $email);
+
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
     /* UPDATE USER */
-    public function updateUser($id, $name,  $email, $password, $role)
+    public function updateUser($id, $name, $age, $email, $password, $userType)
     {
         $sql = "UPDATE user 
-                SET name = ?, email = ?, password = ?, role = ?
+                SET name = ?, age = ?, email = ?, password = ?, userType = ?
                 WHERE id = ?";
         $stmt = $this->db->prepare($sql);
 
-        $stmt->bind_param("sisssi", $name,  $email, $password, $role, $id);
+        $stmt->bind_param("sisssi", $name, $age, $email, $password, $userType, $id);
         return $stmt->execute();
     }
 
