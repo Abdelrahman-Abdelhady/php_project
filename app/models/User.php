@@ -11,11 +11,11 @@ class User
     }
 
     /* CREATE USER */
-    public function createUser($name, $email, $phone_num)
+    public function createUser($name, $age, $email, $password, $role, $photo = null)
     {
-        $sql = "INSERT INTO users (name, email, phone_num) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO users (name, age, email, password, role, profile_pic) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
-        $stmt->bind_param("ssi", $name, $email, $phone_num);
+        $stmt->bind_param("sdssss", $name, $age, $email, $password, $role, $photo);
 
         return $stmt->execute();
     }
@@ -41,15 +41,26 @@ class User
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    /* LOGIN SUPPORT */
+    public function findByEmail($email)
+    {
+        $sql = "SELECT * FROM users WHERE email = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("s", $email);
+
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
     /* UPDATE USER */
-    public function updateUser($id, $name, $email, $phone_num)
+    public function updateUser($id, $name, $age, $email, $role, $profile_pic)
     {
         $sql = "UPDATE users 
-                SET name = ?, email = ?, phone_num = ?
+                SET name = ?, age = ?, email = ?, role = ?, profile_pic = ?
                 WHERE id = ?";
         $stmt = $this->db->prepare($sql);
 
-        $stmt->bind_param("ssii", $name, $email, $phone_num, $id);
+        $stmt->bind_param("sisssi", $name, $age, $email, $role, $profile_pic, $id);
         return $stmt->execute();
     }
 
