@@ -11,11 +11,11 @@ class User
     }
 
     /* CREATE USER */
-    public function createUser($name, $age, $email, $password, $userType)
+    public function createUser($name,  $email, $password, $role)
     {
-        $sql = "INSERT INTO user (name, age, email, password, userType) VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO user (name,  email, password, role) VALUES (?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
-        $stmt->bind_param("sisss", $name, $age, $email, $password, $userType);
+        $stmt->bind_param("sisss", $name,  $email, $password, $role);
 
         return $stmt->execute();
     }
@@ -23,7 +23,7 @@ class User
     /* GET ONE USER */
     public function getUserById($id)
     {
-        $sql = "SELECT * FROM user WHERE id = ?";
+        $sql = "SELECT * FROM users WHERE id = ?";
         $stmt = $this->db->prepare($sql);
 
         $stmt->bind_param("i", $id);
@@ -35,28 +35,28 @@ class User
     /* GET ALL user */
     public function getAllusers()
     {
-        $sql = "SELECT * FROM user ORDER BY id DESC";
+        $sql = "SELECT * FROM users ORDER BY id DESC";
         $result = $this->db->query($sql);
 
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
     /* UPDATE USER */
-    public function updateUser($id, $name, $age, $email, $password, $userType)
+    public function updateUser($id, $name,  $email, $password, $role)
     {
         $sql = "UPDATE user 
-                SET name = ?, age = ?, email = ?, password = ?, userType = ?
+                SET name = ?, email = ?, password = ?, role = ?
                 WHERE id = ?";
         $stmt = $this->db->prepare($sql);
 
-        $stmt->bind_param("sisssi", $name, $age, $email, $password, $userType, $id);
+        $stmt->bind_param("sisssi", $name,  $email, $password, $role, $id);
         return $stmt->execute();
     }
 
     /* DELETE USER */
     public function deleteUser($id)
     {
-        $sql = "DELETE FROM user WHERE id = ?";
+        $sql = "DELETE FROM users WHERE id = ?";
 
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("i", $id);
