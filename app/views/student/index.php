@@ -36,8 +36,8 @@
 
                 <h5>Your Info</h5>
                 <br>
-                <p><strong>Age:</strong> <?= $data['user']['age'] ?></p>
-                <p><strong>Email:</strong> <?= $data['user']['email'] ?></p>
+                <p><strong>Age:</strong> <?= $user['age'] ?? 'N/A' ?></p>
+                <p><strong>Email:</strong> <?= $user['email'] ?? 'N/A' ?></p>
 
 
                 <hr>

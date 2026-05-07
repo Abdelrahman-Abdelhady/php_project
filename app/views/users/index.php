@@ -4,7 +4,7 @@
 
 <table border="1" cellpadding="10">
     <tr>
-        <th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Actions</th>
+        <th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Actions</th>
     </tr>
     <?php if (isset($users) && is_array($users) && count($users) > 0): ?>
         <?php foreach ($users as $user): ?>
@@ -13,6 +13,7 @@
             <td><?= $user['name'] ?></td>
             <td><?= $user['email'] ?></td>
             <td><?= $user['phone_num'] ?></td>
+            <td><?= $user['role'] ?></td>
             <td>
                 <a href="<?= BASE_URL ?>User/show/<?= $user['id'] ?>">View</a> | 
                 <a href="<?= BASE_URL ?>User/edit/<?= $user['id'] ?>">Edit</a> | 
@@ -21,6 +22,6 @@
         </tr>
         <?php endforeach; ?>
     <?php else: ?>
-        <tr><td colspan="5">No users found</td></tr>
+        <tr><td colspan="6">No users found</td></tr>
     <?php endif; ?>
 </table>

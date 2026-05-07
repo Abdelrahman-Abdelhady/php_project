@@ -33,6 +33,17 @@
                 <input type="password" name="password" value="<?= $data['old']['password'] ?? '' ?>" class="form-control">
                 <span class="text-danger"><?= $data['errors']['password'] ?? '' ?></span>
             </div>
+            
+            <div class="form-group">
+                <label>Role:</label>
+                <select name="role" class="form-control">
+                    <option value="">-- Select Role --</option>
+                    <option value="driver" <?= ($data['old']['role'] ?? '') === 'driver' ? 'selected' : '' ?>>Driver</option>
+                    <option value="owner" <?= ($data['old']['role'] ?? '') === 'owner' ? 'selected' : '' ?>>Owner</option>
+                    <option value="admin" <?= ($data['old']['role'] ?? '') === 'admin' ? 'selected' : '' ?>>Admin</option>
+                </select>
+                <span class="text-danger"><?= $data['errors']['role'] ?? '' ?></span>
+            </div>
 
             <button type="submit" class="btn btn-primary mt-2">Save</button>
             <a href="<?= BASE_URL ?>User/index" class="btn btn-danger mt-2">Back</a>

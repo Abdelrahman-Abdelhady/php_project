@@ -27,7 +27,7 @@
                         </tr>
                         <tr>
                             <td>Role</td>
-                            <td><?= $data['user']['userType'] ?></td>
+                            <td><?= $data['user']['role'] ?></td>
                         </tr>
                     </table>
                 </div>
