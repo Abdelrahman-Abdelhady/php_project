@@ -11,11 +11,11 @@ class User
     }
 
     /* CREATE USER */
-    public function createUser($name, $age, $email, $password, $userType)
+    public function createUser($name, $profile_pic, $email, $password, $role)
     {
-        $sql = "INSERT INTO user (name, age, email, password, userType) VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO users (name, profile_pic, email, password, role) VALUES (?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
-        $stmt->bind_param("sisss", $name, $age, $email, $password, $userType);
+        $stmt->bind_param("sisss", $name, $profile_pic, $email, $password, $role);
 
         return $stmt->execute();
     }
@@ -52,15 +52,15 @@ class User
         return $stmt->get_result()->fetch_assoc();
     }
 
-    /* UPDATE USER */
-    public function updateUser($id, $name, $age, $email, $password, $userType)
+    /* UPDATE USERs */
+    public function updateUser($id, $name, $profile_pic, $email, $password, $role)
     {
-        $sql = "UPDATE user 
-                SET name = ?, age = ?, email = ?, password = ?, userType = ?
+        $sql = "UPDATE users 
+                SET name = ?, profile_pic = ?, email = ?, password = ?, role = ?
                 WHERE id = ?";
         $stmt = $this->db->prepare($sql);
 
-        $stmt->bind_param("sisssi", $name, $age, $email, $password, $userType, $id);
+        $stmt->bind_param("sisssi", $name, $profile_pic, $email, $password, $role, $id);
         return $stmt->execute();
     }
 
