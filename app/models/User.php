@@ -11,11 +11,11 @@ class User
     }
 
     /* CREATE USER */
-    public function createUser($name, $age, $email, $password, $userType)
+    public function createUser($name, $age, $email, $password, $role, $photo = null)
     {
-        $sql = "INSERT INTO user (name, age, email, password, userType) VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO users (name, age, email, password, role, profile_pic) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
-        $stmt->bind_param("sisss", $name, $age, $email, $password, $userType);
+        $stmt->bind_param("sdssss", $name, $age, $email, $password, $role, $photo);
 
         return $stmt->execute();
     }
@@ -23,7 +23,7 @@ class User
     /* GET ONE USER */
     public function getUserById($id)
     {
-        $sql = "SELECT * FROM user WHERE id = ?";
+        $sql = "SELECT * FROM users WHERE id = ?";
         $stmt = $this->db->prepare($sql);
 
         $stmt->bind_param("i", $id);
@@ -32,31 +32,42 @@ class User
         return $stmt->get_result()->fetch_assoc();
     }
 
-    /* GET ALL user */
-    public function getAllusers()
+    /* GET ALL USERS */
+    public function getAllUsers()
     {
-        $sql = "SELECT * FROM user ORDER BY id DESC";
+        $sql = "SELECT * FROM users ORDER BY id DESC";
         $result = $this->db->query($sql);
 
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    /* UPDATE USER */
-    public function updateUser($id, $name, $age, $email, $password, $userType)
+    /* LOGIN SUPPORT */
+    public function findByEmail($email)
     {
-        $sql = "UPDATE user 
-                SET name = ?, age = ?, email = ?, password = ?, userType = ?
+        $sql = "SELECT * FROM users WHERE email = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("s", $email);
+
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    /* UPDATE USER */
+    public function updateUser($id, $name, $age, $email, $role, $profile_pic)
+    {
+        $sql = "UPDATE users 
+                SET name = ?, age = ?, email = ?, role = ?, profile_pic = ?
                 WHERE id = ?";
         $stmt = $this->db->prepare($sql);
 
-        $stmt->bind_param("sisssi", $name, $age, $email, $password, $userType, $id);
+        $stmt->bind_param("sisssi", $name, $age, $email, $role, $profile_pic, $id);
         return $stmt->execute();
     }
 
     /* DELETE USER */
     public function deleteUser($id)
     {
-        $sql = "DELETE FROM user WHERE id = ?";
+        $sql = "DELETE FROM users WHERE id = ?";
 
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("i", $id);
