@@ -18,8 +18,8 @@
                             <td><?= $data['user']['name'] ?></td>
                         </tr>
                         <tr>
-                            <td>Age</td>
-                            <td><?= $data['user']['age'] ?></td>
+                            <td>Phone number</td>
+                            <td><?= $data['user']['phone_num'] ?></td>
                         </tr>
                         <tr>
                             <td>Email</td>

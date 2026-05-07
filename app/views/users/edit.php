@@ -16,8 +16,8 @@
             </div>
 
             <div class="form-group">
-                <label>Age:</label>
-                <input type="number" name="age" value="<?= $data['user']['age'] ?>" class="form-control">
+                <label>Phone number:</label>
+                <input type="number" name="phone_num" value="<?= $data['user']['phone_num'] ?>" class="form-control">
             </div>
 
             <div class="form-group">

@@ -17,9 +17,9 @@
             </div>
 
             <div class="form-group">
-                <label>Age:</label>
-                <input type="number" name="age" value="<?= $data['old']['age'] ?? '' ?>" class="form-control">
-                <span class="text-danger"><?= $data['errors']['age'] ?? '' ?></span>
+                <label>Phone number:</label>
+                <input type="number" name="phone_num" value="<?= $data['old']['phone_num'] ?? '' ?>" class="form-control">
+                <span class="text-danger"><?= $data['errors']['phone_num'] ?? '' ?></span>
             </div>
 
             <div class="form-group">

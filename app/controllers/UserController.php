@@ -12,7 +12,8 @@ class UserController extends Controller
     // READ ALL
     public function index()
     {
-         die("INDEX METHOD WORKING");
+        $users = $this->userModel->getAllUsers();
+        $this->view("users/index", ['users' => $users]);
     }
 
     // SHOW ONE USER
