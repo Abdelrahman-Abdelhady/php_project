@@ -11,11 +11,11 @@ class User
     }
 
     /* CREATE USER */
-    public function createUser($name, $email, $age)
+    public function createUser($name, $email, $phone_num)
     {
-        $sql = "INSERT INTO users (name, email, age) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO users (name, email, phone_num) VALUES (?, ?, ?)";
         $stmt = $this->db->prepare($sql);
-        $stmt->bind_param("ssi", $name, $email, $age);
+        $stmt->bind_param("ssi", $name, $email, $phone_num);
 
         return $stmt->execute();
     }
@@ -42,14 +42,14 @@ class User
     }
 
     /* UPDATE USER */
-    public function updateUser($id, $name, $email, $age)
+    public function updateUser($id, $name, $email, $phone_num)
     {
         $sql = "UPDATE users 
-                SET name = ?, email = ?, age = ?
+                SET name = ?, email = ?, phone_num = ?
                 WHERE id = ?";
         $stmt = $this->db->prepare($sql);
 
-        $stmt->bind_param("ssii", $name, $email, $age, $id);
+        $stmt->bind_param("ssii", $name, $email, $phone_num, $id);
         return $stmt->execute();
     }
 

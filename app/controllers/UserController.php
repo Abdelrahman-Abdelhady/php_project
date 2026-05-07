@@ -36,17 +36,17 @@ class UserController extends Controller
 
         $name  = $_POST['name'];
         $email = $_POST['email'];
-        $age   = $_POST['age'];
+        $phone_number   = $_POST['phone_number'];
 
         // Validation rules
         $validator->required('name', $name);
         $validator->required('email', $email);
         $validator->email('email', $email);
-        $validator->required('age', $age);
+        $validator->required('phone_number', $phone_number);
 
         if ($validator->passes()) {
             // Save to DB
-            $this->userModel->createUser($name, $email, $age);
+            $this->userModel->createUser($name, $email, $phone_number);
             header("Location: " . BASE_URL . "User/index");
         } else {
             // Return errors to view
@@ -69,9 +69,9 @@ class UserController extends Controller
     {
         $name  = $_POST['name'];
         $email = $_POST['email'];
-        $age   = $_POST['age'];
+        $phone_number   = $_POST['phone_number'];
 
-        $this->userModel->updateUser($id, $name, $email, $age);
+        $this->userModel->updateUser($id, $name, $email, $phone_number);
 
         header("Location: " . BASE_URL . "User/index");
     }
