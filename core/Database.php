@@ -9,7 +9,7 @@ class Database
     private $username = "root";
     private $password = "";
 	// Write database name here
-    private $dbname = "	parking_system";
+    private $dbname = "parking_system";
 
 
     // Private constructor → prevent direct creation

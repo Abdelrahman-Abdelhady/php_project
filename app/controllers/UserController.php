@@ -12,8 +12,7 @@ class UserController extends Controller
     // READ ALL
     public function index()
     {
-        $users = $this->userModel->getAllUsers();
-        $this->view("users/index", ['users' => $users]);
+         die("INDEX METHOD WORKING");
     }
 
     // SHOW ONE USER
@@ -36,17 +35,17 @@ class UserController extends Controller
 
         $name  = $_POST['name'];
         $email = $_POST['email'];
-        $phone_number   = $_POST['phone_number'];
+        $phone_num   = $_POST['phone_num'];
 
         // Validation rules
         $validator->required('name', $name);
         $validator->required('email', $email);
         $validator->email('email', $email);
-        $validator->required('phone_number', $phone_number);
+        $validator->required('phone_num', $phone_num);
 
         if ($validator->passes()) {
             // Save to DB
-            $this->userModel->createUser($name, $email, $phone_number);
+            $this->userModel->createUser($name, $email, $phone_num);
             header("Location: " . BASE_URL . "User/index");
         } else {
             // Return errors to view
@@ -69,9 +68,9 @@ class UserController extends Controller
     {
         $name  = $_POST['name'];
         $email = $_POST['email'];
-        $phone_number   = $_POST['phone_number'];
+        $phone_num   = $_POST['phone_num'];
 
-        $this->userModel->updateUser($id, $name, $email, $phone_number);
+        $this->userModel->updateUser($id, $name, $email, $phone_num);
 
         header("Location: " . BASE_URL . "User/index");
     }
