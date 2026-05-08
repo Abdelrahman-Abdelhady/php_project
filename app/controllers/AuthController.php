@@ -1,7 +1,7 @@
 <?php
 require_once "../app/helpers/Validator.php";
-require_once "../app/helpers/Auth.php";
-require_once "../app/models/User.php";
+require_once "../app/core/Auth.php";
+require_once "../app/models/UserModel.php";
 
 class AuthController extends Controller
 {
@@ -9,122 +9,93 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->userModel = new User();
+        $this->userModel = new UserModel();
+        
+        // Start session if not already started
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
     }
 
+    // Show register page
     public function register()
     {
         $this->view("auth/register");
     }
 
+    // Handle register form
     public function storeRegister()
     {
-        $validator = new Validator();
+        $name = $_POST['name'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
+        $role = $_POST['role'] ?? 'driver';
+        $phone_num = $_POST['phone_num'] ?? '';
+        
+        // Encrypt password
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+        
+        // Database connection
+        $db = Database::getInstance()->getConnection();
+        
+        // Insert user into database
+        $sql = "INSERT INTO users (name, email, password, role, phone_num) 
+                VALUES ('$name', '$email', '$hashedPassword', '$role', '$phone_num')";
+        
+        // Check if query executed successfully
+        if ($db->query($sql)) {
 
-        $name  = $_POST['name'];
-        $age   = $_POST['age'];
-        $email = $_POST['email'];
-        $password = $_POST['password'];
-        $role  = $_POST['role'];
+            echo "Registered Successfully!";
 
-        // Validation rules
-        $validator->required('name', $name);
-        $validator->required('age', $age);
-        $validator->required('email', $email);
-        $validator->email('email', $email);
-        $validator->required('password', $password);
-
-        $photoUrl = null;
-
-        // Handle file upload
-        if (!empty($_FILES['profile_pic']['name'])) {
-            require_once '../app/models/Upload.php';
-            try {
-                $upload = new Upload($_FILES['profile_pic'], ['jpg','png'], 1024000, 'uploads/img/');
-                $photoUrl = $upload->save();
-            } catch (Exception $e) {
-                $validator->errors['profile_pic'] = $e->getMessage();
-            }
-        }
-        else {
-            $photoUrl = "uploads/img/default.png";
-        }
-
-        if ($validator->passes()) {
-            // Hash password (bcrypt)
-            $hashedPassword = password_hash($_POST['password'], PASSWORD_BCRYPT);
-            // Save to DB
-            $this->userModel->createUser($name, $age, $email, $hashedPassword, $role, $photoUrl);
-            header("Location: " . BASE_URL . "Auth/login");
         } else {
-            // Return errors to view
-            $this->view("auth/register", [
-                'errors' => $validator->getErrors(),
-                'old'    => $_POST
-            ]);
-        }
-    }
 
-    public function login()
-    {
-        $this->view("auth/login");
-    }
-
-    public function doLogin()
-    {
-        $validator = new Validator();
-
-        $email = $_POST['email'];
-        $password = $_POST['password'];
-
-        // Validation rules
-        $validator->required('email', $email);
-        $validator->email('email', $email);
-        $validator->required('password', $password);
-        $validator->minLength('password', $password, 3);
-
-        if (!$validator->passes()) {
-            $this->view("auth/login", [
-                'errors' => $validator->getErrors(), 
-                'old'    => $_POST
-            ]);
-            return;
-        }
-
-        $user = $this->userModel->findByEmail($email);
-
-        if (!$user || !password_verify($password, $user['password'])) {
-            $this->view("auth/login", [
-                "errors" => ["login" => "Invalid credentials"],
-                'old'    => $_POST
-            ]);
-            return;
-        }
-
-        Auth::login($user);
-
-        switch ($user['role']) {
-        case 'admin':
-            header("Location: " . BASE_URL . "Admin/index");
-            break;
-        case 'student':
-            header("Location: " . BASE_URL . "Student/index");
-            break;
-        case 'professor':
-            header("Location: " . BASE_URL . "Professor/index");
-            break;
-        default:
-            header("Location: " . BASE_URL . "Home/index");
-            break;
+            echo "Database Error: " . $db->error;
         }
 
         exit;
     }
 
+    // Show login page
+    public function login()
+    {
+        $this->view("auth/login");
+    }
+
+    // Handle login process
+    public function doLogin()
+    {
+        $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
+        
+        // Find user by email
+        $user = $this->userModel->findByEmail($email);
+        
+        // Verify password
+        if ($user && password_verify($password, $user['password'])) {
+
+            // Save user session
+            Auth::login($user);
+
+            // Redirect to marketplace
+            header("Location: Driver/marketplace");
+
+        } else {
+
+            // Redirect with error
+            header("Location: Auth/login?error=invalid");
+        }
+
+        exit;
+    }
+
+    // Logout user
     public function logout()
     {
         Auth::logout();
-        header("Location: " . BASE_URL . "Home/index");
+
+        // Redirect to login page
+        header("Location: Auth/login");
+
         exit;
     }
 }
