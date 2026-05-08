@@ -1,42 +1,41 @@
+<?php
+$host = "localhost";
+$user = "root";
+$pass = "";
+$dbname = "parking_system";
+
+$conn = new mysqli($host, $user, $pass, $dbname);
+
+$result = $conn->query("SELECT * FROM users");
+?>
+
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/bootstrap.min.css">
+    <title>Show Users </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-
 <body>
-    <div class="container">
-        <h2>User Details</h2>
-
-        <div class="card shadow-sm">
-            <div class="card-body p-2">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <tr>
-                            <td>Name</td>
-                            <td><?= $data['user']['name'] ?></td>
-                        </tr>
-                        <tr>
-                            <td>Phone number</td>
-                            <td><?= $data['user']['phone_num'] ?></td>
-                        </tr>
-                        <tr>
-                            <td>Email</td>
-                            <td><?= $data['user']['email'] ?></td>
-                        </tr>
-                        <tr>
-                            <td>Role</td>
-                            <td><?= $data['user']['role'] ?></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <a href="<?= BASE_URL ?>User/index" class="btn btn-danger mt-2">Back</a>
-
-    </div>
+<div class="container mt-5">
+    <h2>Users </h2>
+    <table class="table table-bordered">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Phone_Num </th>
+        </tr>
+        <?php while($row = $result->fetch_assoc()): ?>
+        <tr>
+            <td><?= $row['userID'] ?></td>
+            <td><?= $row['name'] ?></td>
+            <td><?= $row['email'] ?></td>
+            <td><?= $row['role'] ?></td>
+            <td><?= $row['phone_num'] ?></td>
+        </tr>
+        <?php endwhile; ?>
+    </table>
+</div>
 </body>
-
 </html>
