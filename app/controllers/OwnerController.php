@@ -1,7 +1,7 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/php_project/core/Database.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/php_project/app/models/Spot.php';
+require_once __DIR__ . '/../../core/Database.php';
+require_once __DIR__ . '/../models/Spot.php';
 
 class OwnerController {
 
