@@ -1,4 +1,5 @@
 <?php
+require_once "C:/xampp/htdocs/php_project/core/Database.php";
 
 class UserModel
 {
@@ -104,4 +105,84 @@ class UserModel
         $stmt->bind_param("i", $id);
         return $stmt->execute();
     }
+    
+    // ============ Admin part(مؤقتاً) =============
+    
+    public function getUsersWithViolations()
+    {
+        $sql = "SELECT u.*, COUNT(r.reservationID) as violation_count 
+                FROM users u 
+                JOIN reservation r ON u.userID = r.userID 
+                WHERE r.status = 'active' AND r.endTime < DATE_SUB(NOW(), INTERVAL 30 MINUTE)
+                GROUP BY u.userID";
+        $result = $this->db->query($sql);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+    
+    public function getBlacklistedUsers()
+    {
+        $sql = "SELECT * FROM users WHERE role = 'blacklisted'";
+        $result = $this->db->query($sql);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+    
+    public function blacklistUser($userID)
+    {
+        $sql = "UPDATE users SET role = 'blacklisted' WHERE userID = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $userID);
+        return $stmt->execute();
+    }
+    
+    public function removeFromBlacklist($userID)
+    {
+        $sql = "UPDATE users SET role = 'driver' WHERE userID = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $userID);
+        return $stmt->execute();
+    }
+    
+    public function countUsersByRole($role)
+    {
+        $sql = "SELECT COUNT(*) as total FROM users WHERE role = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("s", $role);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row['total'];
+    }
+    
+    public function getDriversWithUnpaidFines()
+    {
+        $sql = "SELECT u.*, COUNT(f.fineID) as unpaid_fines 
+                FROM users u 
+                LEFT JOIN fines f ON u.userID = (SELECT userID FROM reservation WHERE reservationID = f.reservationID) AND f.status = 'unpaid'
+                WHERE u.role = 'driver' 
+                GROUP BY u.userID 
+                HAVING unpaid_fines > 0";
+        $result = $this->db->query($sql);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+    
+    public function getPendingSpaceOwners()
+    {
+        $sql = "SELECT u.*, 'pending' as verification_status 
+                FROM users u 
+                WHERE u.role = 'space_owner'";
+        $result = $this->db->query($sql);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+    
+    public function verifyOwner($userID, $status)
+    {
+        if ($status === 'approved') {
+            $sql = "UPDATE users SET role = 'space_owner_verified' WHERE userID = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bind_param("i", $userID);
+            return $stmt->execute();
+        }
+        return true;
+    }
 }
+?>
