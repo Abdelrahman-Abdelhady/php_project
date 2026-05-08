@@ -4,6 +4,7 @@ class Validator
 {
     public $errors = [];
 
+    // Required field
     public function required($field, $value, $message = null)
     {
         if (empty(trim($value))) {
@@ -11,6 +12,7 @@ class Validator
         }
     }
 
+    // Email format
     public function email($field, $value, $message = null)
     {
         if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
@@ -18,6 +20,7 @@ class Validator
         }
     }
 
+    // Minimum length
     public function minLength($field, $value, $min, $message = null)
     {
         if (strlen($value) < $min) {
@@ -25,6 +28,7 @@ class Validator
         }
     }
 
+    // Maximum length
     public function maxLength($field, $value, $max, $message = null)
     {
         if (strlen($value) > $max) {
@@ -32,11 +36,13 @@ class Validator
         }
     }
 
+    // Check if validation passed
     public function passes()
     {
         return empty($this->errors);
     }
 
+    // Get errors
     public function getErrors()
     {
         return $this->errors;
