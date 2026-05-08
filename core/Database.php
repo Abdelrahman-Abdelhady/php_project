@@ -8,7 +8,8 @@ class Database
     private $host = "localhost";
     private $username = "root";
     private $password = "";
-    private $dbname = "parking_system";   
+	// Write database name here
+    private $dbname = "parking_system";
 
 
     // Private constructor → prevent direct creation
