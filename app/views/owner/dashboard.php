@@ -1,3 +1,7 @@
+<?php 
+session_start(); 
+// هنا ممكن مستقبلاً تجيب البيانات الحقيقية من الكنترولر عشان تعرضها في الكروت
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,74 +13,42 @@
     
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; margin: 0; }
-
-        /* Sidebar */
-        .side-drawer {
-            height: 100vh;
-            width: 0;
-            position: fixed;
-            z-index: 2000;
-            top: 0;
-            left: 0;
-            background-color: #000000;
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 3rem;
-        }
-        .side-drawer a {
-            padding: 1rem 2rem;
-            text-decoration: none;
-            font-size: 1rem;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            transition: 0.3s;
-            border-bottom: 1px solid #111;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        .side-drawer { height: 100vh; width: 0; position: fixed; z-index: 2000; top: 0; left: 0; background-color: #000000; overflow-x: hidden; transition: 0.5s; padding-top: 3rem; }
+        .side-drawer a { padding: 1rem 2rem; text-decoration: none; font-size: 1rem; color: #ffffff; display: flex; align-items: center; transition: 0.3s; border-bottom: 1px solid #111; text-transform: uppercase; letter-spacing: 1px; }
         .side-drawer a i { margin-right: 15px; width: 20px; text-align: center; color: #888; }
         .side-drawer a:hover { background-color: #ffffff; color: #000000; }
         .side-drawer a:hover i { color: #000000; }
         .close-btn { color: #666 !important; text-align: left !important; font-size: 0.8rem !important; cursor: pointer; }
-
-        /* Dashboard */
         .page-wrapper { background-color: white; border-bottom: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .navbar { padding: 1rem 3%; display: flex; justify-content: space-between; align-items: center; }
         .site-title { font-weight: bold; color: #4F5D95; font-size: 1.2rem; }
         .menu-icon { font-size: 1.5rem; cursor: pointer; color: #4F5D95; }
-
         .main-content { padding: 2rem 5vw; }
-        .stat-card {
-            background: white; padding: 2rem; border-radius: 0.75rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center;
-            border-top: 0.3rem solid #4F5D95; margin-bottom: 1.5rem;
-        }
+        .stat-card { background: white; padding: 2rem; border-radius: 0.75rem; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; border-top: 0.3rem solid #4F5D95; margin-bottom: 1.5rem; }
         .stat-card h2 { color: #4F5D95; font-weight: bold; }
-
-        /* Add Spot Button */
-        .btn-add-custom {
-            background-color: #4F5D95; color: white; border: none;
-            border-radius: 2rem; padding: 0.6rem 2rem; font-weight: 600;
-            transition: 0.3s;
-        }
+        .btn-add-custom { background-color: #4F5D95; color: white; border: none; border-radius: 2rem; padding: 0.6rem 2rem; font-weight: 600; transition: 0.3s; }
         .btn-add-custom:hover { background-color: #3b4675; color: white; }
-
-        /* Modal styling */
         .modal-content { border-radius: 1rem; border-top: 0.5rem solid #4F5D95; }
-        .form-label { color: #4F5D95; margin-bottom: 0.3rem; }
-        .form-control:focus { border-color: #4F5D95; box-shadow: 0 0 0 0.2rem rgba(79, 93, 149, 0.25); }
+        .form-label { color: #4F5D95; margin-bottom: 0.3rem; font-weight: bold; }
     </style>
 </head>
 <body>
 
+    <!-- رسالة نجاح الإضافة -->
+    <?php if(isset($_GET['msg']) && $_GET['msg'] == 'success'): ?>
+        <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
+            <strong>Success!</strong> Your parking spot has been added successfully.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
     <div id="sideDrawer" class="side-drawer">
         <a href="javascript:void(0)" class="close-btn" onclick="toggleSidebar()">Close Menu ×</a>
-        <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
-        <a href="spots.html"><i class="fas fa-parking"></i> My Spots</a> 
-        <a href="earnings.html"><i class="fas fa-wallet"></i> Earnings</a>
-        <a href="reviews.html"><i class="fas fa-star"></i> Reviews</a>
-        <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+        <a href="dashboard.php"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="spots.php"><i class="fas fa-parking"></i> My Spots</a> 
+        <a href="earnings.php"><i class="fas fa-wallet"></i> Earnings</a>
+        <a href="reviews.php"><i class="fas fa-star"></i> Reviews</a>
+        <a href="settings.php"><i class="fas fa-cog"></i> Settings</a>
     </div>
 
     <div class="page-wrapper">
@@ -120,7 +92,7 @@
         </div>
     </main>
 
-    <!-- Modal المعدل بإضافة المنطقة والموقع التفصيلي -->
+    <!-- Modal الإضافة -->
     <div class="modal fade" id="addSpotModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content shadow">
@@ -128,17 +100,15 @@
                     <h5 class="modal-title fw-bold">Add New Parking Spot</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <form action="process_add_spot.php" method="POST">
+            <form action="add_spot_handler.php" method="POST">
                     <div class="modal-body">
-                        <!-- اسم المكان -->
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Spot Name</label>
+                            <label class="form-label">Spot Name</label>
                             <input type="text" name="spot_name" class="form-control" placeholder="e.g. Downtown Private Slot" required>
                         </div>
 
-                        <!-- تعديل: إضافة قائمة المناطق -->
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Area / District</label>
+                            <label class="form-label">Area / District</label>
                             <select name="area" class="form-select" required>
                                 <option value="" selected disabled>Select Area...</option>
                                 <option value="maadi">Maadi</option>
@@ -151,20 +121,18 @@
                             </select>
                         </div>
 
-                        <!-- تعديل: العنوان التفصيلي -->
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Detailed Location / Address</label>
+                            <label class="form-label">Detailed Location / Address</label>
                             <textarea name="address" class="form-control" rows="2" placeholder="Street name, Building number, or landmark" required></textarea>
                         </div>
 
-                        <!-- السعر والسعة -->
                         <div class="row">
                             <div class="col-6">
-                                <label class="form-label fw-bold">Price ($/Hr)</label>
+                                <label class="form-label">Price ($/Hr)</label>
                                 <input type="number" name="price" class="form-control" placeholder="0.00" step="0.01" required>
                             </div>
                             <div class="col-6">
-                                <label class="form-label fw-bold">Capacity</label>
+                                <label class="form-label">Capacity</label>
                                 <input type="number" name="capacity" class="form-control" placeholder="Number of cars" required>
                             </div>
                         </div>
