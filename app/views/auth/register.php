@@ -1,5 +1,5 @@
 <?php
-// اتصال بقاعدة البيانات
+
 $host = "localhost";
 $user = "root";
 $pass = "";
@@ -11,7 +11,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// لو تم الضغط على Sign Up
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'] ?? '';
     $email = $_POST['email'] ?? '';
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $role = $_POST['role'] ?? 'driver';
     $phone_num = $_POST['phone_num'] ?? '';
     
-    // رفع الصورة
+    
     $profile_pic = null;
     if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] === 0) {
         $allowed = ['jpg', 'jpeg', 'png', 'gif'];
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
-    // التحقق من عدم وجود البريد مكرر
+
     $check = $conn->query("SELECT * FROM users WHERE email = '$email'");
     
     if ($check->num_rows > 0) {
