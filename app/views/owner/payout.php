@@ -2,8 +2,7 @@
 /**
  * Payout View Page
  * Handles the user interface for withdrawal requests.
- */
-session_start(); 
+ */ 
 
 $available_balance = 0.00; 
 ?>

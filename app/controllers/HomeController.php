@@ -10,4 +10,9 @@ class HomeController extends Controller
 
         $this->view("home/index", ['user' => $user]);
     }
+    
+    public function contactUs()
+    {
+        $this->view("home/contactUs");
+    }
 }

@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 $host = "localhost";
 $user = "root";
@@ -83,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="alert alert-danger text-center"><?= $error ?></div>
     <?php endif; ?>
 
-    <form method="POST">
+    <form action="<?= BASE_URL ?>Auth/doLogin" method="POST">
         <div class="mb-3">
             <label class="form-label">Email Address</label>
             <input type="email" name="email" class="form-control" required>
