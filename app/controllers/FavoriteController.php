@@ -1,25 +1,51 @@
 <?php 
 
-require_once __DIR__ . '/../models/Favorite.php';
-
-class FavoriteController extends BaseController {
-
-    public function index(){
-
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
     }
 
-    public function add(){
+    require_once __DIR__ . '/../../core/Database.php';
+    require_once __DIR__ . '/../models/Favorite.php';
 
-        $userId = $_POST['user_id'];
-        $spotId = $_POST['spot_id'];
+    class FavoriteController {
 
-        $favorite = new Favorite($this->db);
-        $favorite->addFavorite($userId, $spotId);
+        private $db;
 
-        echo "added to favorites";
+        public function __construct() {
+            $database = Database::getInstance();
+            $this->db = $database->getConnection();
+        }
+
+        public function index(){
+            $userId = $_SESSION['user_id'];
+
+            $favorite = new Favorite($this->db);
+
+            $favorites = $favorite->getUserFavorites($userId);
+
+            return $favorites;
+        }
+
+        public function add(){
+
+            $userId = $_SESSION['user_id'];
+            $spotId = $_POST['spot_id'];
+
+            $favorite = new Favorite($this->db);
+            $favorite->addFavorite($userId, $spotId);
+
+            echo "added to favorites";
+        }
+
+        public function remove(){
+            $userId = $_SESSION['user_id'];
+            $spotId = $_POST['spot_id'];
+
+            $favorite = new Favorite($this->db);
+            $favorite->removeFavorite($userId, $spotId);
+
+            echo "removed from favorites";
+        }
+
+
     }
-
-    public function remove(){
-
-    }
-}
