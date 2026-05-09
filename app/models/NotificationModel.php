@@ -1,4 +1,5 @@
 <?php
+require_once "C:/xampp/htdocs/php_project/core/Database.php";
 
 class NotificationModel
 {

@@ -1,18 +1,10 @@
 <?php
-session_start();
 
-// ============= تعديل مؤقت للتجربة =============
-// علقنا التحقق مؤقتاً عشان نجرب من غير تسجيل دخول
-// if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'municipal_admin') {
-//     header("Location: ../../simple_login.php");
-//     exit;
-// }
-
-// نضيف session مؤقت
-$_SESSION['user'] = 'Admin Test';
-$_SESSION['role'] = 'municipal_admin';
-$_SESSION['email'] = 'admin@cityslot.com';
-// =============================================
+// Check if user is logged in and is admin
+if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'municipal_admin') {
+    header("Location: ../auth/adminlogin.php");
+    exit;
+}
 
 require_once "../../Models/SpotModel.php";
 require_once "../../Models/ReservationModel.php";
@@ -135,12 +127,12 @@ $stats = $sensorModel->getSensorStats();
         <a href="blacklist.php">Blacklist</a>
         <a href="system_health.php">System Health</a>
         <a href="settings.php">Settings</a>
-        <a href="../../home.php" style="margin-top: 50px;">🚪 Logout</a>
+        <a href="../../auth/logout.php" style="margin-top: 50px;"> Logout</a>
     </div>
     <div class="main">
         <div class="navbar">
             <h1>Municipal Admin Dashboard</h1>
-            <span style="background:#dbeafe; color:#1d4ed8; padding:5px 12px; border-radius:20px;">👤 <?php echo $_SESSION['user']; ?></span>
+            <span style="background:#dbeafe; color:#1d4ed8; padding:5px 12px; border-radius:20px;"> <?php echo $_SESSION['user']; ?></span>
         </div>
         <div class="content">
             <div class="stats-grid">
@@ -161,7 +153,7 @@ $stats = $sensorModel->getSensorStats();
                         <td><?php echo htmlspecialchars($v['user_name']); ?></td>
                         <td><?php echo htmlspecialchars($v['location']); ?></td>
                         <td><?php echo $v['endTime']; ?></td>
-                        <td><a href="dispatch.php" class="btn">🚔 Dispatch</a></td>
+                        <td><a href="dispatch.php" class="btn"> Dispatch</a></td>
                     </tr>
                     <?php endforeach; ?>
                     </tbody>

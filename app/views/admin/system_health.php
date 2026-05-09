@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'municipal_admin') {
     header("Location: ../../simple_login.php");
@@ -161,7 +160,7 @@ $inactiveSensors = $sensorModel->getInactiveSensors();
     </div>
     <div class="main">
         <div class="navbar">
-            <h1>📡 IoT System Health Monitor</h1>
+            <h1> IoT System Health Monitor</h1>
         </div>
         <div class="content">
             <?php if(isset($_SESSION['message'])): ?>
@@ -170,19 +169,19 @@ $inactiveSensors = $sensorModel->getInactiveSensors();
             
             <div class="stats-grid">
                 <div class="stat-card">
-                    <h3>📟 Total Sensors</h3>
+                    <h3> Total Sensors</h3>
                     <div class="number"><?php echo $stats['total']; ?></div>
                 </div>
                 <div class="stat-card">
-                    <h3>✅ Active Sensors</h3>
+                    <h3> Active Sensors</h3>
                     <div class="number"><?php echo $stats['active']; ?></div>
                 </div>
                 <div class="stat-card">
-                    <h3>🟢 Online Now</h3>
+                    <h3> Online Now</h3>
                     <div class="number"><?php echo $stats['online']; ?></div>
                 </div>
                 <div class="stat-card">
-                    <h3>⚠️ Inactive</h3>
+                    <h3> Inactive</h3>
                     <div class="number"><?php echo $stats['inactive']; ?></div>
                 </div>
             </div>
@@ -217,7 +216,7 @@ $inactiveSensors = $sensorModel->getInactiveSensors();
                                 <td><?php echo htmlspecialchars($s['zone'] ?? 'N/A'); ?></td>
                                 <td><?php echo $lastHeartbeat; ?></td>
                                 <td><span class="<?php echo $statusClass; ?>"><?php echo $statusText; ?></span></td>
-                                <td><?php echo $s['isOccupied'] ? '🚗 Occupied' : '🅿️ Free'; ?></td>
+                                <td><?php echo $s['isOccupied'] ? ' Occupied' : 'Free'; ?></td>
                                 <td>
                                     <?php if(!$isOnline): ?>
                                     <form method="POST">
@@ -234,13 +233,13 @@ $inactiveSensors = $sensorModel->getInactiveSensors();
                     </table>
                 </div>
                 <?php else: ?>
-                <p style="padding: 20px; text-align: center; color: #6b7280;">📡 No sensors found in the system.</p>
+                <p style="padding: 20px; text-align: center; color: #6b7280;"> No sensors found in the system.</p>
                 <?php endif; ?>
             </div>
 
             <?php if(count($inactiveSensors) > 0): ?>
             <div class="section">
-                <h2>⚠️ Offline Sensors Alert</h2>
+                <h2>Offline Sensors Alert</h2>
                 <div class="alert" style="background: #fee2e2; padding: 15px; border-radius: 8px;">
                     <p><strong><?php echo count($inactiveSensors); ?> sensor(s) are offline:</strong></p>
                     <ul>
