@@ -2,6 +2,7 @@
 
 class Auth
 {
+    
     public static function login($user)
     {
         $_SESSION['user'] = [

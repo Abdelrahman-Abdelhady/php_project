@@ -9,10 +9,6 @@ class OwnerController {
     // Create a new parking spot for the logged-in owner
     public function addSpot() {
 
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $db = Database::getInstance()->getConnection();
@@ -39,10 +35,6 @@ class OwnerController {
 
     // Retrieve all spots belonging to the current owner
     public function mySpots() {
-
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
 
         $db = Database::getInstance()->getConnection();
         $spotModel = new Spot($db);
@@ -95,10 +87,6 @@ class OwnerController {
     // Handle payout request and wallet deduction
     public function processPayout() {
 
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $db = Database::getInstance()->getConnection();
@@ -146,10 +134,6 @@ class OwnerController {
 
     // Update owner profile information and optional image/password
     public function updateProfile() {
-
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
 
         if ($_SERVER['REQUEST_METHOD'] != 'POST') return;
 

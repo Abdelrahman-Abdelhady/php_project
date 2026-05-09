@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'municipal_admin') {
     header("Location: ../../simple_login.php");
