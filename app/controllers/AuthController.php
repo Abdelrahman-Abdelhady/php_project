@@ -1,7 +1,7 @@
 <?php
 require_once "../app/helpers/Validator.php";
 require_once "../app/helpers/Auth.php";
-require_once "../app/models/User.php";
+require_once "../app/models/UserModel.php";
 
 class AuthController extends Controller
 {
@@ -9,7 +9,7 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->userModel = new User();
+        $this->userModel = new UserModel();
     }
 
     public function register()

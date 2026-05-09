@@ -10,11 +10,29 @@ class UserModel
         $this->db = Database::getInstance()->getConnection();
     }
     
-    public function getUserById($userID)
+    // ============ CREATE ============
+    
+    public function createUser($name, $phone_num, $email, $password, $role, $photo = null)
     {
-        $sql = "SELECT userID, name, email, role, phone_num, profile_pic FROM users WHERE userID = ?";
+        $sql = "INSERT INTO users (name, phone_num, email, password, role, profile_pic) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
-        $stmt->bind_param("i", $userID);
+        $stmt->bind_param("ssssss", $name, $phone_num, $email, $password, $role, $photo);
+        return $stmt->execute();
+    }
+    
+    // Alias for createUser (for compatibility)
+    public function create($name, $email, $password, $role, $phone_num = null, $profile_pic = null)
+    {
+        return $this->createUser($name, $phone_num, $email, $password, $role, $profile_pic);
+    }
+    
+    // ============ READ (Single) ============
+    
+    public function getUserById($id)
+    {
+        $sql = "SELECT userID, name, email, role, phone_num, profile_pic, password FROM users WHERE userID = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $id);
         $stmt->execute();
         $result = $stmt->get_result();
         
@@ -26,12 +44,23 @@ class UserModel
                 'email' => $row['email'],
                 'role' => $row['role'],
                 'phone_num' => $row['phone_num'] ?? null,
-                'profile_pic' => $row['profile_pic'] ?? null
+                'profile_pic' => $row['profile_pic'] ?? null,
+                'password' => $row['password'] ?? null
             ];
         }
-        
         return null;
     }
+    
+    // ============ READ (All) ============
+    
+    public function getAllUsers()
+    {
+        $sql = "SELECT userID, name, email, role, phone_num, profile_pic FROM users ORDER BY userID DESC";
+        $result = $this->db->query($sql);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+    
+    // ============ LOGIN / EMAIL ============
     
     public function findByEmail($email)
     {
@@ -54,7 +83,6 @@ class UserModel
                 'profile_pic' => $row['profile_pic'] ?? null
             ];
         }
-        
         return null;
     }
     
@@ -66,37 +94,26 @@ class UserModel
         $stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
-        
         return $row['count'] > 0;
     }
     
-    public function create($name, $email, $password, $role, $phone_num = null, $profile_pic = null)
-    {
-        $sql = "INSERT INTO users (name, email, password, role, phone_num, profile_pic) VALUES (?, ?, ?, ?, ?, ?)";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bind_param("ssssss", $name, $email, $password, $role, $phone_num, $profile_pic);
-        
-        if ($stmt->execute()) {
-            return $this->db->insert_id;
-        }
-        
-        return false;
-    }
+    // ============ UPDATE ============
     
-    public function getAllUsers()
+    public function updateUser($id, $name, $phone_num, $email, $role, $profile_pic = null)
     {
-        $sql = "SELECT userID, name, email, role, phone_num, profile_pic FROM users";
-        $result = $this->db->query($sql);
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }
-    
-    public function updateUser($id, $name, $email, $phone_num, $role)
-    {
-        $sql = "UPDATE users SET name = ?, email = ?, phone_num = ?, role = ? WHERE userID = ?";
+        $sql = "UPDATE users SET name = ?, phone_num = ?, email = ?, role = ? WHERE userID = ?";
         $stmt = $this->db->prepare($sql);
-        $stmt->bind_param("ssssi", $name, $email, $phone_num, $role, $id);
+        $stmt->bind_param("ssssi", $name, $phone_num, $email, $role, $id);
         return $stmt->execute();
     }
+    
+    // Overloaded update (for different parameter order)
+    public function update($id, $name, $email, $phone_num, $role)
+    {
+        return $this->updateUser($id, $name, $phone_num, $email, $role);
+    }
+    
+    // ============ DELETE ============
     
     public function deleteUser($id)
     {
@@ -106,7 +123,7 @@ class UserModel
         return $stmt->execute();
     }
     
-    // ============ Admin part(مؤقتاً) =============
+    // ============ BLACKLIST / VIOLATIONS ============
     
     public function getUsersWithViolations()
     {
@@ -142,6 +159,8 @@ class UserModel
         return $stmt->execute();
     }
     
+    // ============ STATISTICS ============
+    
     public function countUsersByRole($role)
     {
         $sql = "SELECT COUNT(*) as total FROM users WHERE role = ?";
@@ -152,6 +171,8 @@ class UserModel
         $row = $result->fetch_assoc();
         return $row['total'];
     }
+    
+    // ============ FINES & OWNERS ============
     
     public function getDriversWithUnpaidFines()
     {
