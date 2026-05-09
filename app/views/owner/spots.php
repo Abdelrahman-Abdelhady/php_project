@@ -91,14 +91,26 @@ body{
     color:#4F5D95;
 }
 
+/* ===== GRID ===== */
+.spots-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
 /* ===== CARDS ===== */
 .spot-card{
     background:#fff;
     padding:20px;
-    margin-bottom:15px;
     border-radius:15px;
     box-shadow:0 4px 15px rgba(0,0,0,0.08);
     border-left:5px solid #4F5D95;
+    transition:0.3s;
+}
+
+.spot-card:hover{
+    transform: translateY(-5px);
 }
 
 .btn-delete{
@@ -110,7 +122,7 @@ body{
 
 <body>
 
-<!-- Sidebar (DASHBOARD STYLE) -->
+<!-- Sidebar -->
 <div id="sideDrawer" class="side-drawer">
     <a href="javascript:void(0)" class="close-btn" onclick="toggleSidebar()">
         Close Menu ×
@@ -136,17 +148,19 @@ body{
 
 <h2 style="color:#4F5D95; font-weight:bold;">My Spots</h2>
 
+<div class="spots-grid">
+
 <?php if($spots && $spots->num_rows > 0): ?>
 
     <?php while($row = $spots->fetch_assoc()): ?>
 
-        <?php $id = $row['ID'] ?? 0; ?>
+        <?php $id = $row['SpotID'] ?? 0; ?>
 
         <div class="spot-card">
 
-            <h4><?= $row['location'] ?></h4>
+            <h4><?= htmlspecialchars($row['location']) ?></h4>
 
-            <p><b>Area:</b> <?= $row['zone'] ?></p>
+            <p><b>Area:</b> <?= htmlspecialchars($row['zone']) ?></p>
             <p><b>Price:</b> <?= $row['price_per_hour'] ?> EGP</p>
             <p><b>Status:</b> <?= $row['status'] ?></p>
 
@@ -167,6 +181,8 @@ body{
     </div>
 
 <?php endif; ?>
+
+</div>
 
 </div>
 
