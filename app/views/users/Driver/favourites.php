@@ -1,3 +1,12 @@
+<?php
+
+require_once __DIR__ . '/../../../controllers/FavoriteController.php';
+
+$controller = new FavoriteController();
+$favorites = $controller->index();
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -212,48 +221,47 @@
         </header>
 
         <div class="favorites-grid">
+
+            <?php if ($favorites->num_rows == 0) { ?>
+
+                <div class="empty-dash-card">
+                    <div class="plus-circle"><i class="fas fa-plus-circle"></i></div>
+                    <p>No favorites yet. Browse more spots.</p>
+                </div>
+
+            <?php } ?>
             
-            <div class="spot-card">
-                <button class="unfavorite-btn" title="Remove from favorites">
-                    <i class="fas fa-heart"></i>
-                </button>
-                <div class="card-img-top">
-                    <i class="fas fa-parking"></i>
-                </div>
-                <div class="card-body">
-                    <h3>Downtown Executive Garage</h3>
-                    <p class="location-text"><i class="fas fa-map-marker-alt"></i> Tahrir Square, Cairo</p>
-                    <div class="info-tags">
-                        <span class="tag tag-price">20 EGP/hr</span>
-                        <span class="tag tag-status">Available</span>
+            <?php while ($row = $favorites->fetch_assoc()) { ?>
+
+                <div class="spot-card">
+                    <form method="POST" action="/php_project/public/remove_favorite.php">
+                        <input type="hidden" name="spot_id" value="<?php echo $row['spot_id']; ?>">
+                        <button class="unfavorite-btn" type="submit" title="Remove from favorites">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </form>
+
+                    <div class="card-img-top">
+                        <i class="fas fa-parking"></i>
                     </div>
-                    <button class="btn-book">Book Now</button>
+
+                    <div class="card-body">
+                        <h3>Parking Spot #<?php echo $row['spot_id']; ?></h3>
+                        <p class="location-text">
+                            <i class="fas fa-map-marker-alt"></i> Location will be connected later
+                        </p>
+
+                        <div class="info-tags">
+                            <span class="tag tag-price">Price later</span>
+                            <span class="tag tag-status">Available</span>
+                        </div>
+
+                        <button class="btn-book">Book Now</button>
                 </div>
             </div>
 
-            <div class="spot-card">
-                <button class="unfavorite-btn" title="Remove from favorites">
-                    <i class="fas fa-heart"></i>
-                </button>
-                <div class="card-img-top">
-                    <i class="fas fa-parking"></i>
-                </div>
-                <div class="card-body">
-                    <h3>Maadi Hub Parking</h3>
-                    <p class="location-text"><i class="fas fa-map-marker-alt"></i> Road 9, Maadi</p>
-                    <div class="info-tags">
-                        <span class="tag tag-price">15 EGP/hr</span>
-                        <span class="tag tag-status">Available</span>
-                    </div>
-                    <button class="btn-book">Book Now</button>
-                </div>
-            </div>
-
-            <div class="empty-dash-card">
-                <div class="plus-circle"><i class="fas fa-plus-circle"></i></div>
-                <p>Browse more spots</p>
-            </div>
-
+            <?php } ?>
+            
         </div>
     </main>
 

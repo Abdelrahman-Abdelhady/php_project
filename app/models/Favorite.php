@@ -40,3 +40,4 @@ class Favorite{
         return $stmt->get_result();
     }
 }
+
