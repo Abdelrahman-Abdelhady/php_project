@@ -12,7 +12,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-require_once "../../helpers/Upload.php";
+require_once "../app/helpers/Upload.php";
 
 $error = "";
 $success = "";
