@@ -9,7 +9,9 @@ class Favorite extends Eloquent {
     }
 
     public function addFavorite($userId, $itemId) {
-        
+        $query = "INSERT INTO favorites (user_id, item_id) VALUES (?, ?)";
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute([$userId, $itemId]);
     }
 
     public function removeFavorite($userId, $itemId) {
