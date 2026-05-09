@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 // تأكد من أن المستخدم Admin
 if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'municipal_admin') {
@@ -133,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
             
             <div class="section">
-                <h2>📋 Pending Owner Verification Requests</h2>
+                <h2>Pending Owner Verification Requests</h2>
                 <?php if(count($pendingSpots) > 0): ?>
                 <div style="overflow-x: auto;">
                     <table>

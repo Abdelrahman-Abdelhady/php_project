@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'municipal_admin') {
     header("Location: ../../simple_login.php");
@@ -140,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['dispatch'])) {
                     </table>
                 </div>
                 <?php else: ?>
-                <p style="padding: 20px; text-align: center; color: #6b7280;">✅ No overstay violations at this time.</p>
+                <p style="padding: 20px; text-align: center; color: #6b7280;"> No overstay violations at this time.</p>
                 <?php endif; ?>
             </div>
         </div>

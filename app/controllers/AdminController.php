@@ -14,7 +14,6 @@ class AdminController
     
     public function __construct()
     {
-        session_start();
         
         // Check if user is admin
         if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'municipal_admin') {

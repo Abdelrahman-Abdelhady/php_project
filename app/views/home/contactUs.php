@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 $success = "";
 $error = "";
@@ -35,6 +34,7 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us - CitySlot</title>
+    
     <style>
         * {
             margin: 0;

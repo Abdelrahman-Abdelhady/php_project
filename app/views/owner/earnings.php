@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 require_once __DIR__ . '/../../../core/Database.php';
 require_once __DIR__ . '/../../controllers/EarningsController.php';

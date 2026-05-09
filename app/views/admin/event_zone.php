@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'municipal_admin') {
     header("Location: ../../simple_login.php");
@@ -137,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     <div class="main">
         <div class="navbar">
-            <h1>🔒 Event-Zone Locking</h1>
+            <h1> Event-Zone Locking</h1>
         </div>
         <div class="content">
             <?php if(isset($_SESSION['message'])): ?>
@@ -173,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label>Duration (hours)</label>
                         <input type="number" name="duration" value="4" min="1" max="24" required>
                     </div>
-                    <button type="submit" class="btn">🔒 Initiate Lockdown</button>
+                    <button type="submit" class="btn"> Initiate Lockdown</button>
                 </form>
             </div>
         </div>
