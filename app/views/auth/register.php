@@ -12,7 +12,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-require_once "../../helpers/Upload.php";
+require_once "../app/helpers/Upload.php";
 
 $error = "";
 $success = "";
@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     $role = $_POST['role'] ?? 'driver';
     $phone_num = $_POST['phone_num'] ?? '';
+    $projectBase = '/' . basename(dirname(__DIR__, 3));
     
     // Handle profile picture upload
     $profile_pic = null;
@@ -37,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Set default profile picture if none uploaded
     if (!$profile_pic) {
-        $profile_pic = "/php_project/public/uploads/img/default.png.jpg";
+        $profile_pic = $projectBase . "/public/uploads/img/default.png";
     }
     
     // Check if email exists
@@ -62,9 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             // Redirect based on role
             if ($role == 'space_owner') {
-                header("Location: /php_project/app/views/owner/dashboard.php");
+                header("Location: " . $projectBase . "/app/views/owner/dashboard.php");
             } else {
-                header("Location: /php_project/app/views/driver/marketplace.php");
+                header("Location: " . $projectBase . "/app/views/driver/marketplace.php");
             }
             exit;
         } else {
