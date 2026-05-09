@@ -1,20 +1,45 @@
-<?php
-
 class EarningsController {
 
-    public function showEarnings() {
+    private $conn;
 
-        session_start();
+    public function __construct($db) {
+        $this->conn = $db;
+    }
 
-        require_once $_SERVER['DOCUMENT_ROOT'] . '/php_project/core/Database.php';
-        require_once $_SERVER['DOCUMENT_ROOT'] . '/php_project/app/models/Earnings.php';
+    // Get wallet balance for user
+    public function getBalance($user_id) {
 
-        $db = Database::getInstance()->getConnection();
+        $query = "SELECT balance FROM wallet WHERE user_id = ?";
 
-        $model = new Earnings($db);
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
 
-        $ownerid = $_SESSION['user_id'];
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
 
-        return $model->getEarnings($ownerid);
+        return $row['balance'] ?? 0;
+    }
+
+    // Add earning + update wallet balance
+    public function addEarning($user_id, $amount, $source) {
+
+        // Save earning record
+        $query = "INSERT INTO earnings (ownerid, amount, source)
+                  VALUES (?, ?, ?)";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("ids", $user_id, $amount, $source);
+        $stmt->execute();
+
+        // Update wallet balance
+        $query2 = "UPDATE wallet 
+                   SET balance = balance + ?, 
+                       last_updated = NOW()
+                   WHERE user_id = ?";
+
+        $stmt2 = $this->conn->prepare($query2);
+        $stmt2->bind_param("di", $amount, $user_id);
+        $stmt2->execute();
     }
 }
