@@ -11,144 +11,181 @@ $userPic = $user['profile_pic'] ?? "https://via.placeholder.com/130?text=User";
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CitySlot - Profile Settings</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CitySlot - Profile Settings</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <style>
-        body {
-            font-family: 'Segoe UI';
-            background: #f4f7f6;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+<style>
+body {
+    font-family: 'Segoe UI';
+    background: #f4f7f6;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
 
-        .side-drawer {
-            height: 100vh;
-            width: 0;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background: #000;
-            overflow-x: hidden;
-            transition: 0.4s;
-            padding-top: 3rem;
-            z-index: 2000;
-        }
+/* ===== SIDEBAR (SAME DASHBOARD) ===== */
+.side-drawer {
+    height: 100vh;
+    width: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #000000;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 3rem;
+    z-index: 2000;
+}
 
-        .side-drawer a {
-            padding: 1rem 2rem;
-            text-decoration: none;
-            color: #fff;
-            display: block;
-            border-bottom: 1px solid #111;
-        }
+.side-drawer a {
+    padding: 1rem 2rem;
+    text-decoration: none;
+    font-size: 1rem;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    transition: 0.3s;
+    border-bottom: 1px solid #111;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
 
-        .side-drawer a:hover {
-            background: #fff;
-            color: #000;
-        }
+.side-drawer a i {
+    margin-right: 15px;
+    width: 20px;
+    text-align: center;
+    color: #888;
+}
 
-        .navbar {
-            background: #fff;
-            padding: 1rem;
-            display: flex;
-            justify-content: space-between;
-        }
+.side-drawer a:hover {
+    background-color: #ffffff;
+    color: #000000;
+}
 
-        .site-title {
-            font-weight: bold;
-            color: #4F5D95;
-        }
+.side-drawer a:hover i {
+    color: #000000;
+}
 
-        .main-content {
-            padding: 2rem;
-        }
+.close-btn {
+    color: #666 !important;
+    font-size: 0.8rem !important;
+    cursor: pointer;
+    padding: 1rem 2rem;
+}
 
-        .profile-header {
-            background: #4F5D95;
-            color: #fff;
-            padding: 3rem 2rem;
-            text-align: center;
-            border-radius: 1rem 1rem 0 0;
-        }
+/* NAVBAR */
+.navbar {
+    background: #fff;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+}
 
-        .profile-img {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #fff;
-        }
+.site-title {
+    font-weight: bold;
+    color: #4F5D95;
+}
 
-        .settings-card {
-            background: #fff;
-            padding: 2rem;
-            border-radius: 1rem;
-            margin-top: -2rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
+/* CONTENT */
+.main-content {
+    padding: 2rem;
+}
 
-        .save-btn {
-            background: #4F5D95;
-            color: #fff;
-            border: none;
-            padding: 0.8rem 2.5rem;
-            border-radius: 2rem;
-        }
-    </style>
+.profile-header {
+    background: #4F5D95;
+    color: #fff;
+    padding: 3rem 2rem;
+    text-align: center;
+    border-radius: 1rem 1rem 0 0;
+}
+
+.profile-img {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #fff;
+}
+
+.settings-card {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 1rem;
+    margin-top: -2rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.save-btn {
+    background: #4F5D95;
+    color: #fff;
+    border: none;
+    padding: 0.8rem 2.5rem;
+    border-radius: 2rem;
+}
+</style>
 </head>
 
 <body>
 
 <!-- Sidebar -->
 <div id="sideDrawer" class="side-drawer">
-    <a href="javascript:void(0)" onclick="toggleSidebar()">Close ×</a>
-    <a href="dashboard.php">Dashboard</a>
-    <a href="spots.php">My Spots</a>
-    <a href="earnings.php">Earnings</a>
-    <a href="settings.php">Settings</a>
+
+    <a href="javascript:void(0)" class="close-btn" onclick="toggleSidebar()">
+        Close Menu ×
+    </a>
+
+    <a href="dashboard.php"><i class="fas fa-home"></i> Dashboard</a>
+    <a href="spots.php"><i class="fas fa-parking"></i> My Spots</a>
+    <a href="earnings.php"><i class="fas fa-wallet"></i> Earnings</a>
+    <a href="reviews.php"><i class="fas fa-star"></i> Reviews</a>
+    <a href="settings.php"><i class="fas fa-cog"></i> Settings</a>
+
 </div>
 
-<!-- Navbar -->
+<!-- NAVBAR -->
 <div class="navbar">
     <div onclick="toggleSidebar()" style="cursor:pointer;">☰</div>
     <div class="site-title">CitySlot 🚘</div>
 </div>
 
-<!-- Content -->
+<!-- CONTENT -->
 <div class="main-content container" style="max-width:850px;">
 
-<?php if(isset($_GET['msg']) && $_GET['msg']=='empty'): ?>
-    <div class="alert alert-danger text-center">Please fill required fields</div>
+<!-- SUCCESS MESSAGE -->
+<?php if(isset($_GET['msg']) && $_GET['msg']=='success'): ?>
+    <div class="alert alert-success text-center">
+        Profile updated successfully 🎉
+    </div>
 <?php endif; ?>
 
-<?php if(isset($_GET['msg']) && $_GET['msg']=='no_change'): ?>
-    <div class="alert alert-warning text-center">No changes detected</div>
+<?php if(isset($_GET['msg']) && $_GET['msg']=='error'): ?>
+    <div class="alert alert-danger text-center">
+        Something went wrong ❌
+    </div>
 <?php endif; ?>
 
-<!-- Profile Header -->
+<!-- PROFILE HEADER -->
 <div class="profile-header">
 
     <img src="<?php echo $userPic; ?>" class="profile-img mb-2">
 
     <h4><?php echo $user['name'] ?? 'Owner'; ?></h4>
     <p class="text-white-50">Verified Parking Provider</p>
+
 </div>
 
-<!-- Form -->
+<!-- FORM -->
 <div class="settings-card">
 
 <form action="/php_project/app/controllers/OwnerController.php?action=updateProfile"
       method="POST"
       enctype="multipart/form-data">
 
-    <!-- Image -->
     <div class="mb-3">
         <label>Profile Image</label>
         <input type="file" name="profile_pic" class="form-control">
