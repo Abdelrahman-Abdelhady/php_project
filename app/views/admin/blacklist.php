@@ -16,10 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['userID'])) {
     
     if ($action === 'blacklist') {
         $userModel->blacklistUser($userID);
-        $_SESSION['message'] = "⛔ User #{$userID} has been blacklisted";
+        $_SESSION['message'] = " User #{$userID} has been blacklisted";
     } elseif ($action === 'remove') {
         $userModel->removeFromBlacklist($userID);
-        $_SESSION['message'] = "✅ User #{$userID} removed from blacklist";
+        $_SESSION['message'] = " User #{$userID} removed from blacklist";
     }
     header('Location: blacklist.php');
     exit();
@@ -129,7 +129,7 @@ $blacklistedUsers = $userModel->getBlacklistedUsers();
     </div>
     <div class="main">
         <div class="navbar">
-            <h1>⛔ Blacklist / Suspension Manager</h1>
+            <h1> Blacklist / Suspension Manager</h1>
         </div>
         <div class="content">
             <?php if(isset($_SESSION['message'])): ?>
@@ -161,7 +161,7 @@ $blacklistedUsers = $userModel->getBlacklistedUsers();
                                     <form method="POST" style="display: inline;">
                                         <input type="hidden" name="userID" value="<?php echo $u['userID']; ?>">
                                         <input type="hidden" name="action" value="blacklist">
-                                        <button type="submit" class="btn btn-blacklist" onclick="return confirm('Blacklist this user?')">⛔ Blacklist</button>
+                                        <button type="submit" class="btn btn-blacklist" onclick="return confirm('Blacklist this user?')"> Blacklist</button>
                                     </form>
                                 </td>
                             </tr>
@@ -170,12 +170,12 @@ $blacklistedUsers = $userModel->getBlacklistedUsers();
                     </table>
                 </div>
                 <?php else: ?>
-                <p style="padding: 20px; text-align: center; color: #6b7280;">✅ No users with multiple violations.</p>
+                <p style="padding: 20px; text-align: center; color: #6b7280;"> No users with multiple violations.</p>
                 <?php endif; ?>
             </div>
             
             <div class="section">
-                <h2>🚫 Currently Blacklisted Users</h2>
+                <h2> Currently Blacklisted Users</h2>
                 <?php if(count($blacklistedUsers) > 0): ?>
                 <div style="overflow-x: auto;">
                     <table>
@@ -208,7 +208,7 @@ $blacklistedUsers = $userModel->getBlacklistedUsers();
                     </table>
                 </div>
                 <?php else: ?>
-                <p style="padding: 20px; text-align: center; color: #6b7280;">✅ No blacklisted users.</p>
+                <p style="padding: 20px; text-align: center; color: #6b7280;"> No blacklisted users.</p>
                 <?php endif; ?>
             </div>
         </div>

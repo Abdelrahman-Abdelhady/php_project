@@ -118,7 +118,7 @@ $reservations = $reservationModel->getActiveReservations();
     </div>
     <div class="main">
         <div class="navbar">
-            <h1>🚨 Emergency Vehicle Override</h1>
+            <h1> Emergency Vehicle Override</h1>
         </div>
         <div class="content">
             <?php if(isset($_SESSION['message'])): ?>
@@ -126,7 +126,7 @@ $reservations = $reservationModel->getActiveReservations();
             <?php endif; ?>
             
             <div class="section">
-                <h2>📋 Active Reservations</h2>
+                <h2> Active Reservations</h2>
                 <?php if(count($reservations) > 0): ?>
                 <div style="overflow-x: auto;">
                     <table>
@@ -153,7 +153,7 @@ $reservations = $reservationModel->getActiveReservations();
                                 <td>
                                     <form method="POST" onsubmit="return confirm('WARNING: This will cancel the reservation and free the spot. Continue?')">
                                         <input type="hidden" name="reservationID" value="<?php echo $r['reservationID']; ?>">
-                                        <button type="submit" class="btn-danger">🚨 Emergency Override</button>
+                                        <button type="submit" class="btn-danger"> Emergency Override</button>
                                     </form>
                                 </td>
                             </tr>
@@ -162,7 +162,7 @@ $reservations = $reservationModel->getActiveReservations();
                     </table>
                 </div>
                 <?php else: ?>
-                <p style="padding: 20px; text-align: center; color: #6b7280;">✅ No active reservations found.</p>
+                <p style="padding: 20px; text-align: center; color: #6b7280;"> No active reservations found.</p>
                 <?php endif; ?>
             </div>
         </div>

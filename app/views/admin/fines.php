@@ -17,9 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['violation_id'])) {
     
     if ($action === 'approve_fine') {
         $reservationModel->generateFine($violationID, $amount, "Overstay violation");
-        $_SESSION['message'] = "💰 Fine of \${$amount} approved for violation #{$violationID}";
+        $_SESSION['message'] = " Fine of \${$amount} approved for violation #{$violationID}";
     } elseif ($action === 'reject_appeal') {
-        $_SESSION['message'] = "❌ Appeal rejected for violation #{$violationID}";
+        $_SESSION['message'] = " Appeal rejected for violation #{$violationID}";
     }
     header('Location: fines.php');
     exit();
@@ -131,7 +131,7 @@ $allFines = $reservationModel->getAllFines();
     </div>
     <div class="main">
         <div class="navbar">
-            <h1>💰 Automated Fines & Appeals Workflow</h1>
+            <h1> Automated Fines & Appeals Workflow</h1>
         </div>
         <div class="content">
             <?php if(isset($_SESSION['message'])): ?>
@@ -139,7 +139,7 @@ $allFines = $reservationModel->getAllFines();
             <?php endif; ?>
             
             <div class="section">
-                <h2>⚠️ New Violations Requiring Action</h2>
+                <h2>New Violations Requiring Action</h2>
                 <?php if(count($violations) > 0): ?>
                 <div style="overflow-x: auto;">
                     <table>
@@ -186,12 +186,12 @@ $allFines = $reservationModel->getAllFines();
                     </table>
                 </div>
                 <?php else: ?>
-                <p style="padding: 20px; text-align: center; color: #6b7280;">✅ No new violations requiring action.</p>
+                <p style="padding: 20px; text-align: center; color: #6b7280;"> No new violations requiring action.</p>
                 <?php endif; ?>
             </div>
 
             <div class="section">
-                <h2>📋 All Fines History</h2>
+                <h2> All Fines History</h2>
                 <?php if(count($allFines) > 0): ?>
                 <div style="overflow-x: auto;">
                     <table>
