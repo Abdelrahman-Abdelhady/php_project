@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
 
 $host = "localhost";
@@ -12,27 +14,37 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+$error = "";
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
     
-    $sql = "SELECT * FROM users WHERE email = '$email'";
-    $result = $conn->query($sql);
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? AND role = 'municipal_admin'");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
     
     if ($row = $result->fetch_assoc()) {
         if (password_verify($password, $row['password'])) {
             $_SESSION['user'] = $row['name'];
+            $_SESSION['user_id'] = $row['userID'];
             $_SESSION['role'] = $row['role'];
             $_SESSION['email'] = $row['email'];
-            header("Location: dashboard.php");
+            $_SESSION['phone'] = $row['phone_num'];
+            $_SESSION['profile_pic'] = $row['profile_pic'];
+            
+            header("Location: /php_project/app/views/admin/dashboard.php");
             exit;
         } else {
             $error = "Invalid password";
         }
     } else {
-        $error = "Email not found";
+        $error = "Admin account not found";
     }
+    $stmt->close();
 }
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -40,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CitySlot - Login</title>
+    <title>CitySlot - Admin Login</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -69,38 +81,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .btn-primary:hover {
             background: #3b4675;
         }
+        .admin-badge {
+            background: #4F5D95;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
 
 <div class="login-card">
     <div class="text-center mb-4">
+        <span class="admin-badge">🔐 Admin Portal</span>
         <h2 class="fw-bold" style="color: #4F5D95;">CitySlot 🚘</h2>
-        <p class="text-muted">Welcome back! Please login</p>
+        <p class="text-muted">Welcome back Admin! Please login</p>
     </div>
 
-    <?php if (isset($error)): ?>
-        <div class="alert alert-danger text-center"><?= $error ?></div>
+    <?php if ($error): ?>
+        <div class="alert alert-danger text-center"><?php echo htmlspecialchars($error); ?></div>
     <?php endif; ?>
 
     <form method="POST">
         <div class="mb-3">
             <label class="form-label">Email Address</label>
-            <input type="email" name="email" class="form-control" required>
+            <input type="email" name="email" class="form-control" placeholder="User@admin.com" required>
         </div>
 
         <div class="mb-4">
             <label class="form-label">Password</label>
-            <input type="password" name="password" class="form-control" required>
+            <input type="password" name="password" class="form-control" placeholder="Enter password" required>
         </div>
 
-        <button type="submit" class="btn btn-primary shadow">Login</button>
+        <button type="submit" class="btn btn-primary shadow">Admin Login</button>
     </form>
 
-    <div class="mt-4 text-center">
-        <p class="small text-muted">
-            Don't have an account?
-<a href="app/views/auth/register.php" class="text-decoration-none fw-bold" style="color: #4F5D95;">Sign Up</a>    </div>
+   
 </div>
 
 </body>

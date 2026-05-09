@@ -1,5 +1,5 @@
 <?php
-require_once "C:/xampp/htdocs/php_project/core/Database.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . '/php_project/core/Database.php';
 class SensorModel {
     private $db;
     

@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 $host = "localhost";
 $user = "root";
@@ -11,6 +12,10 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+require_once "../../helpers/Upload.php";
+
+$error = "";
+$success = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'] ?? '';
@@ -19,40 +24,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $role = $_POST['role'] ?? 'driver';
     $phone_num = $_POST['phone_num'] ?? '';
     
-    
+    // Handle profile picture upload
     $profile_pic = null;
-    if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] === 0) {
-        $allowed = ['jpg', 'jpeg', 'png', 'gif'];
-        $filename = $_FILES['profile_pic']['name'];
-        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-        
-        if (in_array($ext, $allowed)) {
-            $upload_dir = "uploads/";
-            if (!file_exists($upload_dir)) {
-                mkdir($upload_dir, 0777, true);
-            }
-            $new_filename = uniqid() . "." . $ext;
-            $upload_path = $upload_dir . $new_filename;
-            
-            if (move_uploaded_file($_FILES['profile_pic']['tmp_name'], $upload_path)) {
-                $profile_pic = $upload_path;
-            }
+    if (!empty($_FILES['profile_pic']['name'])) {
+        try {
+            $upload = new Upload($_FILES['profile_pic'], ['jpg', 'png', 'jpeg', 'gif'], 2097152, 'uploads/img/');
+            $profile_pic = $upload->save();
+        } catch (Exception $e) {
+            $error = $e->getMessage();
         }
     }
     
-
+    // Set default profile picture if none uploaded
+    if (!$profile_pic) {
+        $profile_pic = "/php_project/public/uploads/img/default.png.jpg";
+    }
+    
+    // Check if email exists
     $check = $conn->query("SELECT * FROM users WHERE email = '$email'");
     
     if ($check->num_rows > 0) {
         $error = "Email already registered!";
-    } else {
+    } else if (empty($error)) {
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
         
         $sql = "INSERT INTO users (name, email, password, role, phone_num, profile_pic) 
                 VALUES ('$name', '$email', '$hashedPassword', '$role', '$phone_num', '$profile_pic')";
         
         if ($conn->query($sql)) {
-            $success = "Registration successful! You can now <a href='simple_login.php'>Login</a>";
+            // Save to session
+            $_SESSION['user'] = $name;
+            $_SESSION['email'] = $email;
+            $_SESSION['role'] = $role;
+            $_SESSION['user_id'] = $conn->insert_id;
+            $_SESSION['phone'] = $phone_num;
+            $_SESSION['profile_pic'] = $profile_pic;
+            
+            // Redirect based on role
+            if ($role == 'space_owner') {
+                header("Location: /php_project/app/views/owner/dashboard.php");
+            } else {
+                header("Location: /php_project/app/views/driver/marketplace.php");
+            }
+            exit;
         } else {
             $error = "Error: " . $conn->error;
         }
@@ -134,15 +148,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p class="text-muted">Create your account</p>
     </div>
 
-    <?php if (isset($success)): ?>
+    <?php if ($success): ?>
         <div class="alert alert-success text-center"><?= $success ?></div>
     <?php endif; ?>
 
-    <?php if (isset($error)): ?>
+    <?php if ($error): ?>
         <div class="alert alert-danger text-center"><?= $error ?></div>
     <?php endif; ?>
 
-    <form method="POST" enctype="multipart/form-data">
+    <form action="" method="POST" enctype="multipart/form-data">
         <div class="mb-3">
             <label class="form-label">Full Name</label>
             <input type="text" name="name" class="form-control" required>
