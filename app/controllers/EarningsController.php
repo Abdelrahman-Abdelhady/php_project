@@ -1,3 +1,5 @@
+<?php
+ 
 class EarningsController {
 
     private $conn;
@@ -6,7 +8,8 @@ class EarningsController {
         $this->conn = $db;
     }
 
-    // Get wallet balance for user
+/*
+    // Get wallet balance
     public function getBalance($user_id) {
 
         $query = "SELECT balance FROM wallet WHERE user_id = ?";
@@ -20,11 +23,12 @@ class EarningsController {
 
         return $row['balance'] ?? 0;
     }
-
-    // Add earning + update wallet balance
+*/
+/*
+    // Add earning and update wallet
     public function addEarning($user_id, $amount, $source) {
 
-        // Save earning record
+        // Insert earning history
         $query = "INSERT INTO earnings (ownerid, amount, source)
                   VALUES (?, ?, ?)";
 
@@ -42,4 +46,6 @@ class EarningsController {
         $stmt2->bind_param("di", $amount, $user_id);
         $stmt2->execute();
     }
+
+    */
 }

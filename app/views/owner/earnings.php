@@ -1,16 +1,25 @@
 <?php
 session_start();
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/php_project/app/controllers/EarningsController.php';
+require_once __DIR__ . '/../../../core/Database.php';
+require_once __DIR__ . '/../../controllers/EarningsController.php';
 
-$controller = new EarningsController();
+// DB
+$database = Database::getInstance();
+$conn = $database->getConnection();
+
+// Controller
+$controller = new EarningsController($conn);
 
 $ownerid = $_SESSION['user_id'] ?? 1;
 
-// Get balance safely
-$balance = $controller->getBalance($ownerid);
-?>
+$balance=0;
+/*
 
+$balance = $controller->getBalance($ownerid);
+*/
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
