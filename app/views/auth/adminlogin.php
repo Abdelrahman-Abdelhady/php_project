@@ -1,6 +1,4 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 session_start();
 
 $host = "localhost";
@@ -20,7 +18,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
     
-    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? AND role = 'municipal_admin'");
+    // Check for admin only (municipal_admin role)
+    $sql = "SELECT * FROM users WHERE email = ? AND role = 'municipal_admin'";
+    $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -34,7 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['phone'] = $row['phone_num'];
             $_SESSION['profile_pic'] = $row['profile_pic'];
             
-            header("Location: /php_project/app/views/admin/dashboard.php");
+            // Redirect to admin dashboard
+            header("Location: ../admin/dashboard.php");
             exit;
         } else {
             $error = "Invalid password";
@@ -108,7 +109,7 @@ $conn->close();
     <form method="POST">
         <div class="mb-3">
             <label class="form-label">Email Address</label>
-            <input type="email" name="email" class="form-control" placeholder="User@admin.com" required>
+            <input type="email" name="email" class="form-control" placeholder="admin@cityslot.com" required>
         </div>
 
         <div class="mb-4">
@@ -119,7 +120,7 @@ $conn->close();
         <button type="submit" class="btn btn-primary shadow">Admin Login</button>
     </form>
 
-   
+    
 </div>
 
 </body>

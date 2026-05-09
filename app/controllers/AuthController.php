@@ -16,7 +16,12 @@ class AuthController extends Controller
     {
         $this->view("auth/register");
     }
-
+    public function index()
+{
+    // Redirect to login page
+    header("Location: " . BASE_URL . "Auth/login");
+    exit;
+}
     public function storeRegister()
     {
         $validator = new Validator();
