@@ -249,14 +249,28 @@ $reservations = $controller->getReservationHistory();
                         <button class="btn-action"><?php echo $buttonText; ?></button>
                     </div>
 
-                    <div class="action-side">
-                        <button class="btn-action">Details</button>
-                    </div>
-                </div>
+                    <?php if ($row['status'] == "completed") { ?>
 
+                        <form method="POST" action="/php_project/public/add_review.php" style="margin-top: 10px;">
+                            <input type="hidden" name="spot_id" value="<?php echo $row['spotID']; ?>">
+
+                            <select name="rating" required>
+                                <option value="">Rating</option>
+                                <option value="1">1 Star</option>
+                                <option value="2">2 Stars</option>
+                                <option value="3">3 Stars</option>
+                                <option value="4">4 Stars</option>
+                                <option value="5">5 Stars</option>
+                            </select>
+
+                            <input type="text" name="comment" placeholder="Write review..." required>
+
+                            <button type="submit" class="btn-action">Submit Review</button>
+                        </form>
+                    <?php } ?>
+                </div>
             <?php } ?>
         </div>
     </main>
-
 </body>
 </html>
