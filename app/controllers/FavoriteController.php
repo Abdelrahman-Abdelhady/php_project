@@ -1,5 +1,9 @@
 <?php 
 
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
     require_once __DIR__ . '/../../core/Database.php';
     require_once __DIR__ . '/../models/Favorite.php';
 
@@ -13,6 +17,11 @@
         }
 
         public function index(){
+
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+
             $userId = $_SESSION['user_id'];
 
             $favorite = new Favorite($this->db);

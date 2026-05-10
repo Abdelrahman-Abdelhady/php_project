@@ -1,3 +1,13 @@
+<?php
+
+require_once __DIR__ . '/../../../controllers/HistoryController.php';
+
+$controller = new HistoryController();
+$reservations = $controller->getReservationHistory();
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -188,60 +198,41 @@
 
         <div class="history-list">
             
-            <div class="reservation-card">
-                <div class="spot-info">
-                    <div class="icon-box"><i class="fas fa-calendar-check"></i></div>
-                    <div class="text-details">
-                        <h3>Downtown Executive Garage</h3>
-                        <p>Tahrir Square, Cairo</p>
+            <?php if ($reservations->num_rows == 0) { ?>
+
+                <p>No reservation history yet.</p>
+
+            <?php } ?>
+
+            <?php while ($row = $reservations->fetch_assoc()) { ?>
+
+                <div class="reservation-card">
+                    <div class="spot-info">
+                        <div class="icon-box">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+
+                        <div class="text-details">
+                            <h3>Reservation #<?php echo $row['reservationID']; ?></h3>
+                            <p>Spot ID: <?php echo $row['spotID']; ?></p>
+                        </div>
+                    </div>
+
+                    <div class="res-timing">
+                        <p><?php echo $row['startTime']; ?></p>
+                        <span><?php echo $row['endTime']; ?></span>
+                    </div>
+
+                    <div class="status-badge status-completed">
+                        <?php echo $row['status']; ?>
+                    </div>
+
+                    <div class="action-side">
+                        <button class="btn-action">Details</button>
                     </div>
                 </div>
-                <div class="res-timing">
-                    <p>April 29, 2026</p>
-                    <span>10:00 PM - 12:00 PM</span>
-                </div>
-                <div class="status-badge status-ongoing">Ongoing</div>
-                <div class="action-side">
-                    <button class="btn-action">View Pass</button>
-                </div>
-            </div>
 
-            <div class="reservation-card">
-                <div class="spot-info">
-                    <div class="icon-box"><i class="fas fa-check-circle"></i></div>
-                    <div class="text-details">
-                        <h3>Maadi Hub Parking</h3>
-                        <p>Road 9, Maadi</p>
-                    </div>
-                </div>
-                <div class="res-timing">
-                    <p>April 25, 2026</p>
-                    <span>02:00 PM - 05:00 PM</span>
-                </div>
-                <div class="status-badge status-completed">Completed</div>
-                <div class="action-side">
-                    <button class="btn-action">Invoice</button>
-                </div>
-            </div>
-
-            <div class="reservation-card">
-                <div class="spot-info">
-                    <div class="icon-box" style="color: #fa5252;"><i class="fas fa-times-circle"></i></div>
-                    <div class="text-details">
-                        <h3>Nile View Plaza</h3>
-                        <p>Zamalek, Cairo</p>
-                    </div>
-                </div>
-                <div class="res-timing">
-                    <p>April 20, 2026</p>
-                    <span>08:00 AM - 09:30 AM</span>
-                </div>
-                <div class="status-badge status-cancelled">Cancelled</div>
-                <div class="action-side">
-                    <button class="btn-action">Re-book</button>
-                </div>
-            </div>
-
+            <?php } ?>
         </div>
     </main>
 
