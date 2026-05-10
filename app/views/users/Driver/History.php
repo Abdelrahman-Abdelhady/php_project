@@ -234,7 +234,19 @@ $reservations = $controller->getReservationHistory();
                     ?>
 
                     <div class="status-badge <?php echo $statusClass; ?>">
-                        <?php echo $row['status']; ?>
+                        <?php
+                        $buttonText = "Details";
+
+                        if ($row['status'] == "ongoing") {
+                            $buttonText = "View Pass";
+                        } elseif ($row['status'] == "completed") {
+                            $buttonText = "Invoice";
+                        } elseif ($row['status'] == "cancelled") {
+                            $buttonText = "Re-book";
+                        }
+                        ?>
+
+                        <button class="btn-action"><?php echo $buttonText; ?></button>
                     </div>
 
                     <div class="action-side">
