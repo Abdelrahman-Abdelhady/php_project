@@ -18,8 +18,9 @@
 
         public function index(){
 
-            if (session_status() === PHP_SESSION_NONE) {
-                session_start();
+            if (!isset($_SESSION['user_id'])) {
+                header("Location: /php_project/public/login.php");
+                exit;
             }
 
             $userId = $_SESSION['user_id'];
@@ -28,7 +29,7 @@
 
             $favorites = $favorite->getUserFavorites($userId);
 
-            return $favorites;
+            require_once __DIR__ . '/../views/users/Driver/Favourites.php';
         }
 
         public function add(){

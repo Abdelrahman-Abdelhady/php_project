@@ -15,6 +15,13 @@ class HistoryController {
         $this->db = $database->getConnection();
     }
 
+    public function index() {
+
+        $reservations = $this->getReservationHistory();
+
+        require_once __DIR__ . '/../views/users/Driver/History.php';
+    }
+
     public function getReservationHistory(){
         
         if (!isset($_SESSION['user_id'])) {

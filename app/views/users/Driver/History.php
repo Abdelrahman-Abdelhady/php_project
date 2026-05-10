@@ -1,13 +1,3 @@
-<?php
-
-require_once __DIR__ . '/../../../controllers/HistoryController.php';
-
-$controller = new HistoryController();
-$reservations = $controller->getReservationHistory();
-
-?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
