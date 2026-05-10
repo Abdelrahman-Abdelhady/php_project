@@ -223,7 +223,17 @@ $reservations = $controller->getReservationHistory();
                         <span><?php echo $row['endTime']; ?></span>
                     </div>
 
-                    <div class="status-badge status-completed">
+                    <?php
+                    $statusClass = "status-completed";
+
+                    if ($row['status'] == "ongoing") {
+                        $statusClass = "status-ongoing";
+                    } elseif ($row['status'] == "cancelled") {
+                        $statusClass = "status-cancelled";
+                    }
+                    ?>
+
+                    <div class="status-badge <?php echo $statusClass; ?>">
                         <?php echo $row['status']; ?>
                     </div>
 
