@@ -1,5 +1,9 @@
 <?php 
 
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
     require_once __DIR__ . '/../../core/Database.php';
     require_once __DIR__ . '/../models/Favorite.php';
 
@@ -13,13 +17,19 @@
         }
 
         public function index(){
+
+            if (!isset($_SESSION['user_id'])) {
+                header("Location: /php_project/public/login.php");
+                exit;
+            }
+
             $userId = $_SESSION['user_id'];
 
             $favorite = new Favorite($this->db);
 
             $favorites = $favorite->getUserFavorites($userId);
 
-            return $favorites;
+            require_once __DIR__ . '/../views/users/Driver/Favourites.php';
         }
 
         public function add(){

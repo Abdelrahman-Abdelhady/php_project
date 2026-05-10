@@ -1,12 +1,3 @@
-<?php
-
-require_once __DIR__ . '/../../../controllers/FavoriteController.php';
-
-$controller = new FavoriteController();
-$favorites = $controller->index();
-
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
