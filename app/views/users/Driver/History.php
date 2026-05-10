@@ -271,6 +271,6 @@ $reservations = $controller->getReservationHistory();
                 </div>
             <?php } ?>
         </div>
-    </main>
+    </main> 
 </body>
 </html>
