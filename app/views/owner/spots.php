@@ -1,8 +1,11 @@
 <?php
+
 require_once $_SERVER['DOCUMENT_ROOT'] . '/php_project/core/Database.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/php_project/app/controllers/OwnerController.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/php_project/app/models/Spot.php';
 
-$controller = new OwnerController();
+$db = Database::getInstance()->getConnection();
+$controller = new OwnerController($db);
 $spots = $controller->mySpots();
 ?>
 
@@ -22,7 +25,7 @@ body{
     margin:0;
 }
 
-/* ===== SIDEBAR (same dashboard) ===== */
+/*SIDEBAR same dashboard */
 .side-drawer {
     height: 100vh;
     width: 0;
