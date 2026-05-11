@@ -20,7 +20,7 @@ class Review {
                     r.created_at,
                     u.name AS user_name,
                     s.location AS spot_location
-                FROM reviews r
+                FROM review r
                 JOIN users u ON r.user_id = u.id
                 JOIN spots s ON r.spot_id = s.id
                 WHERE s.ownerid = ?
@@ -45,7 +45,7 @@ class Review {
     public function getOwnerAverageRating($owner_id) {
 
         $sql = "SELECT COALESCE(AVG(r.rating),0) AS avg_rating
-                FROM reviews r
+                FROM review r
                 JOIN spots s ON r.spot_id = s.id
                 WHERE s.ownerid = ?";
 
@@ -72,7 +72,7 @@ class Review {
     public function countOwnerReviews($owner_id) {
 
         $sql = "SELECT COUNT(*) AS total
-                FROM reviews r
+                FROM review r
                 JOIN spots s ON r.spot_id = s.id
                 WHERE s.ownerid = ?";
 
