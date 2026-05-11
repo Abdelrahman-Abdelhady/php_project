@@ -12,19 +12,26 @@ class UserModel
     // ============ CREATE ============
     
     public function createUser($name, $phone_num, $email, $password, $role, $photo = null)
-    {
-                if ($this->userModel->emailExists($email)) {
-            $this->view("auth/register", [
-                'errors' => ['email' => 'Email already exists'],
-                'old' => $_POST
-            ]);
-            return;
-        }
-        $sql = "INSERT INTO users (name, phone_num, email, password, role, profile_pic) VALUES (?, ?, ?, ?, ?, ?)";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bind_param("ssssss", $name, $phone_num, $email, $password, $role, $photo);
-        return $stmt->execute();
-    }
+{
+    
+
+    $sql = "INSERT INTO users (name, phone_num, email, password, role, profile_pic) 
+            VALUES (?, ?, ?, ?, ?, ?)";
+
+    $stmt = $this->db->prepare($sql);
+
+    $stmt->bind_param(
+        "ssssss",
+        $name,
+        $phone_num,
+        $email,
+        $password,
+        $role,
+        $photo
+    );
+
+    return $stmt->execute();
+}
     
     // Alias for createUser (for compatibility)
     public function create($name, $email, $password, $role, $phone_num = null, $profile_pic = null)
