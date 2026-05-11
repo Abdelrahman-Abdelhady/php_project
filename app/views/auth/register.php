@@ -132,7 +132,7 @@
                 class="form-control"
                 value="<?= htmlspecialchars($old['email'] ?? '') ?>"
             >
-
+                
             <?php if (!empty($errors['email'])): ?>
                 <small class="error-text"><?= htmlspecialchars($errors['email']) ?></small>
             <?php endif; ?>

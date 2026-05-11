@@ -1,17 +1,38 @@
 <?php
-class Spot {
-    private $conn;
+require_once "../app/core/Database.php";
 
-    public function __construct($db) {
-        $this->conn = $db;
+class Spot
+{
+    private $db;
+
+    public function __construct()
+    {
+        // CHANGED: fixed getdbection() typo to getConnection()
+        $this->db = Database::getInstance()->getConnection();
     }
 
-    public function create($data) {
-        $sql = "INSERT INTO spot (location, zone, address, price_per_hour, capacity, status, ownerid) 
+    public function create($data)
+    {
+        $sql = "INSERT INTO spot 
+                (location, zone, address, price_per_hour, capacity, status, ownerid) 
                 VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $this->conn->prepare($sql);
-        if (!$stmt) return false;
-        $stmt->bind_param("sssdisi",
+
+        $stmt = $this->db->prepare($sql);
+
+        if (!$stmt) {
+            return false;
+        }
+
+        // s = string, d = double, i = integer
+        // location string
+        // zone string
+        // address string
+        // price_per_hour double
+        // capacity integer
+        // status string
+        // ownerid integer
+        $stmt->bind_param(
+            "sssdisi",
             $data['location'],
             $data['zone'],
             $data['address'],
@@ -20,33 +41,56 @@ class Spot {
             $data['status'],
             $data['ownerid']
         );
+
         return $stmt->execute();
     }
 
-    public function getOwnerSpots($ownerid) {
+    public function getOwnerSpots($ownerid)
+    {
         $sql = "SELECT * FROM spot WHERE ownerid = ?";
-        $stmt = $this->conn->prepare($sql);
-        if (!$stmt) return [];
+
+        $stmt = $this->db->prepare($sql);
+
+        if (!$stmt) {
+            return [];
+        }
+
         $stmt->bind_param("i", $ownerid);
         $stmt->execute();
+
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function deleteWithOwnerCheck($id, $ownerid) {
+    public function deleteWithOwnerCheck($id, $ownerid)
+    {
         $sql = "DELETE FROM spot WHERE id = ? AND ownerid = ?";
-        $stmt = $this->conn->prepare($sql);
-        if (!$stmt) return false;
+
+        $stmt = $this->db->prepare($sql);
+
+        if (!$stmt) {
+            return false;
+        }
+
         $stmt->bind_param("ii", $id, $ownerid);
+
         return $stmt->execute();
     }
 
-    public function countByOwner($ownerid) {
+    public function countByOwner($ownerid)
+    {
         $sql = "SELECT COUNT(*) as total FROM spot WHERE ownerid = ?";
-        $stmt = $this->conn->prepare($sql);
-        if (!$stmt) return 0;
+
+        $stmt = $this->db->prepare($sql);
+
+        if (!$stmt) {
+            return 0;
+        }
+
         $stmt->bind_param("i", $ownerid);
         $stmt->execute();
+
         $row = $stmt->get_result()->fetch_assoc();
+
         return $row['total'] ?? 0;
     }
 }

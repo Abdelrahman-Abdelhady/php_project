@@ -56,7 +56,7 @@ class AuthController extends Controller
 
         // Handle file upload
         if (!empty($_FILES['profile_pic']['name'])) {
-            require_once '../app/models/Upload.php';
+            require_once "../app/helpers/Upload.php";
 
             try {
                 // CHANGED: Added jpeg as an accepted extension

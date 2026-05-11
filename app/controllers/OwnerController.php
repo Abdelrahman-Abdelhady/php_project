@@ -2,16 +2,15 @@
 require_once __DIR__ . '/../models/Spot.php';
 require_once __DIR__ . '/../models/Earnings.php';
 require_once __DIR__ . '/../models/Review.php';
-
+require_once "../app/helpers/Auth.php";
 class OwnerController {
     private $spotModel;
     private $earningsModel;
     private $reviewModel;
-
-    public function __construct($db) {
-        $this->spotModel = new Spot($db);
-        $this->earningsModel = new Earnings($db);
-        $this->reviewModel = new Review($db);
+    public function __construct() {
+        $this->spotModel = new Spot();
+        $this->earningsModel = new Earnings();
+        $this->reviewModel = new Review();
     }
 
     public function addSpot() {
@@ -68,6 +67,16 @@ class OwnerController {
     public function getAverageRating() {
         $ownerid = $_SESSION['user']['id'] ?? null;
         return $ownerid ? $this->reviewModel->getOwnerAverageRating($ownerid) : 0;
+    }
+    
+   public function dashboard()
+    {
+        Auth::redirectIfNotLogged();
+        Auth::forbidIfNotRole('space_owner');
+
+        $this->view("owner/dashboard", [
+            'user' => Auth::user()
+        ]);
     }
 }
 ?>

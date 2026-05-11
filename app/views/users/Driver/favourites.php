@@ -225,7 +225,7 @@
             <?php while ($row = $favorites->fetch_assoc()) { ?>
 
                 <div class="spot-card">
-                    <form method="POST" action="/php_project/public/remove_favorite.php">
+                    <form method="POST" action="/php_project/public/favorite/remove">
                         <input type="hidden" name="spot_id" value="<?php echo $row['spot_id']; ?>">
                         <button class="unfavorite-btn" type="submit" title="Remove from favorites">
                             <i class="fas fa-heart"></i>

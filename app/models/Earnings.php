@@ -2,10 +2,10 @@
 
 class Earnings {
 
-    private $conn;
+    private $db;
 
-    public function __construct($db) {
-        $this->conn = $db;
+    public function __construct() {
+        $this->db = Database::getInstance()->getConnection();
     }
 
    
@@ -16,7 +16,7 @@ class Earnings {
         $sql = "INSERT INTO earnings (ownerid, amount, source)
                 VALUES (?, ?, ?)";
 
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->db->prepare($sql);
 
         if (!$stmt) {
             return false;
@@ -36,7 +36,7 @@ class Earnings {
                 FROM earnings 
                 WHERE ownerid = ?";
 
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->db->prepare($sql);
 
         if (!$stmt) {
             return 0;
@@ -62,7 +62,7 @@ class Earnings {
                 WHERE ownerid = ? 
                 ORDER BY id DESC";
 
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->db->prepare($sql);
 
         if (!$stmt) {
             return [];
