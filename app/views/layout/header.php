@@ -39,7 +39,7 @@
     </nav>
 </div>
 
-<<<<<<< HEAD
+
 <script>
 function toggleSidebar() {
     var drawer = document.getElementById("sideDrawer");
@@ -50,7 +50,7 @@ function toggleSidebar() {
         drawer.style.width = "250px";
     }
 }
-=======
+
                 <div class="menu-icon" onclick="">🔔</div>
                 <div class="menu-icon" onclick="">💵</div>
                 <div class="menu-icon" onclick="toggleSidebar()">☰</div>
@@ -65,8 +65,5 @@ function toggleSidebar() {
             drawer.style.width = (drawer.style.width === "250px") ? "0" : "250px";
         }
     }
-<<<<<<< Updated upstream
-=======
->>>>>>> ee535bd092910d80735e1f0531e0fde6e893388f
->>>>>>> Stashed changes
+
 </script>
