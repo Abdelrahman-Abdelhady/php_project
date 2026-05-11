@@ -108,19 +108,33 @@ class AuthController extends Controller
 
         Auth::login($user);
 
+        // If user was redirected to login from a protected page,
+        // send them back to that original page.
+        if (isset($_SESSION['redirect_after_login'])) {
+            $redirectUrl = $_SESSION['redirect_after_login'];
+            unset($_SESSION['redirect_after_login']);
+
+            header("Location: " . $redirectUrl);
+            exit;
+        }
+
+        // Otherwise normal fallback redirect
         switch ($user['role']) {
-        case 'admin':
-            header("Location: " . BASE_URL . "Admin/index");
-            break;
-        case 'driver':
-            header("Location: " . BASE_URL . "Driver/dashboard");
-            break;
-        case 'space_owner':
-            header("Location: " . BASE_URL . "owner/dashboard");
-            break;
-        default:
-            header("Location: " . BASE_URL . "Home/index");
-            break;
+            case 'admin':
+                header("Location: " . BASE_URL . "Admin/index");
+                break;
+
+            case 'driver':
+                header("Location: " . BASE_URL . "Home/index");
+                break;
+
+            case 'space_owner':
+                header("Location: " . BASE_URL . "Owner/dashboard");
+                break;
+
+            default:
+                header("Location: " . BASE_URL . "Home/index");
+                break;
         }
 
         exit;

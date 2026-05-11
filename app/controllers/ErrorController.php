@@ -6,4 +6,9 @@ class ErrorController extends Controller
     {
         $this->view("errors/error403");
     }
+
+    public function error404()
+    {
+        $this->view("errors/error404");
+    }
 }

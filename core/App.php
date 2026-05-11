@@ -14,6 +14,11 @@ class App
         if (isset($url[0]) && file_exists("../app/controllers/" . ucfirst($url[0]) . "Controller.php")) {
             $this->controller = ucfirst($url[0]) . "Controller";
             unset($url[0]);
+        }elseif (isset($url[0]) && !empty($url[0])) {
+            require_once "../app/controllers/ErrorController.php";
+            $errorController = new ErrorController();
+            $errorController->error404();
+            exit;
         }
 
         require_once "../app/controllers/{$this->controller}.php";
@@ -24,6 +29,11 @@ class App
             if (method_exists($this->controller, $url[1])) {
                 $this->method = $url[1];
                 unset($url[1]);
+            } else {
+                require_once "../app/controllers/ErrorController.php";
+                $errorController = new ErrorController();
+                $errorController->error404();
+                exit;
             }
         }
 
