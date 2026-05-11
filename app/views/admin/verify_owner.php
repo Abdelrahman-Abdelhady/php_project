@@ -1,4 +1,6 @@
+@ -1,182 +1,181 @@
 <?php
+session_start();
 
 // تأكد من أن المستخدم Admin
 if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'municipal_admin') {

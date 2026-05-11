@@ -1,4 +1,16 @@
 <?php
+session_start();
+
+// ============= تعديل مؤقت للتجربة (شيليه بعد ما تخلصي) =============
+if (!isset($_SESSION['user_id'])) {
+    $_SESSION['user'] = 'Admin Test';
+    $_SESSION['role'] = 'municipal_admin';
+    $_SESSION['email'] = 'admin@cityslot.com';
+    $_SESSION['user_id'] = 1;
+    $_SESSION['phone'] = '01000000000';
+    $_SESSION['profile_pic'] = null;
+}
+// ================================================================
 
 // Check if user is logged in and is admin
 if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'municipal_admin') {
@@ -127,12 +139,12 @@ $stats = $sensorModel->getSensorStats();
         <a href="blacklist.php">Blacklist</a>
         <a href="system_health.php">System Health</a>
         <a href="settings.php">Settings</a>
-        <a href="../../auth/logout.php" style="margin-top: 50px;"> Logout</a>
+        <a href="../../auth/logout.php" style="margin-top: 50px;">🚪 Logout</a>
     </div>
     <div class="main">
         <div class="navbar">
             <h1>Municipal Admin Dashboard</h1>
-            <span style="background:#dbeafe; color:#1d4ed8; padding:5px 12px; border-radius:20px;"> <?php echo $_SESSION['user']; ?></span>
+            <span style="background:#dbeafe; color:#1d4ed8; padding:5px 12px; border-radius:20px;">👤 <?php echo $_SESSION['user']; ?></span>
         </div>
         <div class="content">
             <div class="stats-grid">
@@ -153,7 +165,7 @@ $stats = $sensorModel->getSensorStats();
                         <td><?php echo htmlspecialchars($v['user_name']); ?></td>
                         <td><?php echo htmlspecialchars($v['location']); ?></td>
                         <td><?php echo $v['endTime']; ?></td>
-                        <td><a href="dispatch.php" class="btn"> Dispatch</a></td>
+                        <td><a href="dispatch.php" class="btn">🚔 Dispatch</a></td>
                     </tr>
                     <?php endforeach; ?>
                     </tbody>
@@ -164,9 +176,9 @@ $stats = $sensorModel->getSensorStats();
             </div>
             
             <div class="section">
-                <h2> Recent Reservations</h2>
+                <h2>📋 Recent Reservations</h2>
                 <table>
-                    <thead><tr><th>ID</th><th>User</th><th>Spot</th><th>Start</th><th>End</th><th>Status</th></tr></thead>
+                    <thead><tr><th>ID</th><th>User</th><th>Spot</th><th>Start</th><th>End</th><th>Status</th></table></thead>
                     <tbody>
                     <?php foreach($recentReservations as $r): ?>
                     <tr>

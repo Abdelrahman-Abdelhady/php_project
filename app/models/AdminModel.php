@@ -10,11 +10,8 @@ class AdminModel
         $this->db = Database::getInstance()->getConnection();
     }
     
-    // ============ USER MANAGEMENT (Admin Functions) ============
+    // ============ USER MANAGEMENT ============
     
-    /**
-     * Get all users
-     */
     public function getAllUsers()
     {
         $sql = "SELECT userID, name, email, role, phone_num, profile_pic FROM users ORDER BY userID DESC";
@@ -22,9 +19,6 @@ class AdminModel
         return $result->fetch_all(MYSQLI_ASSOC);
     }
     
-    /**
-     * Get user by ID
-     */
     public function getUserById($id)
     {
         $sql = "SELECT userID, name, email, role, phone_num, profile_pic FROM users WHERE userID = ?";
@@ -35,9 +29,6 @@ class AdminModel
         return $result->fetch_assoc();
     }
     
-    /**
-     * Get users by role
-     */
     public function getUsersByRole($role)
     {
         $sql = "SELECT userID, name, email, role, phone_num, profile_pic FROM users WHERE role = ? ORDER BY userID DESC";
@@ -48,9 +39,6 @@ class AdminModel
         return $result->fetch_all(MYSQLI_ASSOC);
     }
     
-    /**
-     * Count users by role
-     */
     public function countUsersByRole($role)
     {
         $sql = "SELECT COUNT(*) as total FROM users WHERE role = ?";
@@ -62,9 +50,6 @@ class AdminModel
         return $row['total'];
     }
     
-    /**
-     * Update user information
-     */
     public function updateUser($id, $name, $phone_num, $email, $role)
     {
         $sql = "UPDATE users SET name = ?, phone_num = ?, email = ?, role = ? WHERE userID = ?";
@@ -73,9 +58,6 @@ class AdminModel
         return $stmt->execute();
     }
     
-    /**
-     * Delete user
-     */
     public function deleteUser($id)
     {
         $sql = "DELETE FROM users WHERE userID = ?";
@@ -84,9 +66,6 @@ class AdminModel
         return $stmt->execute();
     }
     
-    /**
-     * Search users by name or email
-     */
     public function searchUsers($keyword)
     {
         $searchTerm = "%{$keyword}%";
@@ -102,9 +81,6 @@ class AdminModel
     
     // ============ STATISTICS ============
     
-    /**
-     * Get total number of users
-     */
     public function getTotalUsers()
     {
         $sql = "SELECT COUNT(*) as total FROM users";
@@ -113,30 +89,22 @@ class AdminModel
         return $row['total'];
     }
     
-    /**
-     * Get number of drivers
-     */
     public function getDriverCount()
     {
         return $this->countUsersByRole('driver');
     }
     
-    /**
-     * Get number of space owners
-     */
     public function getOwnerCount()
     {
         return $this->countUsersByRole('space_owner');
     }
     
-    // ============ VIOLATIONS & FINES (Admin Functions) ============
+    // ============ VIOLATIONS & FINES ============
     
-    /**
-     * Get users with violations (overstay > 30 minutes)
-     */
     public function getUsersWithViolations()
     {
-        $sql = "SELECT u.*, COUNT(r.reservationID) as violation_count 
+        $sql = "SELECT u.userID, u.name, u.email, u.phone_num, u.role, u.profile_pic,
+                       COUNT(r.reservationID) as violation_count 
                 FROM users u 
                 JOIN reservation r ON u.userID = r.userID 
                 WHERE r.status = 'active' AND r.endTime < DATE_SUB(NOW(), INTERVAL 30 MINUTE)
@@ -145,12 +113,10 @@ class AdminModel
         return $result->fetch_all(MYSQLI_ASSOC);
     }
     
-    /**
-     * Get drivers with unpaid fines
-     */
     public function getDriversWithUnpaidFines()
     {
-        $sql = "SELECT u.*, COUNT(f.fineID) as unpaid_fines 
+        $sql = "SELECT u.userID, u.name, u.email, u.phone_num, u.role, u.profile_pic,
+                       COUNT(f.fineID) as unpaid_fines 
                 FROM users u 
                 LEFT JOIN fines f ON u.userID = (SELECT userID FROM reservation WHERE reservationID = f.reservationID) AND f.status = 'unpaid'
                 WHERE u.role = 'driver' 
@@ -158,6 +124,79 @@ class AdminModel
                 HAVING unpaid_fines > 0";
         $result = $this->db->query($sql);
         return $result->fetch_all(MYSQLI_ASSOC);
+    }
+    
+    // ============ BLACKLIST MANAGEMENT ============
+    
+    public function getBlacklistedUsers()
+    {
+        $sql = "SELECT userID, name, email, role, phone_num, profile_pic FROM users WHERE role = 'blacklisted'";
+        $result = $this->db->query($sql);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+    
+    public function blacklistUser($userID)
+    {
+        $sql = "UPDATE users SET role = 'blacklisted' WHERE userID = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $userID);
+        return $stmt->execute();
+    }
+    
+    public function removeFromBlacklist($userID)
+    {
+        $sql = "UPDATE users SET role = 'driver' WHERE userID = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $userID);
+        return $stmt->execute();
+    }
+    
+    // ============ SPACE OWNER VERIFICATION ============
+    
+    public function getPendingSpaceOwners()
+    {
+        $sql = "SELECT DISTINCT u.userID, u.name, u.email, u.phone_num, u.profile_pic, u.role,
+                       'pending' as verification_status
+                FROM users u
+                JOIN spot s ON u.userID = s.ownerID
+                WHERE (s.status = 'pending' OR s.status = 'under_review') AND u.role = 'space_owner'
+                GROUP BY u.userID";
+        $result = $this->db->query($sql);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+    
+    public function verifyOwner($userID, $status)
+    {
+        if ($status === 'approved') {
+            $sql = "UPDATE spot SET status = 'available' WHERE ownerID = ? AND (status = 'pending' OR status = 'under_review')";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bind_param("i", $userID);
+            return $stmt->execute();
+        } elseif ($status === 'rejected') {
+            $sql = "UPDATE spot SET status = 'rejected' WHERE ownerID = ? AND (status = 'pending' OR status = 'under_review')";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bind_param("i", $userID);
+            return $stmt->execute();
+        }
+        return false;
+    }
+    
+    public function getPendingSpots()
+    {
+        $sql = "SELECT s.*, u.name as owner_name, u.email, u.phone_num 
+                FROM spot s 
+                JOIN users u ON s.ownerID = u.userID 
+                WHERE s.status = 'pending' OR s.status = 'under_review'";
+        $result = $this->db->query($sql);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+    
+    public function updateSpotStatus($spotID, $status)
+    {
+        $sql = "UPDATE spot SET status = ? WHERE spotID = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("si", $status, $spotID);
+        return $stmt->execute();
     }
 }
 ?>
