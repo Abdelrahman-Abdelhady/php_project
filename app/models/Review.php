@@ -2,10 +2,10 @@
 
 class Review {
 
-    private $conn;
+    private $db;
 
-    public function __construct($db) {
-        $this->conn = $db;
+    public function __construct() {
+        $this->db = Database::getInstance()->getConnection();
     }
 
     // =========================
@@ -26,7 +26,7 @@ class Review {
                 WHERE s.ownerid = ?
                 ORDER BY r.created_at DESC";
 
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->db->prepare($sql);
 
         if (!$stmt) {
             return [];
@@ -49,7 +49,7 @@ class Review {
                 JOIN spots s ON r.spot_id = s.id
                 WHERE s.ownerid = ?";
 
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->db->prepare($sql);
 
         if (!$stmt) {
             return 0;
@@ -76,7 +76,7 @@ class Review {
                 JOIN spots s ON r.spot_id = s.id
                 WHERE s.ownerid = ?";
 
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->db->prepare($sql);
 
         if (!$stmt) {
             return 0;
