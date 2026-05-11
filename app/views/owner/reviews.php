@@ -13,7 +13,7 @@ $query = "SELECT
             r.comment, 
             r.date, 
             u.name AS user_name, 
-            s.location AS spot_display_name
+            s.spot_name AS spot_display_name
           FROM review r
           JOIN users u ON r.userID = u.userID
           JOIN spot s ON r.spotID = s.spotID

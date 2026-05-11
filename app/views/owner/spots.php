@@ -34,13 +34,11 @@ $spots = $controller->mySpots();
         <?php if (!empty($spots)): ?>
             <?php foreach ($spots as $row): ?>
                 <div class="spot-card">
-                    <h4><?= htmlspecialchars($row['location']) ?></h4>
+                    <h4><?= htmlspecialchars($row['spot_name']) ?></h4>
                     <p><b>Area:</b> <?= htmlspecialchars($row['zone']) ?></p>
                     <p><b>Price:</b> <?= $row['price_per_hour'] ?> EGP</p>
                     <p><b>Status:</b> <?= $row['status'] ?></p>
-                    <a href="delete_spot_handler.php?id=<?= $row['id'] ?>" 
-                       class="btn btn-danger btn-sm" 
-                       onclick="return confirm('Delete this spot?')">Delete</a>
+                <button type="button" data-id="<?= $row['spotID'] ?>" class="btn btn-danger btn-sm delete-spot-btn">Delete</button>
                 </div>
             <?php endforeach; ?>
         <?php else: ?>
@@ -48,5 +46,36 @@ $spots = $controller->mySpots();
         <?php endif; ?>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('.delete-spot-btn').click(function() {
+        if (!confirm('Delete this spot?')) return;
+        
+        var spotId = $(this).data('id');
+        var button = $(this);
+        
+        $.ajax({
+            url: 'delete_spot_handler.php',
+            type: 'POST',
+            data: { id: spotId },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    
+                    button.closest('.spot-card').fadeOut(500, function() {
+                        $(this).remove();
+                    });
+            
+                    alert('Spot deleted successfully');
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+          
+        });
+    });
+});
+</script>
 </body>
 </html>
