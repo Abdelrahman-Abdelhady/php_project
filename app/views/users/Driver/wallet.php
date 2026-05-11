@@ -19,7 +19,7 @@
         <p class="mb-1 text-uppercase small">Available Balance</p>
         <h1 class="fw-bold">
             <?php 
-                // Checks if it's an object or an array and displays balance
+ 
                 if (isset($data['balance']->balance)) {
                     echo number_format($data['balance']->balance, 2);
                 } elseif (isset($data['balance']['balance'])) {
