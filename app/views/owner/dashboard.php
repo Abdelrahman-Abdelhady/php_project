@@ -1,5 +1,5 @@
 <?php
-session_start();
+// session_start();  <-- إحذف هذا السطر أو علّقه
 require_once __DIR__ . '/../../../core/Database.php';
 require_once __DIR__ . '/../../../app/controllers/OwnerController.php';
 
@@ -9,6 +9,8 @@ $spots_count = $controller->countSpots();
 $total_earnings = $controller->totalEarnings();
 $avg_rating = $controller->getAverageRating();
 ?>
+<!DOCTYPE html>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

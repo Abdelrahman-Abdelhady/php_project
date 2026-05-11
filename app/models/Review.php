@@ -19,11 +19,19 @@ class Review {
                     r.comment,
                     r.created_at,
                     u.name AS user_name,
+<<<<<<< HEAD
                     s.location AS spot_location
                 FROM review r
                 JOIN users u ON r.user_id = u.id
                 JOIN spots s ON r.spot_id = s.id
                 WHERE s.ownerid = ?
+=======
+                    s.spot_name AS spot_location
+                FROM review r
+                JOIN user u ON r.userID= u.ID
+                JOIN spot s ON r.spotID= s.ID
+                WHERE s.ownerID = ?
+>>>>>>> 306fa165a506b9da89403e87ed70d18561167668
                 ORDER BY r.created_at DESC";
 
         $stmt = $this->db->prepare($sql);
@@ -46,8 +54,13 @@ class Review {
 
         $sql = "SELECT COALESCE(AVG(r.rating),0) AS avg_rating
                 FROM review r
+<<<<<<< HEAD
                 JOIN spots s ON r.spot_id = s.id
                 WHERE s.ownerid = ?";
+=======
+                JOIN spot s ON r.spotID= s.spotID
+                WHERE s.ownerID = ?";
+>>>>>>> 306fa165a506b9da89403e87ed70d18561167668
 
         $stmt = $this->db->prepare($sql);
 
@@ -73,8 +86,13 @@ class Review {
 
         $sql = "SELECT COUNT(*) AS total
                 FROM review r
+<<<<<<< HEAD
                 JOIN spots s ON r.spot_id = s.id
                 WHERE s.ownerid = ?";
+=======
+                JOIN spot s ON r.spotID = s.spotID
+                WHERE s.ownerID = ?";
+>>>>>>> 306fa165a506b9da89403e87ed70d18561167668
 
         $stmt = $this->db->prepare($sql);
 

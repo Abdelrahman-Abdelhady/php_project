@@ -1,5 +1,5 @@
 <?php
-require_once "../app/core/Database.php";
+require_once __DIR__ . '/../../core/Database.php';
 
 class Spot
 {
@@ -7,90 +7,70 @@ class Spot
 
     public function __construct()
     {
-        
         $this->db = Database::getInstance()->getConnection();
     }
 
+    // إنشاء موقف جديد
     public function create($data)
     {
-        $sql = "INSERT INTO spot 
-                (location, zone, address, price_per_hour, capacity, status, ownerid) 
+        $sql = "INSERT INTO spot (spot_name, zone, address, price_per_hour, capacity, status, ownerID) 
                 VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $this->db->prepare($sql);
-
         if (!$stmt) {
             return false;
         }
 
-        // s = string, d = double, i = integer
-        // location string
-        // zone string
-        // address string
-        // price_per_hour double
-        // capacity integer
-        // status string
-        // ownerid integer
         $stmt->bind_param(
             "sssdisi",
-            $data['location'],
+            $data['spot_name'],
             $data['zone'],
             $data['address'],
             $data['price_per_hour'],
             $data['capacity'],
             $data['status'],
-            $data['ownerid']
+            $data['ownerID']
         );
 
         return $stmt->execute();
     }
 
-    public function getOwnerSpots($ownerid)
+    // جلب جميع الأماكن لمالك معين
+    public function getOwnerSpots($ownerID)
     {
-        $sql = "SELECT * FROM spot WHERE ownerid = ?";
-
+        $sql = "SELECT * FROM spot WHERE ownerID = ?";
         $stmt = $this->db->prepare($sql);
-
         if (!$stmt) {
             return [];
         }
-
-        $stmt->bind_param("i", $ownerid);
+        $stmt->bind_param("i", $ownerID);
         $stmt->execute();
-
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function deleteWithOwnerCheck($id, $ownerid)
+    // حذف مكان مع التحقق من المالك
+    public function deleteWithOwnerCheck($spotID, $ownerID)
     {
-        $sql = "DELETE FROM spot WHERE id = ? AND ownerid = ?";
-
+        $sql = "DELETE FROM spot WHERE SpotID = ? AND ownerID = ?";
         $stmt = $this->db->prepare($sql);
-
         if (!$stmt) {
             return false;
         }
-
-        $stmt->bind_param("ii", $id, $ownerid);
-
+        $stmt->bind_param("ii", $spotID, $ownerID);
         return $stmt->execute();
     }
 
-    public function countByOwner($ownerid)
+    // عدد الأماكن لمالك معين
+    public function countByOwner($ownerID)
     {
-        $sql = "SELECT COUNT(*) as total FROM spot WHERE ownerid = ?";
-
+        $sql = "SELECT COUNT(*) as total FROM spot WHERE ownerID = ?";
         $stmt = $this->db->prepare($sql);
-
         if (!$stmt) {
             return 0;
         }
-
-        $stmt->bind_param("i", $ownerid);
+        $stmt->bind_param("i", $ownerID);
         $stmt->execute();
-
         $row = $stmt->get_result()->fetch_assoc();
-
         return $row['total'] ?? 0;
     }
 }
