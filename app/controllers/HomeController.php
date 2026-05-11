@@ -59,7 +59,6 @@ class HomeController extends Controller
     
     public function contactUs()
     {
-         Auth::redirectIfNotLogged();
         $this->view("home/contactUs");
     }
 }
