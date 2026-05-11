@@ -1,33 +1,28 @@
+<div id="sideDrawer" class="side-drawer">
+    <a href="javascript:void(0)" onclick="toggleSidebar()" style="color:red">Close ×</a>
+    <a href="#">My Profile</a>
+    <a href="#">Settings</a>
+    <a href="<?= BASE_URL ?>history">My Rentals</a>
+    <a href="<?= BASE_URL ?>home/contactUs">Contact Us</a>
+</div>
 
-    <div id="sideDrawer" class="side-drawer">
-        <a href="javascript:void(0)" onclick="toggleSidebar()" style="color:red">Close ×</a>
-        <a href="#">My Profile</a>
-        <a href="#">Settings</a>
-        <a href="#">My Rentals</a>
-        <a href="<?= BASE_URL ?>home/contactUs">Contact Us</a>
-    </div>
+<div class="page-wrapper">
+    <nav class="navbar">
 
-    <div class="page-wrapper">
-        <nav class="navbar">
-            <div class="nav-section nav-left">
-                <div class="logo">🚘</div>
-                <span class="site-title">CitySlot</span>
-            </div>
+        <div class="nav-section nav-left">
+            <div class="logo">🚘</div>
+            <span class="site-title">CitySlot</span>
+        </div>
 
-            <div class="nav-section nav-center">
-                <input type="text" class="search-bar" placeholder="Search listings...">
-                <!-- <div class="nav-links">
-                    <a href="#">Browse</a>
-                    <a href="#">Categories</a>
-                    <a href="http://localhost/Project/app/views/home/contactUS.html">Contact us</a>
-                </div> -->
-            </div>
+        <div class="nav-section nav-center">
+            <input type="text" class="search-bar" placeholder="Search listings...">
+        </div>
 
-           <div class="nav-section nav-right">
+        <div class="nav-section nav-right">
             <div class="Dropdown">
                 <button>Account</button>
                 <div class="Content">
-                    <?php if (Auth::check()): ?>
+                    <?php if (class_exists('Auth') && Auth::check()): ?>
                         <a href="<?= BASE_URL ?>Auth/logout">Logout</a>
                     <?php else: ?>
                         <a href="<?= BASE_URL ?>Auth/login">Login</a>
@@ -35,8 +30,26 @@
                     <?php endif; ?>
                 </div>
             </div>
+
+            <div class="menu-icon">🔔</div>
+            <div class="menu-icon">💵</div>
+            <div class="menu-icon" onclick="toggleSidebar()">☰</div>
         </div>
 
+    </nav>
+</div>
+
+
+<script>
+function toggleSidebar() {
+    var drawer = document.getElementById("sideDrawer");
+
+    if (drawer.style.width === "250px") {
+        drawer.style.width = "0";
+    } else {
+        drawer.style.width = "250px";
+    }
+}
 
                 <div class="menu-icon" onclick="">🔔</div>
                 <div class="menu-icon" onclick="">💵</div>
@@ -52,4 +65,5 @@
             drawer.style.width = (drawer.style.width === "250px") ? "0" : "250px";
         }
     }
+
 </script>

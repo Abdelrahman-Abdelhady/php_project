@@ -6,6 +6,8 @@
     <title>CitySlot | Reservations History</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/home.css">
+
     <style>
         * {
             margin: 0;
@@ -17,33 +19,6 @@
         body {
             background-color: #f4f7f9;
             color: #333;
-        }
-
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .menu-icon {
-            font-size: 1.2rem;
-            color: #2D4263;
-            cursor: pointer;
-        }
-
-        .logo {
-            font-weight: 800;
-            color: #2D4263; 
-            font-size: 1.4rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .container {
@@ -175,19 +150,19 @@
             .btn-action { width: 100%; }
         }
     </style>
-</head>
-<body>
+    </head>
 
-    <header class="navbar">
-        <div class="menu-icon"><i class="fas fa-bars"></i></div>
-        <div class="logo">CitySlot <span style="font-style: normal;">🚗</span></div>
-    </header>
+        <?php require_once __DIR__ . '/../../layout/header.php'; ?>
+
+    <body>
+
+    <?php require_once __DIR__ . '/../../layout/header.php'; ?>
 
     <main class="container">
         <h1 class="page-title">Reservations History</h1>
 
         <div class="history-list">
-            
+
             <?php if ($reservations->num_rows == 0) { ?>
 
                 <p>No reservation history yet.</p>
@@ -196,71 +171,14 @@
 
             <?php while ($row = $reservations->fetch_assoc()) { ?>
 
-                <div class="reservation-card">
-                    <div class="spot-info">
-                        <div class="icon-box">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
+                <!-- reservation card here -->
 
-                        <div class="text-details">
-                            <h3>Reservation #<?php echo $row['reservationID']; ?></h3>
-                            <p>Spot ID: <?php echo $row['spotID']; ?></p>
-                        </div>
-                    </div>
-
-                    <div class="res-timing">
-                        <p><?php echo $row['startTime']; ?></p>
-                        <span><?php echo $row['endTime']; ?></span>
-                    </div>
-
-                    <?php
-                    $statusClass = "status-completed";
-
-                    if ($row['status'] == "ongoing") {
-                        $statusClass = "status-ongoing";
-                    } elseif ($row['status'] == "cancelled") {
-                        $statusClass = "status-cancelled";
-                    }
-                    ?>
-
-                    <div class="status-badge <?php echo $statusClass; ?>">
-                        <?php
-                        $buttonText = "Details";
-
-                        if ($row['status'] == "ongoing") {
-                            $buttonText = "View Pass";
-                        } elseif ($row['status'] == "completed") {
-                            $buttonText = "Invoice";
-                        } elseif ($row['status'] == "cancelled") {
-                            $buttonText = "Re-book";
-                        }
-                        ?>
-
-                        <button class="btn-action"><?php echo $buttonText; ?></button>
-                    </div>
-
-                    <?php if ($row['status'] == "completed") { ?>
-
-                        <form method="POST" action="/php_project/public/add_review.php" style="margin-top: 10px;">
-                            <input type="hidden" name="spot_id" value="<?php echo $row['spotID']; ?>">
-
-                            <select name="rating" required>
-                                <option value="">Rating</option>
-                                <option value="1">1 Star</option>
-                                <option value="2">2 Stars</option>
-                                <option value="3">3 Stars</option>
-                                <option value="4">4 Stars</option>
-                                <option value="5">5 Stars</option>
-                            </select>
-
-                            <input type="text" name="comment" placeholder="Write review..." required>
-
-                            <button type="submit" class="btn-action">Submit Review</button>
-                        </form>
-                    <?php } ?>
-                </div>
             <?php } ?>
+
         </div>
-    </main> 
+    </main>
+
+    <?php require_once __DIR__ . '/../../layout/footer.php'; ?>
+
 </body>
 </html>

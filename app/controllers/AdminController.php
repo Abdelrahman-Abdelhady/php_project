@@ -3,14 +3,14 @@
 require_once "../Models/SpotModel.php";
 require_once "../Models/ReservationModel.php";
 require_once "../Models/SensorModel.php";
-require_once "../Models/UserModel.php";
+require_once "../Models/AdminModel.php";
 
 class AdminController
 {
     private $spotModel;
     private $reservationModel;
     private $sensorModel;
-    private $userModel;
+    private $AdminModel;
     
     public function __construct()
     {
@@ -24,7 +24,7 @@ class AdminController
         $this->spotModel = new SpotModel();
         $this->reservationModel = new ReservationModel();
         $this->sensorModel = new SensorModel();
-        $this->userModel = new UserModel();
+        $this->AdminModel = new AdminModel();
     }
     
     public function dashboard()
