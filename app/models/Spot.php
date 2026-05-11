@@ -7,7 +7,7 @@ class Spot
 
     public function __construct()
     {
-        // CHANGED: fixed getdbection() typo to getConnection()
+        
         $this->db = Database::getInstance()->getConnection();
     }
 
