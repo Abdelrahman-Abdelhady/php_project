@@ -4,45 +4,62 @@ class Validator
 {
     public $errors = [];
 
-    // Required field
     public function required($field, $value, $message = null)
     {
-        if (empty(trim($value))) {
-            $this->errors[$field] = $message ?? "$field is required.";
+        if (empty(trim((string)$value))) {
+            $this->errors[$field] = $message ?? ucfirst(str_replace("_", " ", $field)) . " is required.";
         }
     }
 
-    // Email format
     public function email($field, $value, $message = null)
     {
-        if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+        if (!empty($value) && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
             $this->errors[$field] = $message ?? "Invalid email format.";
         }
     }
 
-    // Minimum length
     public function minLength($field, $value, $min, $message = null)
     {
-        if (strlen($value) < $min) {
-            $this->errors[$field] = $message ?? "$field must be at least $min characters.";
+        if (!empty($value) && strlen($value) < $min) {
+            $this->errors[$field] = $message ?? ucfirst(str_replace("_", " ", $field)) . " must be at least $min characters.";
         }
     }
 
-    // Maximum length
     public function maxLength($field, $value, $max, $message = null)
     {
-        if (strlen($value) > $max) {
-            $this->errors[$field] = $message ?? "$field cannot exceed $max characters.";
+        if (!empty($value) && strlen($value) > $max) {
+            $this->errors[$field] = $message ?? ucfirst(str_replace("_", " ", $field)) . " cannot exceed $max characters.";
         }
     }
 
-    // Check if validation passed
+    public function phone($field, $value, $message = null)
+    {
+        if (!empty($value) && !preg_match('/^[0-9]{10,15}$/', $value)) {
+            $this->errors[$field] = $message ?? "Phone number must contain only digits and be 10 to 15 numbers.";
+        }
+    }
+
+    public function role($field, $value, $message = null)
+    {
+        $allowedRoles = ['driver', 'space_owner'];
+
+        if (!in_array($value, $allowedRoles)) {
+            $this->errors[$field] = $message ?? "Invalid role selected.";
+        }
+    }
+
+    public function match($field, $value, $matchField, $matchValue, $message = null)
+    {
+        if ($value !== $matchValue) {
+            $this->errors[$field] = $message ?? ucfirst($field) . " must match " . ucfirst($matchField) . ".";
+        }
+    }
+
     public function passes()
     {
         return empty($this->errors);
     }
 
-    // Get errors
     public function getErrors()
     {
         return $this->errors;

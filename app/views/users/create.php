@@ -39,7 +39,7 @@
                 <select name="role" class="form-control">
                     <option value="">-- Select Role --</option>
                     <option value="driver" <?= ($data['old']['role'] ?? '') === 'driver' ? 'selected' : '' ?>>Driver</option>
-                    <option value="owner" <?= ($data['old']['role'] ?? '') === 'owner' ? 'selected' : '' ?>>Owner</option>
+                    <option value="space_owner" <?= ($data['old']['role'] ?? '') === 'space_owner' ? 'selected' : '' ?>>Owner</option>
                     <option value="admin" <?= ($data['old']['role'] ?? '') === 'admin' ? 'selected' : '' ?>>Admin</option>
                 </select>
                 <span class="text-danger"><?= $data['errors']['role'] ?? '' ?></span>

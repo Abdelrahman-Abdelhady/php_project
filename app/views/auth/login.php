@@ -1,46 +1,12 @@
-<?php
-
-$host = "localhost";
-$user = "root";
-$pass = "";
-$dbname = "parking_system";
-
-$conn = new mysqli($host, $user, $pass, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
-    
-    $sql = "SELECT * FROM users WHERE email = '$email'";
-    $result = $conn->query($sql);
-    
-    if ($row = $result->fetch_assoc()) {
-        if (password_verify($password, $row['password'])) {
-            $_SESSION['user'] = $row['name'];
-            $_SESSION['role'] = $row['role'];
-            $_SESSION['email'] = $row['email'];
-            header("Location: dashboard.php");
-            exit;
-        } else {
-            $error = "Invalid password";
-        }
-    } else {
-        $error = "Email not found";
-    }
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CitySlot - Login</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
         body {
             background: #f4f7f6;
@@ -48,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: flex;
             align-items: center;
         }
+
         .login-card {
             width: 100%;
             max-width: 400px;
@@ -58,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             border-top: 5px solid #4F5D95;
         }
+
         .btn-primary {
             background: #4F5D95;
             border: none;
@@ -65,11 +33,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 10px;
             width: 100%;
         }
+
         .btn-primary:hover {
             background: #3b4675;
         }
+
+        .error-text {
+            color: #d93025;
+            font-size: 0.85rem;
+            margin-top: 4px;
+            display: block;
+        }
     </style>
 </head>
+
 <body>
 
 <div class="login-card">
@@ -78,19 +55,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p class="text-muted">Welcome back! Please login</p>
     </div>
 
-    <?php if (isset($error)): ?>
-        <div class="alert alert-danger text-center"><?= $error ?></div>
+    <?php if (!empty($errors['login'])): ?>
+        <div class="alert alert-danger text-center">
+            <?= htmlspecialchars($errors['login']) ?>
+        </div>
     <?php endif; ?>
 
     <form action="<?= BASE_URL ?>Auth/doLogin" method="POST">
         <div class="mb-3">
             <label class="form-label">Email Address</label>
-            <input type="email" name="email" class="form-control" required>
+
+            <input 
+                type="email" 
+                name="email" 
+                class="form-control"
+                value="<?= htmlspecialchars($old['email'] ?? '') ?>"
+            >
+
+            <?php if (!empty($errors['email'])): ?>
+                <small class="error-text"><?= htmlspecialchars($errors['email']) ?></small>
+            <?php endif; ?>
         </div>
 
         <div class="mb-4">
             <label class="form-label">Password</label>
-            <input type="password" name="password" class="form-control" required>
+
+            <input 
+                type="password" 
+                name="password" 
+                class="form-control"
+            >
+
+            <?php if (!empty($errors['password'])): ?>
+                <small class="error-text"><?= htmlspecialchars($errors['password']) ?></small>
+            <?php endif; ?>
         </div>
 
         <button type="submit" class="btn btn-primary shadow">Login</button>
@@ -99,7 +97,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="mt-4 text-center">
         <p class="small text-muted">
             Don't have an account?
-<a href="app/views/auth/register.php" class="text-decoration-none fw-bold" style="color: #4F5D95;">Sign Up</a>    </div>
+            <a href="<?= BASE_URL ?>Auth/register" class="text-decoration-none fw-bold" style="color: #4F5D95;">
+                Sign Up
+            </a>
+        </p>
+    </div>
 </div>
 
 </body>

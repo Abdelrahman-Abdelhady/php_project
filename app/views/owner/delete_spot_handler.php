@@ -5,5 +5,6 @@ require_once __DIR__ . '/../../../app/controllers/OwnerController.php';
 
 $db = Database::getInstance()->getConnection();
 $controller = new OwnerController($db);
-$controller->addSpot();
+$id = $_GET['id'] ?? 0;
+$controller->deleteSpot($id);
 ?>

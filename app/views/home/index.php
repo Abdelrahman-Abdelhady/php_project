@@ -41,134 +41,15 @@
         <main class="main-content">
     <div class="listings-grid">
         
-        <!-- Repeat this <div> for each listing -->
-        <div class="listing-card">
-            <div class="listing-image-wrapper">
-                <img src="https://via.placeholder.com/400x250" alt="Parking Space">
-                <div class="price-tag">$4.50/hr</div>
-            </div>
+    
 
-            <div class="listing-content">
-                <div class="listing-header">
-                    <h4>Heliopolis - Street 12</h4>
-                    <span class="rating-badge">★ 4.8</span>
-                </div>
-                <span class="distance-text">📍 0.6 km from destination</span>
+    
+    <!-- display all active listings by  -->
+    <?php foreach ($listings as $listing): ?>
+        <?php require "../app/views/layout/listingCard.php"; ?>
+    <?php endforeach; ?>
 
-                <div class="specs-container">
-                    <span class="spec-chip">SUV Fit</span>
-                    <span class="spec-chip">EV Charging</span>
-                    <span class="spec-chip">CCTV</span>
-                </div>
 
-                <div class="status-indicator">
-                    <div class="pulse-dot"></div>
-                    Available Now
-                </div>
-            </div>
-
-            <div class="card-actions">
-                <button class="btn-book">Reserve Spot</button>
-                <button class="btn-fav">❤️</button>
-            </div>
-        </div>
-        <!-- End Listing Card -->
-          <!-- Repeat this <div> for each listing -->
-        <div class="listing-card">
-            <div class="listing-image-wrapper">
-                <img src="https://via.placeholder.com/400x250" alt="Parking Space">
-                <div class="price-tag">$4.50/hr</div>
-            </div>
-
-            <div class="listing-content">
-                <div class="listing-header">
-                    <h4>Heliopolis - Street 12</h4>
-                    <span class="rating-badge">★ 4.8</span>
-                </div>
-                <span class="distance-text">📍 0.6 km from destination</span>
-
-                <div class="specs-container">
-                    <span class="spec-chip">SUV Fit</span>
-                    <span class="spec-chip">EV Charging</span>
-                    <span class="spec-chip">CCTV</span>
-                </div>
-
-                <div class="status-indicator">
-                    <div class="pulse-dot"></div>
-                    Available Now
-                </div>
-            </div>
-
-            <div class="card-actions">
-                <button class="btn-book">Reserve Spot</button>
-                <button class="btn-fav">❤️</button>
-            </div>
-        </div>
-        <!-- End Listing Card -->
-          <!-- Repeat this <div> for each listing -->
-        <div class="listing-card">
-            <div class="listing-image-wrapper">
-                <img src="https://via.placeholder.com/400x250" alt="Parking Space">
-                <div class="price-tag">$4.50/hr</div>
-            </div>
-
-            <div class="listing-content">
-                <div class="listing-header">
-                    <h4>Heliopolis - Street 12</h4>
-                    <span class="rating-badge">★ 4.8</span>
-                </div>
-                <span class="distance-text">📍 0.6 km from destination</span>
-
-                <div class="specs-container">
-                    <span class="spec-chip">SUV Fit</span>
-                    <span class="spec-chip">EV Charging</span>
-                    <span class="spec-chip">CCTV</span>
-                </div>
-
-                <div class="status-indicator">
-                    <div class="pulse-dot"></div>
-                    Available Now
-                </div>
-            </div>
-
-            <div class="card-actions">
-                <button class="btn-book">Reserve Spot</button>
-                <button class="btn-fav">❤️</button>
-            </div>
-        </div>
-        <!-- End Listing Card -->
-          <!-- Repeat this <div> for each listing -->
-        <div class="listing-card">
-            <div class="listing-image-wrapper">
-                <img src="https://via.placeholder.com/400x250" alt="Parking Space">
-                <div class="price-tag">$4.50/hr</div>
-            </div>
-
-            <div class="listing-content">
-                <div class="listing-header">
-                    <h4>Heliopolis - Street 12</h4>
-                    <span class="rating-badge">★ 4.8</span>
-                </div>
-                <span class="distance-text">📍 0.6 km from destination</span>
-
-                <div class="specs-container">
-                    <span class="spec-chip">SUV Fit</span>
-                    <span class="spec-chip">EV Charging</span>
-                    <span class="spec-chip">CCTV</span>
-                </div>
-
-                <div class="status-indicator">
-                    <div class="pulse-dot"></div>
-                    Available Now
-                </div>
-            </div>
-
-            <div class="card-actions">
-                <button class="btn-book">Reserve Spot</button>
-                <button class="btn-fav">❤️</button>
-            </div>
-        </div>
-        <!-- End Listing Card -->
 
     </div>
     <?php if (Auth::check()): ?>
@@ -195,5 +76,13 @@
 <?php require_once "../app/views/layout/footer.php"; ?>
 
 </footer>
+<script>
+    // refresh to prevent geting cahed pages
+    window.addEventListener("pageshow", function(event) {
+        if (event.persisted) {
+            window.location.reload();
+        }
+    });
+</script>
 </body> 
 </html>
