@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 // Check if user is logged in and is admin
 if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'municipal_admin') {
