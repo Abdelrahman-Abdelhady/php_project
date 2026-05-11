@@ -174,82 +174,12 @@
             .action-side { justify-content: center; width: 100%; }
             .btn-action { width: 100%; }
         }
-
-        
-
-        footer {
-            background-color: #0F2854;
-            color: white;
-            padding: 3rem 5% 1rem;
-            margin-top: auto; /* Pushes footer to bottom if Content is short */
-        }
-
-        .footer-container {
-            display: flex;
-            justify-Content: space-between;
-            flex-wrap: wrap;
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-section {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .footer-section h3 {
-            font-size: 1.1rem;
-            margin-bottom: 1.2rem;
-            color: #ecf0f1;
-            border-bottom: 2px solid #4F5D95;
-            display: inline-block;
-        }
-
-        .footer-links {
-            list-style: none;
-            padding: 0;
-        }
-
-        .footer-links li {
-            margin-bottom: 0.8rem;
-        }
-
-        .footer-links a {
-            color: #bdc3c7;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-        }
-
-        .footer-links a:hover {
-            color: white;
-        }
-
-        .footer-bottom {
-            
-            text-align: center;
-            margin-top: 3rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            font-size: 0.8rem;
-            color: #95a5a6;
-            display: flex;
-            justify-Content: space-between;
-            align-items: center;
-        }
     </style>
 </head>
 <body>
 
     <header class="navbar">
-        <div class="menu-icon"><i class="fas fa-bars"></i>
-            <a href="javascript:void(0)" onclick="toggleSidebar()" style="color:red">Close ×</a>
-            <a href="#">My Profile</a>
-            <a href="#">Settings</a>
-            <a href="#">My Rentals</a>
-            <a href="<?= BASE_URL ?>home/contactUs">Contact Us</a>
-        </div>
+        <div class="menu-icon"><i class="fas fa-bars"></i></div>
         <div class="logo">CitySlot <span style="font-style: normal;">🚗</span></div>
     </header>
 
@@ -327,30 +257,10 @@
 
                             <button type="submit" class="btn-action">Submit Review</button>
                         </form>
-
                     <?php } ?>
-
                 </div>
-
             <?php } ?>
-
         </div>
-
     </main> 
-
-    <footer>
-    
-        <?php require_once "../app/views/layout/footer.php"; ?>
-
-    </footer>
-
-    <script>
-        window.addEventListener("pageshow", function(event) {
-            if (event.persisted) {
-                window.location.reload();
-            }
-        });
-    </script>
-
 </body>
 </html>
