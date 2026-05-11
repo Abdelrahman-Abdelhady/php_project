@@ -1,0 +1,37 @@
+<?php
+require_once "../app/core/Controller.php";
+require_once "../app/models/walletModel.php";
+
+class walletController extends Controller {
+
+    public function wallet() {
+        $wallet = new WalletModel();
+        $user_id = 1; // Magda's ID
+        $balanceData = $wallet->getBalance($user_id);
+
+        $this->view("users/Driver/wallet", [
+            "balance" => $balanceData 
+        ]);
+    }
+
+    public function deposit() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // Get amount and ensure it's a number
+            $amount = isset($_POST['amount']) ? (float)$_POST['amount'] : 0;
+            $user_id = 1;
+
+            if ($amount <= 0) {
+                die("Please enter an amount greater than 0.");
+            }
+
+            $wallet = new WalletModel();
+            
+            if($wallet->deposit($user_id, $amount)) {
+                header("Location: ?url=wallet/wallet");
+                exit();
+            } else {
+                die("The database rejected the update. Check your connection.");
+            }
+        }
+    }
+}
