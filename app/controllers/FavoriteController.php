@@ -45,7 +45,7 @@
             $favorite = new Favorite($this->db);
             $favorite->addFavorite($userId, $spotId);
 
-            header("Location: /php_project/public/favourites.php");
+            header("Location: /php_project/public/favourite");
             exit;
         }
 
@@ -62,7 +62,7 @@
             $favorite = new Favorite($this->db);
             $favorite->removeFavorite($userId, $spotId);
 
-            header("Location: /php_project/public/favourites.php");
+            header("Location: /php_project/public/favourite");
             exit;
         }
 

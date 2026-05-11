@@ -57,7 +57,7 @@ body {
 .Dropdown button{
     background-color: grey;
     color: white;
-    padding 10px 15px;
+    padding: 10px 15px;
     border: none;
     cursor: pointer;
 }
@@ -151,67 +151,7 @@ z-index: 2;
 }
 
 .menu-icon { font-size: 1.5rem; cursor: pointer; }
-footer {
-    background-color: #0F2854;
-    color: white;
-    padding: 3rem 5% 1rem;
-    margin-top: auto; /* Pushes footer to bottom if Content is short */
-}
 
-.footer-container {
-    display: flex;
-    justify-Content: space-between;
-    flex-wrap: wrap;
-    gap: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.footer-section {
-    flex: 1;
-    min-width: 200px;
-}
-
-.footer-section h3 {
-    font-size: 1.1rem;
-    margin-bottom: 1.2rem;
-    color: #ecf0f1;
-    border-bottom: 2px solid #4F5D95;
-    display: inline-block;
-}
-
-.footer-links {
-    list-style: none;
-    padding: 0;
-}
-
-.footer-links li {
-    margin-bottom: 0.8rem;
-}
-
-.footer-links a {
-    color: #bdc3c7;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.3s;
-}
-
-.footer-links a:hover {
-    color: white;
-}
-
-.footer-bottom {
-    
-    text-align: center;
-    margin-top: 3rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    font-size: 0.8rem;
-    color: #95a5a6;
-    display: flex;
-    justify-Content: space-between;
-    align-items: center;
-}
 
 /* System Health Indicator Styling */
 .system-status {
@@ -405,4 +345,105 @@ footer {
     border-radius: 6px;
     cursor: pointer;
 }
-    
+
+footer {
+    background-color: #0F2854 !important;
+    color: white !important;
+    padding: 1rem 5% 0.5rem !important;
+    margin-top: 2rem !important;
+}
+
+.footer-container {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    flex-wrap: wrap !important;
+    gap: 1.5rem !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+}
+
+.footer-section {
+    flex: 1 !important;
+    min-width: 180px !important;
+}
+
+.footer-section h3 {
+    color: #ecf0f1 !important;
+    font-size: 1rem !important;
+    margin-bottom: 0.5rem !important;
+    border-bottom: 2px solid #4F5D95 !important;
+    display: inline-block !important;
+}
+
+.footer-section p {
+    color: #bdc3c7 !important;
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.footer-links {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.footer-links li {
+    margin-bottom: 0.35rem !important;
+}
+
+.footer-links a {
+    color: #bdc3c7 !important;
+    text-decoration: none !important;
+    font-size: 0.8rem !important;
+}
+
+.footer-links a:hover {
+    color: white !important;
+}
+
+.footer-section select {
+    background: #34495e !important;
+    color: white !important;
+    border: none !important;
+    padding: 5px !important;
+    border-radius: 4px !important;
+}
+
+.social-icons a {
+    font-size: 1rem !important;
+    margin-right: 0.5rem !important;
+    color: white !important;
+    text-decoration: none !important;
+}
+
+.footer-bottom {
+    max-width: 1200px !important;
+    margin: 0.8rem auto 0 !important;
+    padding-top: 0.6rem !important;
+    border-top: 1px solid rgba(255,255,255,0.1) !important;
+    font-size: 0.75rem !important;
+    color: #95a5a6 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.system-status {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+}
+
+.status-dot {
+    height: 8px !important;
+    width: 8px !important;
+    background-color: #2ecc71 !important;
+    border-radius: 50% !important;
+    display: inline-block !important;
+}
+
+main.container {
+    min-height: 45vh;
+}

@@ -6,6 +6,8 @@
     <title>CitySlot | My Favorites</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/home.css">
+
     <style>
         * {
             margin: 0;
@@ -17,33 +19,6 @@
         body {
             background-color: #f4f7f9; 
             color: #333;
-        }
-
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .logo {
-            font-weight: 800;
-            color: #2D4263; 
-            font-size: 1.4rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .menu-icon {
-            font-size: 1.2rem;
-            color: #2D4263;
-            cursor: pointer;
         }
 
         /* Main Layout */
@@ -198,63 +173,63 @@
         }
 
     </style>
-</head>
+</head>   
+
 <body>
 
-    <header class="navbar">
-        <div class="menu-icon"><i class="fas fa-bars"></i></div>
-        <div class="logo">CitySlot 🚗</div>
+<?php require_once __DIR__ . '/../../layout/header.php'; ?>
+
+<main class="container">
+    <header class="page-header">
+        <h1>My Favorites</h1>
     </header>
 
-    <main class="container">
-        <header class="page-header">
-            <h1>My Favorites</h1>
-        </header>
+    <div class="favorites-grid">
 
-        <div class="favorites-grid">
+        <?php if ($favorites->num_rows == 0) { ?>
 
-            <?php if ($favorites->num_rows == 0) { ?>
+            <div class="empty-dash-card">
+                <div class="plus-circle"><i class="fas fa-plus-circle"></i></div>
+                <p>No favorites yet. Browse more spots.</p>
+            </div>
 
-                <div class="empty-dash-card">
-                    <div class="plus-circle"><i class="fas fa-plus-circle"></i></div>
-                    <p>No favorites yet. Browse more spots.</p>
+        <?php } ?>
+
+        <?php while ($row = $favorites->fetch_assoc()) { ?>
+
+            <div class="spot-card">
+                <form method="POST" action="/php_project/public/favorite/remove">
+                    <input type="hidden" name="spot_id" value="<?php echo $row['spot_id']; ?>">
+                    <button class="unfavorite-btn" type="submit" title="Remove from favorites">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                </form>
+
+                <div class="card-img-top">
+                    <i class="fas fa-parking"></i>
                 </div>
 
-            <?php } ?>
-            
-            <?php while ($row = $favorites->fetch_assoc()) { ?>
+                <div class="card-body">
+                    <h3>Parking Spot #<?php echo $row['spot_id']; ?></h3>
+                    <p class="location-text">
+                        <i class="fas fa-map-marker-alt"></i> Location will be connected later
+                    </p>
 
-                <div class="spot-card">
-                    <form method="POST" action="/php_project/public/favorite/remove">
-                        <input type="hidden" name="spot_id" value="<?php echo $row['spot_id']; ?>">
-                        <button class="unfavorite-btn" type="submit" title="Remove from favorites">
-                            <i class="fas fa-heart"></i>
-                        </button>
-                    </form>
-
-                    <div class="card-img-top">
-                        <i class="fas fa-parking"></i>
+                    <div class="info-tags">
+                        <span class="tag tag-price">Price later</span>
+                        <span class="tag tag-status">Available</span>
                     </div>
 
-                    <div class="card-body">
-                        <h3>Parking Spot #<?php echo $row['spot_id']; ?></h3>
-                        <p class="location-text">
-                            <i class="fas fa-map-marker-alt"></i> Location will be connected later
-                        </p>
-
-                        <div class="info-tags">
-                            <span class="tag tag-price">Price later</span>
-                            <span class="tag tag-status">Available</span>
-                        </div>
-
-                        <button class="btn-book">Book Now</button>
+                    <button class="btn-book">Book Now</button>
                 </div>
             </div>
 
-            <?php } ?>
-            
-        </div>
-    </main>
+        <?php } ?>
+
+    </div>
+</main>
+
+<?php require_once __DIR__ . '/../../layout/footer.php'; ?>
 
 </body>
 </html>

@@ -4,12 +4,13 @@ class walletModel {
     private $db;
 
     public function __construct() {
-        $this->db = new Database;
+        $this->db = Database::getInstance()->getConnection();
+    }
     }
 
     public function getBalance($user_id) {
         // userID and balance match your database exactly
-        $this->db->query("SELECT balance FROM wallet WHERE userID = :id");
+        $this->db->query("SELECT balance FROM wallet WHERE userID = 1");
         $this->db->bind(':id', $user_id);
         
         return $this->db->single();
