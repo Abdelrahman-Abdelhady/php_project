@@ -28,5 +28,20 @@ class WalletModel
         $stmt->bind_param("di", $amount, $userID);
         return $stmt->execute();
     }
+    public function createWalletForUser($userID)
+    {
+        $sql = "INSERT INTO wallet (userID, balance, currency, lastUpdated)
+                VALUES (?, 0, 'EGP', NOW())";
+
+        $stmt = $this->db->prepare($sql);
+
+        if (!$stmt) {
+            return false;
+        }
+
+        $stmt->bind_param("i", $userID);
+
+        return $stmt->execute();
+    }
 }
 ?>
