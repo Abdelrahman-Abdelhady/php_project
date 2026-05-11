@@ -44,3 +44,12 @@
             </div>
         </nav>
     </div>
+    <script>
+    function toggleSidebar() {
+        const drawer = document.getElementById("sideDrawer");
+
+        if (drawer) {
+            drawer.style.width = (drawer.style.width === "250px") ? "0" : "250px";
+        }
+    }
+</script>

@@ -65,12 +65,7 @@
 </main>
     </main>
 
-    <script>
-        function toggleSidebar() {
-            const drawer = document.getElementById("sideDrawer");
-            drawer.style.width = (drawer.style.width === "250px") ? "0" : "250px";
-        }
-    </script>
+    
 <footer>
     
 <?php require_once "../app/views/layout/footer.php"; ?>
