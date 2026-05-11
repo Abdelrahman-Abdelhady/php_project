@@ -1,0 +1,14 @@
+<?php
+
+class requestModel {
+    private $db;
+
+    public function __construct() {
+        $this->db = new Database();
+    }
+
+    public function getAllRequests() {
+        $this->db->query("SELECT * FROM requests ORDER BY created_at DESC");
+        return $this->db->resultSet();
+    }
+}
