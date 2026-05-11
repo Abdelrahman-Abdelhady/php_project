@@ -256,5 +256,19 @@
         </div>
     </main>
 
+    <footer>
+    
+        <?php require_once "../app/views/layout/footer.php"; ?>
+
+    </footer>
+
+    <script>
+        window.addEventListener("pageshow", function(event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
+    </script>
+
 </body>
 </html>
