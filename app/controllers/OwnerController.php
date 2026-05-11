@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../models/Spot.php';
 require_once __DIR__ . '/../models/Earnings.php';
 require_once __DIR__ . '/../models/Review.php';
-require_once "../app/helpers/Auth.php";
+require_once __DIR__ . '/../helpers/Auth.php';
 class OwnerController {
     private $spotModel;
     private $earningsModel;

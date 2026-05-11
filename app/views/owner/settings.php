@@ -1,11 +1,24 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+session_start();
 
-$user = $_SESSION['user'] ?? null;
+// التأكد من أن المستخدم مسجل دخوله
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ../../../login.php');
+    exit;
+}
 
-/* fallback image */
-$userPic = $user['profile_pic'] ?? "https://via.placeholder.com/130?text=User";
+require_once __DIR__ . '/../../../core/Database.php';
+
+$db = Database::getInstance()->getConnection();
+
+// جلب بيانات المستخدم من قاعدة البيانات
+$stmt = $db->prepare("SELECT name, email, phone, profile_pic FROM users WHERE id = ?");
+$stmt->bind_param("i", $_SESSION['user_id']);
+$stmt->execute();
+$user = $stmt->get_result()->fetch_assoc();
+
+// الصورة الافتراضية
+$userPic = !empty($user['profile_pic']) ? $user['profile_pic'] : "https://via.placeholder.com/130?text=User";
 ?>
 
 <!DOCTYPE html>
@@ -28,7 +41,6 @@ body {
     min-height: 100vh;
 }
 
-/* ===== SIDEBAR (SAME DASHBOARD) ===== */
 .side-drawer {
     height: 100vh;
     width: 0;
@@ -78,7 +90,6 @@ body {
     padding: 1rem 2rem;
 }
 
-/* NAVBAR */
 .navbar {
     background: #fff;
     padding: 1rem;
@@ -91,7 +102,6 @@ body {
     color: #4F5D95;
 }
 
-/* CONTENT */
 .main-content {
     padding: 2rem;
 }
@@ -132,105 +142,84 @@ body {
 
 <body>
 
-<!-- Sidebar -->
 <div id="sideDrawer" class="side-drawer">
-
-    <a href="javascript:void(0)" class="close-btn" onclick="toggleSidebar()">
-        Close Menu ×
-    </a>
-
+    <a href="javascript:void(0)" class="close-btn" onclick="toggleSidebar()">Close Menu ×</a>
     <a href="dashboard.php"><i class="fas fa-home"></i> Dashboard</a>
     <a href="spots.php"><i class="fas fa-parking"></i> My Spots</a>
     <a href="earnings.php"><i class="fas fa-wallet"></i> Earnings</a>
     <a href="reviews.php"><i class="fas fa-star"></i> Reviews</a>
     <a href="settings.php"><i class="fas fa-cog"></i> Settings</a>
-
 </div>
 
-<!-- NAVBAR -->
 <div class="navbar">
     <div onclick="toggleSidebar()" style="cursor:pointer;">☰</div>
     <div class="site-title">CitySlot 🚘</div>
 </div>
 
-<!-- CONTENT -->
 <div class="main-content container" style="max-width:850px;">
 
-<!-- SUCCESS MESSAGE -->
 <?php if(isset($_GET['msg']) && $_GET['msg']=='success'): ?>
-    <div class="alert alert-success text-center">
-        Profile updated successfully 🎉
-    </div>
+    <div class="alert alert-success text-center">Profile updated successfully 🎉</div>
 <?php endif; ?>
 
 <?php if(isset($_GET['msg']) && $_GET['msg']=='error'): ?>
-    <div class="alert alert-danger text-center">
-        Something went wrong ❌
-    </div>
+    <div class="alert alert-danger text-center">Something went wrong ❌</div>
 <?php endif; ?>
 
-<!-- PROFILE HEADER -->
 <div class="profile-header">
-
-    <img src="<?php echo $userPic; ?>" class="profile-img mb-2">
-
-    <h4><?php echo $user['name'] ?? 'Owner'; ?></h4>
+    <img src="<?php echo htmlspecialchars($userPic); ?>" class="profile-img mb-2">
+    <h4><?php echo htmlspecialchars($user['name'] ?? 'Owner'); ?></h4>
     <p class="text-white-50">Verified Parking Provider</p>
-
 </div>
 
-<!-- FORM -->
 <div class="settings-card">
-
-<form action="/php_project/app/controllers/OwnerController.php?action=updateProfile"
-      method="POST"
-      enctype="multipart/form-data">
-
-    <div class="mb-3">
-        <label>Profile Image</label>
-        <input type="file" name="profile_pic" class="form-control">
-    </div>
-
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <label>Full Name</label>
-            <input type="text" name="full_name" class="form-control"
-                   value="<?php echo $user['name'] ?? ''; ?>">
+    <form action="update_profile_handler.php" method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label>Profile Image</label>
+            <input type="file" name="profile_pic" class="form-control" accept="image/*">
         </div>
 
-        <div class="col-md-6 mb-3">
-            <label>Phone</label>
-            <input type="text" name="phone" class="form-control"
-                   value="<?php echo $user['phone'] ?? ''; ?>">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label>Full Name</label>
+                <input type="text" name="full_name" class="form-control"
+                       value="<?php echo htmlspecialchars($user['name'] ?? ''); ?>" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label>Phone</label>
+                <input type="text" name="phone" class="form-control"
+                       value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>">
+            </div>
         </div>
-    </div>
 
-    <div class="mb-3">
-        <label>Email</label>
-        <input type="email" name="email" class="form-control"
-               value="<?php echo $user['email'] ?? ''; ?>">
-    </div>
+        <div class="mb-3">
+            <label>Email</label>
+            <input type="email" name="email" class="form-control"
+                   value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>" required>
+        </div>
 
-    <div class="mb-4">
-        <label>New Password</label>
-        <input type="password" name="new_password" class="form-control">
-    </div>
+        <div class="mb-3">
+            <label>New Password (leave blank to keep current)</label>
+            <input type="password" name="new_password" class="form-control">
+        </div>
 
-    <div class="text-center">
-        <button class="save-btn">Save Changes</button>
-    </div>
+        <div class="mb-4">
+            <label>Confirm Password</label>
+            <input type="password" name="confirm_password" class="form-control">
+        </div>
 
-</form>
-
+        <div class="text-center">
+            <button type="submit" class="save-btn">Save Changes</button>
+        </div>
+    </form>
 </div>
 </div>
 
 <script>
-function toggleSidebar(){
+function toggleSidebar() {
     const d = document.getElementById("sideDrawer");
     d.style.width = (d.style.width === "260px") ? "0" : "260px";
 }
 </script>
-
 </body>
 </html>
