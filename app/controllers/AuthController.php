@@ -27,14 +27,14 @@ class AuthController extends Controller
         $validator = new Validator();
 
         $name  = $_POST['name'];
-        $age   = $_POST['age'];
+        $phone_num   = $_POST['phone_num'];
         $email = $_POST['email'];
         $password = $_POST['password'];
         $role  = $_POST['role'];
 
         // Validation rules
         $validator->required('name', $name);
-        $validator->required('age', $age);
+        $validator->required('phone_num', $phone_num);
         $validator->required('email', $email);
         $validator->email('email', $email);
         $validator->required('password', $password);
@@ -59,7 +59,7 @@ class AuthController extends Controller
             // Hash password (bcrypt)
             $hashedPassword = password_hash($_POST['password'], PASSWORD_BCRYPT);
             // Save to DB
-            $this->userModel->createUser($name, $age, $email, $hashedPassword, $role, $photoUrl);
+            $this->userModel->createUser($name, $phone_num, $email, $hashedPassword, $role, $photoUrl);
             header("Location: " . BASE_URL . "Auth/login");
         } else {
             // Return errors to view
@@ -108,19 +108,33 @@ class AuthController extends Controller
 
         Auth::login($user);
 
+        // If user was redirected to login from a protected page,
+        // send them back to that original page.
+        if (isset($_SESSION['redirect_after_login'])) {
+            $redirectUrl = $_SESSION['redirect_after_login'];
+            unset($_SESSION['redirect_after_login']);
+
+            header("Location: " . $redirectUrl);
+            exit;
+        }
+
+        // Otherwise normal fallback redirect
         switch ($user['role']) {
-        case 'admin':
-            header("Location: " . BASE_URL . "Admin/index");
-            break;
-        case 'student':
-            header("Location: " . BASE_URL . "Student/index");
-            break;
-        case 'professor':
-            header("Location: " . BASE_URL . "Professor/index");
-            break;
-        default:
-            header("Location: " . BASE_URL . "Home/index");
-            break;
+            case 'admin':
+                header("Location: " . BASE_URL . "Admin/index");
+                break;
+
+            case 'driver':
+                header("Location: " . BASE_URL . "Home/index");
+                break;
+
+            case 'space_owner':
+                header("Location: " . BASE_URL . "Owner/dashboard");
+                break;
+
+            default:
+                header("Location: " . BASE_URL . "Home/index");
+                break;
         }
 
         exit;

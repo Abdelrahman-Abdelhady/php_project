@@ -11,7 +11,7 @@ class Auth
             'age'  => $user['age'],
             'email' => $user['email'],
             'role'  => $user['role'],
-            'profile_pic'  => $user['profile_pic']
+            'profile_pic'  => $user['profile_pic']?? null
         ];
     }
 
@@ -35,13 +35,17 @@ class Auth
         return self::check() && $_SESSION['user']['role'] === $requiredRole;
     }
 
-    public static function redirectIfNotLogged()
-    {
-        if (!self::check()) {
-            header("Location: " . BASE_URL . "Auth/login");
-            exit;
-        }
+   public static function redirectIfNotLogged()
+{
+    if (!self::check()) {
+
+        // Save the page the user was trying to access
+        $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
+
+        header("Location: " . BASE_URL . "Auth/login");
+        exit;
     }
+}
 
     public static function forbidIfNotRole($role)
     {

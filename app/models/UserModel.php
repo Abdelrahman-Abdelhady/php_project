@@ -13,6 +13,13 @@ class UserModel
     
     public function createUser($name, $phone_num, $email, $password, $role, $photo = null)
     {
+                if ($this->userModel->emailExists($email)) {
+            $this->view("auth/register", [
+                'errors' => ['email' => 'Email already exists'],
+                'old' => $_POST
+            ]);
+            return;
+        }
         $sql = "INSERT INTO users (name, phone_num, email, password, role, profile_pic) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("ssssss", $name, $phone_num, $email, $password, $role, $photo);
@@ -135,28 +142,30 @@ class UserModel
         return $result->fetch_all(MYSQLI_ASSOC);
     }
     
-    public function getBlacklistedUsers()
-    {
-        $sql = "SELECT * FROM users WHERE role = 'blacklisted'";
-        $result = $this->db->query($sql);
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }
+    // public function getBlacklistedUsers()
+    // {
+    //     $sql = "SELECT * FROM users WHERE role = 'blacklisted'";
+    //     $result = $this->db->query($sql);
+    //     return $result->fetch_all(MYSQLI_ASSOC);
+    // }
     
-    public function blacklistUser($userID)
-    {
-        $sql = "UPDATE users SET role = 'blacklisted' WHERE userID = ?";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bind_param("i", $userID);
-        return $stmt->execute();
-    }
+    //blacklist cant be a role as the black listed could be owner or driver
+
+    // public function blacklistUser($userID)
+    // {
+    //     $sql = "UPDATE users SET role = 'blacklisted' WHERE userID = ?";
+    //     $stmt = $this->db->prepare($sql);
+    //     $stmt->bind_param("i", $userID);
+    //     return $stmt->execute();
+    // }
     
-    public function removeFromBlacklist($userID)
-    {
-        $sql = "UPDATE users SET role = 'driver' WHERE userID = ?";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bind_param("i", $userID);
-        return $stmt->execute();
-    }
+    // public function removeFromBlacklist($userID)
+    // {
+    //     $sql = "UPDATE users SET role = 'driver' WHERE userID = ?";
+    //     $stmt = $this->db->prepare($sql);
+    //     $stmt->bind_param("i", $userID);
+    //     return $stmt->execute();
+    // }
     
     // ============ STATISTICS ============
     
@@ -185,24 +194,28 @@ class UserModel
         return $result->fetch_all(MYSQLI_ASSOC);
     }
     
-    public function getPendingSpaceOwners()
-    {
-        $sql = "SELECT u.*, 'pending' as verification_status 
-                FROM users u 
-                WHERE u.role = 'space_owner'";
-        $result = $this->db->query($sql);
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }
+    // public function getPendingSpaceOwners()
+    // {
+    //     $sql = "SELECT u.*, 'pending' as verification_status 
+    //             FROM users u 
+    //             WHERE u.role = 'space_owner'";
+    //     $result = $this->db->query($sql);
+    //     return $result->fetch_all(MYSQLI_ASSOC);
+    // }
+   
     
-    public function verifyOwner($userID, $status)
-    {
-        if ($status === 'approved') {
-            $sql = "UPDATE users SET role = 'space_owner_verified' WHERE userID = ?";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bind_param("i", $userID);
-            return $stmt->execute();
-        }
-        return true;
-    }
+    //Owner doesn't get verified their listing does
+
+
+    // public function verifyOwner($userID, $status)
+    // {
+    //     if ($status === 'approved') {
+    //         $sql = "UPDATE users SET role = 'space_owner_verified' WHERE userID = ?";
+    //         $stmt = $this->db->prepare($sql);
+    //         $stmt->bind_param("i", $userID);
+    //         return $stmt->execute();
+    //     }
+    //     return true;
+    // }
 }
 ?>
