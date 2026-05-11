@@ -11,7 +11,7 @@ class Auth
             'age'  => $user['age'],
             'email' => $user['email'],
             'role'  => $user['role'],
-            'profile_pic'  => $user['profile_pic']
+            'profile_pic'  => $user['profile_pic']?? null
         ];
     }
 

@@ -34,7 +34,7 @@
                 <label>Role:</label>
                 <select name="role" class="form-control">
                     <option value="driver" <?= $data['user']['role'] === 'driver' ? 'selected' : '' ?>>Driver</option>
-                    <option value="owner" <?= $data['user']['role'] === 'owner' ? 'selected' : '' ?>>Owner</option>
+                    <option value="space_owner" <?= $data['user']['role'] === 'space_owner' ? 'selected' : '' ?>>Owner</option>
                     <option value="admin" <?= $data['user']['role'] === 'admin' ? 'selected' : '' ?>>Admin</option>
                 </select>
             </div>

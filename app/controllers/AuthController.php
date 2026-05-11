@@ -27,14 +27,14 @@ class AuthController extends Controller
         $validator = new Validator();
 
         $name  = $_POST['name'];
-        $age   = $_POST['age'];
+        $phone_num   = $_POST['phone_num'];
         $email = $_POST['email'];
         $password = $_POST['password'];
         $role  = $_POST['role'];
 
         // Validation rules
         $validator->required('name', $name);
-        $validator->required('age', $age);
+        $validator->required('phone_num', $phone_num);
         $validator->required('email', $email);
         $validator->email('email', $email);
         $validator->required('password', $password);
@@ -59,7 +59,7 @@ class AuthController extends Controller
             // Hash password (bcrypt)
             $hashedPassword = password_hash($_POST['password'], PASSWORD_BCRYPT);
             // Save to DB
-            $this->userModel->createUser($name, $age, $email, $hashedPassword, $role, $photoUrl);
+            $this->userModel->createUser($name, $phone_num, $email, $hashedPassword, $role, $photoUrl);
             header("Location: " . BASE_URL . "Auth/login");
         } else {
             // Return errors to view
@@ -112,11 +112,11 @@ class AuthController extends Controller
         case 'admin':
             header("Location: " . BASE_URL . "Admin/index");
             break;
-        case 'student':
-            header("Location: " . BASE_URL . "Student/index");
+        case 'driver':
+            header("Location: " . BASE_URL . "Driver/dashboard");
             break;
-        case 'professor':
-            header("Location: " . BASE_URL . "Professor/index");
+        case 'space_owner':
+            header("Location: " . BASE_URL . "owner/dashboard");
             break;
         default:
             header("Location: " . BASE_URL . "Home/index");
