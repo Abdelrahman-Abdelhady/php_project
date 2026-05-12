@@ -5,6 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once __DIR__ . '/../../core/Database.php';
+require_once __DIR__ . '/../helpers/Auth.php';
 
 class HistoryController {
     

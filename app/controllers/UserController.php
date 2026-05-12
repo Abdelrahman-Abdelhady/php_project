@@ -1,16 +1,27 @@
 <?php
-require_once "../app/helpers/Validator.php";
-require_once "../app/models/UserModel.php"; // اتأكدنا إن المسار مطابق لاسم الملف
+// app/controllers/UserController.php
+
+// Use __DIR__ to ensure paths are absolute and stable
+require_once __DIR__ . "/../helpers/Validator.php";
+
+
+require_once __DIR__ . '/../helpers/Auth.php';
+
+require_once __DIR__ . "/../models/UserModel.php";
 
 class UserController extends Controller
 {
-    // تعريف البروبرتي بيخلي الـ IDE (زي VS Code) يفهم إن الكلاس ده موجود
-    public $userModel;
+    private $userModel;
 
     public function __construct()
     {
-        // نداء الموديل بالاسم الصحيح
-        $this->userModel = new UserModel(); 
+        // Start the session if it hasn't been started
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // FIX: Using 'new UserModel()' to match the filename
+        $this->userModel = new UserModel();
     }
 
     // READ ALL
@@ -37,10 +48,11 @@ class UserController extends Controller
     public function store()
     {
         $validator = new Validator();
-        $name = $_POST['name'] ?? '';
-        $email = $_POST['email'] ?? '';
+
+        $name      = $_POST['name'] ?? '';
+        $email     = $_POST['email'] ?? '';
         $phone_num = $_POST['phone_num'] ?? '';
-        $role = $_POST['role'] ?? '';
+        $role      = $_POST['role'] ?? '';
 
         $validator->required('name', $name);
         $validator->required('email', $email);
@@ -49,42 +61,40 @@ class UserController extends Controller
         $validator->required('role', $role);
 
         if ($validator->passes()) {
-            // بعتنا الـ 5 باراميترز الأساسية (الترتيب: name, phone, email, password, role)
             $this->userModel->createUser($name, $phone_num, $email, '', $role);
             header("Location: " . BASE_URL . "User/index");
+            exit;
         } else {
             $this->view("users/create", [
                 'errors' => $validator->getErrors(),
-                'old' => $_POST
+                'old'    => $_POST
             ]);
         }
     }
 
-    // EDIT FORM
     public function edit($id)
     {
         $user = $this->userModel->getUserById($id);
         $this->view("users/edit", ['user' => $user]);
     }
 
-    // UPDATE USER
     public function update($id)
     {
-        $name = $_POST['name'];
-        $email = $_POST['email'];
+        $name      = $_POST['name'];
+        $email     = $_POST['email'];
         $phone_num = $_POST['phone_num'];
-        $role = $_POST['role'];
+        $role      = $_POST['role'];
 
-        // مطابقة لـ updateUser($id, $name, $phone_num, $email, $role) في الموديل
-        $this->userModel->updateUser($id, $name, $phone_num, $email, $role);
+        $this->userModel->updateUser($id, $name, $phone_num, $email, $role, null);
 
         header("Location: " . BASE_URL . "User/index");
+        exit;
     }
 
-    // DELETE USER
     public function delete($id)
     {
         $this->userModel->deleteUser($id);
         header("Location: " . BASE_URL . "User/index");
+        exit;
     }
 }

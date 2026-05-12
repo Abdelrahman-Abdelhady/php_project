@@ -44,10 +44,9 @@ class Auth
         }
     }
 
-    public static function forbidIfNotRole($role)
-    {
+    public static function forbidIfNotRole($role) {
         if (!self::role($role)) {
-            header("Location: " . BASE_URL . "Error/error403");
+            header("Location: " . BASE_URL . "User/index");
             exit;
         }
     }

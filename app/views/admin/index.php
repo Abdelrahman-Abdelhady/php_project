@@ -2,176 +2,77 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Welcome</title>
-
-    <!-- Bootstrap 5 CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CitySlot - Driver Portal</title>
     <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/bootstrap.min.css">
-
+    <style>
+        body { background: #f8f9fa; }
+        .driver-card {
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.3s;
+        }
+        .driver-card:hover {
+            transform: translateY(-5px);
+        }
+        .icon-box {
+            font-size: 2rem;
+            color: #4F5D95;
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
+<body>
 
-<body class="bg-light">
-    
-    <!-- ================= HEADER / NAVBAR ================= -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container">
+        <a class="navbar-brand" href="<?= BASE_URL ?>Home/index">CitySlot 🚘</a>
+        <div class="ms-auto">
+            <span class="text-light me-3">Welcome, <?= htmlspecialchars(Auth::user()['name']) ?></span>
+            <a href="<?= BASE_URL ?>Auth/logout" class="btn btn-sm btn-danger">Logout</a>
+        </div>
+    </div>
+</nav>
 
-            <!-- Website Logo/Name -->
-            <a class="navbar-brand">
-                My PHP MVC Project
-            </a>
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">Driver Control Panel</h2>
+        <p class="text-muted">Manage your wallet and parking requests</p>
+    </div>
 
-            <!-- Menu -->
-            <div>
-
-                <!-- Right Side Buttons -->
-                <div class="ms-auto d-flex gap-2">
-
-                    <?php if(!$data['user']): ?>
-                    <a href="<?= BASE_URL ?>Auth/login" class="btn btn-outline-light">
-                        Login
-                    </a>
-
-                    <a href="<?= BASE_URL ?>Auth/register" class="btn btn-warning">
-                        Register
-                    </a>
-                    <?php else: ?>
-                        <a href="<?= BASE_URL ?>Auth/logout" class="btn btn-danger">
-                            Logout
-                        </a>
-                    <?php endif; ?>
-
-                </div>
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-4">
+            <div class="card driver-card shadow-sm h-100 text-center p-4">
+                <div class="icon-box">💰</div>
+                <h4>My Wallet</h4>
+                <p class="text-muted">Check your balance and top up funds.</p>
+                <a href="<?= BASE_URL ?>Wallet/index" class="btn btn-primary mt-auto">View Wallet</a>
             </div>
         </div>
-    </nav>
-    <!-- =============== END HEADER =============== -->
 
-    <div class="container mt-5">
-
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1 class="mb-0">Users</h1>
-
-            <a href="<?= BASE_URL ?>Admin/create" class="btn btn-primary">
-                + Create New User
-            </a>
-        </div>
-
-        <div class="card shadow">
-            <div class="card-body p-0">
-
-                <table class="table table-striped table-hover mb-0">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Age</th>
-                            <th>Role</th>
-                            <th>Image</th>
-                            <th style="width: 180px;">Actions</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <?php foreach ($data['users'] as $user): ?>
-                            <?php if ($user['id'] == $data['user']['id']) continue; // Skip current logged-in user ?>
-                            <tr id="user-row-<?= $user['id'] ?>">
-                                <td><?= $user['name'] ?></td>
-                                <td><?= $user['email'] ?></td>
-                                <td><?= $user['age'] ?></td>
-                                <td><?= $user['role'] ?></td>
-
-                                <td>
-                                    <?php if ($user['profile_pic']): ?>
-                                        <img src="<?= BASE_URL ?><?= $user['profile_pic'] ?>" alt="User Image" class="img-thumbnail" style="max-width: 50px; max-height: 50px;">
-                                    <?php else: ?>
-                                        <img src="<?= BASE_URL ?>uploads/img/default.png" alt="Default Image" class="img-thumbnail" style="max-width: 50px; max-height: 50px;">
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <a href="<?= BASE_URL ?>Admin/show/<?= $user['id'] ?>" class="btn btn-sm btn-info text-white">
-                                        View
-                                    </a>
-
-                                    <a href="<?= BASE_URL ?>Admin/edit/<?= $user['id'] ?>" class="btn btn-sm btn-warning">
-                                        Edit
-                                    </a>
-
-                                    <button class="btn btn-sm btn-danger" onclick="deleteUser(<?= $user['id'] ?>)">
-                                        Delete
-                                    </button>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-
-                </table>
-
+        <div class="col-md-4">
+            <div class="card driver-card shadow-sm h-100 text-center p-4">
+                <div class="icon-box">📩</div>
+                <h4>My Requests</h4>
+                <p class="text-muted">Track your parking and service requests.</p>
+                <a href="<?= BASE_URL ?>Request/index" class="btn btn-primary mt-auto">View Requests</a>
             </div>
         </div>
     </div>
 
-    <script src="<?= BASE_URL ?>assets/js/jquery-3.6.0.min.js"></script>
-    <script src="<?= BASE_URL ?>assets/js/bootstrap.min.js"></script>
-    
-    <script>
-        function deleteUser(userId) {
+    <div class="mt-5 text-center">
+        <?php if (Auth::role('municipal_admin')): ?>
+            <a href="<?= BASE_URL ?>Admin/dashboard" class="btn btn-outline-secondary">
+                ← Back to Dashboard
+            </a>
+        <?php else: ?>
+            <a href="<?= BASE_URL ?>Home/index" class="btn btn-outline-secondary">
+                ← Back to Home
+            </a>
+        <?php endif; ?>
+    </div>
+</div>
 
-            if (!confirm("Are you sure you want to delete this user?")) {
-                return;
-            }
-
-            const rowId = "#user-row-" + userId;
-
-            $.ajax({
-                url: "<?= BASE_URL ?>Admin/delete/" + userId,
-                type: "POST",
-                dataType: "json",
-
-                success: function(response) {
-                    if (response.success) {
-
-                        $(rowId)
-                            .find("td")
-                            .css("background-color", "#f8d7da")
-                            .animate({ opacity: 0 }, 600, function() {
-                                $(rowId).remove();
-                            });
-
-                    } else {
-                        alert("Failed to delete user.");
-                    }
-                },
-
-                error: function() { 
-                    alert("Server error. Could not delete user.");
-                }
-            });
-
-
-            // For non-jquery users, you can use Fetch API like this:
-            /*
-            fetch("<?= BASE_URL ?>Admin/delete/" + userId, {
-                method: "POST",
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest"
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Remove the user row from the table
-                    const row = document.getElementById("user-row-" + userId);
-                    row.style.backgroundColor = "#f8d7da"; // Red background
-                    setTimeout(() => row.remove(), 600); // Remove after animation
-                } else {
-                    alert("Failed to delete user.");
-                }
-            })
-            .catch(() => {
-                alert("Server error. Could not delete user.");
-            });
-             */
-        }
-    </script>
-
+<script src="<?= BASE_URL ?>assets/js/bootstrap.bundle.min.js"></script>
 </body>
+</html>

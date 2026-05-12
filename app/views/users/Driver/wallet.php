@@ -34,23 +34,9 @@
             margin-bottom: 25px;
         }
 
-        .balance-display .label {
-            font-size: 0.85rem;
-            opacity: 0.8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 6px;
-        }
-
         .balance-display .amount {
             font-size: 2.5rem;
             font-weight: 700;
-        }
-
-        .balance-display .last-updated {
-            font-size: 0.78rem;
-            opacity: 0.7;
-            margin-top: 6px;
         }
 
         .btn-primary {
@@ -68,26 +54,14 @@
             padding: 8px;
             width: 100%;
             font-size: 0.9rem;
-        }
-
-        .error-text {
-            color: #d93025;
-            font-size: 0.85rem;
-            margin-top: 4px;
-            display: block;
+            margin-bottom: 10px;
         }
 
         .divider { border-top: 1px solid #eee; margin: 20px 0; }
     </style>
 </head>
 <body>
-<div class="divider"></div>
 
-<div class="text-center d-flex flex-column gap-2">
-    <a href="<?= BASE_URL ?>Transaction/index" class="btn btn-outline-secondary btn-sm">📋 View Transactions</a>
-    <a href="<?= BASE_URL ?>Request/index" class="btn btn-outline-secondary btn-sm">📩 My Requests</a>
-    <a href="<?= BASE_URL ?>Home/index" class="btn btn-outline-secondary btn-sm">← Back to Home</a>
-</div>
 <div class="wallet-card">
 
     <div class="text-center mb-4">
@@ -95,54 +69,41 @@
         <p class="text-muted">My Wallet</p>
     </div>
 
-    <!-- Balance -->
     <div class="balance-display">
-        <div class="label">Current Balance</div>
+        <div class="label text-uppercase small opacity-75">Current Balance</div>
         <div class="amount">
             <?= htmlspecialchars($wallet['currency'] ?? 'EGP') ?>
             <?= number_format($wallet['balance'] ?? 0, 2) ?>
         </div>
-        <?php if (!empty($wallet['lastUpdated'])): ?>
-            <div class="last-updated">
-                Last updated: <?= htmlspecialchars($wallet['lastUpdated']) ?>
-            </div>
-        <?php endif; ?>
     </div>
 
-    <!-- Error -->
-    <?php if (!empty($errors['topup'])): ?>
-        <div class="alert alert-danger py-2 text-center" style="border-radius: 10px; font-size: 0.9rem;">
-            <?= htmlspecialchars($errors['topup']) ?>
-        </div>
-    <?php endif; ?>
-
-    <!-- Top-Up Form — always visible -->
     <form action="<?= BASE_URL ?>Wallet/doTopUp" method="POST">
-
         <div class="mb-3">
-            <label class="form-label fw-semibold">Add Funds (<?= htmlspecialchars($wallet['currency'] ?? 'EGP') ?>)</label>
+            <label class="form-label fw-semibold">Add Funds</label>
             <input
                 type="number"
                 name="amount"
                 class="form-control"
-                placeholder="Enter amount e.g. 100"
+                placeholder="Enter amount"
                 min="1"
                 step="0.01"
-                value="<?= htmlspecialchars($old['amount'] ?? '') ?>"
+                required
             >
-            <?php if (!empty($errors['amount'])): ?>
-                <small class="error-text"><?= htmlspecialchars($errors['amount']) ?></small>
-            <?php endif; ?>
         </div>
-
         <button type="submit" class="btn btn-primary shadow">+ Add Funds</button>
-
     </form>
 
     <div class="divider"></div>
 
-    <div class="text-center">
-        <a href="<?= BASE_URL ?>Home/index" class="btn btn-outline-secondary btn-sm">← Back to Home</a>
+    <div class="text-center d-flex flex-column gap-2">
+        <a href="<?= BASE_URL ?>Transaction/index" class="btn btn-outline-secondary btn-sm">📋 View Transactions</a>
+        <a href="<?= BASE_URL ?>Request/index" class="btn btn-outline-secondary btn-sm">📩 My Requests</a>
+        
+        <?php if (Auth::role('municipal_admin')): ?>
+            <a href="<?= BASE_URL ?>Admin/dashboard" class="btn btn-outline-dark btn-sm">← Back to Dashboard</a>
+        <?php else: ?>
+            <a href="<?= BASE_URL ?>Home/index" class="btn btn-outline-secondary btn-sm">← Back to Home</a>
+        <?php endif; ?>
     </div>
 
 </div>
