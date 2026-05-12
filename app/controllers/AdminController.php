@@ -1,4 +1,4 @@
-<?php
+<<?php
 require_once "../app/helpers/Auth.php";
 require_once "../app/models/SpotModel.php";
 require_once "../app/models/ReservationModel.php";
@@ -14,30 +14,55 @@ class AdminController extends Controller
 
     public function __construct()
     {
-        Auth::redirectIfNotLogged("Auth/adminLogin");
-        Auth::forbidIfNotRole('admin');
+        Auth::forbidIfNotAdmin();
 
         $this->spotModel = new SpotModel();
         $this->reservationModel = new ReservationModel();
         $this->sensorModel = new SensorModel();
         $this->adminModel = new AdminModel();
     }
-
     public function index()
     {
         $adminID = Auth::user()['id'];
+
+        $totalSpots = method_exists($this->spotModel, 'getTotalSpots')
+            ? $this->spotModel->getTotalSpots()
+            : 0;
+
+        $occupiedSpots = method_exists($this->spotModel, 'getOccupiedSpots')
+            ? $this->spotModel->getOccupiedSpots()
+            : 0;
+
+        $availableSpots = method_exists($this->spotModel, 'getAvailableSpots')
+            ? $this->spotModel->getAvailableSpots()
+            : 0;
+
+        $violations = method_exists($this->reservationModel, 'getOverstayViolations')
+            ? $this->reservationModel->getOverstayViolations()
+            : [];
+
+        $fines = method_exists($this->reservationModel, 'getAllFines')
+            ? $this->reservationModel->getAllFines()
+            : [];
+
+        $systemHealth = method_exists($this->sensorModel, 'getSensorStats')
+            ? $this->sensorModel->getSensorStats()
+            : [];
 
         $stats = [
             'total_users'       => $this->adminModel->getTotalUsers(),
             'total_drivers'     => $this->adminModel->getDriverCount(),
             'total_owners'      => $this->adminModel->getOwnerCount(),
-            'total_spots'       => method_exists($this->spotModel, 'getTotalSpots') ? $this->spotModel->getTotalSpots() : 0,
-            'occupied_spots'    => method_exists($this->spotModel, 'getOccupiedSpots') ? $this->spotModel->getOccupiedSpots() : 0,
-            'available_spots'   => method_exists($this->spotModel, 'getAvailableSpots') ? $this->spotModel->getAvailableSpots() : 0,
-            'active_violations' => method_exists($this->reservationModel, 'getOverstayViolations') ? count($this->reservationModel->getOverstayViolations()) : 0,
-            'total_fines'       => method_exists($this->reservationModel, 'getAllFines') ? count($this->reservationModel->getAllFines()) : 0,
+
+            'total_spots'       => is_array($totalSpots) ? count($totalSpots) : $totalSpots,
+            'occupied_spots'    => is_array($occupiedSpots) ? count($occupiedSpots) : $occupiedSpots,
+            'available_spots'   => is_array($availableSpots) ? count($availableSpots) : $availableSpots,
+
+            'active_violations' => is_array($violations) ? count($violations) : 0,
+            'total_fines'       => is_array($fines) ? count($fines) : 0,
             'unpaid_fines'      => count($this->adminModel->getDriversWithUnpaidFines()),
-            'system_health'     => method_exists($this->sensorModel, 'getSensorStats') ? $this->sensorModel->getSensorStats() : []
+
+            'system_health'     => $systemHealth
         ];
 
         $this->view("admin/dashboard", [
@@ -73,36 +98,19 @@ class AdminController extends Controller
         ]);
     }
 
-    public function requests()
+    public function dispatch()
     {
-        $pendingSpots = $this->adminModel->getPendingSpots();
-
-        $this->view("admin/requests", [
-            'pendingSpots' => $pendingSpots
-        ]);
-    }
-
-    public function systemHealth()
-    {
-        $stats = method_exists($this->sensorModel, 'getSensorStats') ? $this->sensorModel->getSensorStats() : [];
-
-        $this->view("admin/system_health", [
-            'stats' => $stats
-        ]);
-    }
-
-    public function sensors()
-    {
-        $sensors = method_exists($this->sensorModel, 'getAllSensors') ? $this->sensorModel->getAllSensors() : [];
-
-        $this->view("admin/sensors", [
-            'sensors' => $sensors
-        ]);
+        $this->view("admin/dispatch");
     }
 
     public function eventLocking()
     {
         $this->view("admin/event_zone");
+    }
+
+    public function emergency()
+    {
+        $this->view("admin/emergency");
     }
 
     public function fines()
@@ -120,6 +128,31 @@ class AdminController extends Controller
 
         $this->view("admin/blacklist", [
             'blacklistedUsers' => $blacklistedUsers
+        ]);
+    }
+
+    public function systemHealth()
+    {
+        $stats = method_exists($this->sensorModel, 'getSensorStats')
+            ? $this->sensorModel->getSensorStats()
+            : [];
+
+        $this->view("admin/system_health", [
+            'stats' => $stats
+        ]);
+    }
+
+    public function settings()
+    {
+        $this->view("admin/settings");
+    }
+
+    public function requests()
+    {
+        $pendingSpots = $this->adminModel->getPendingSpots();
+
+        $this->view("admin/requests", [
+            'pendingSpots' => $pendingSpots
         ]);
     }
 }

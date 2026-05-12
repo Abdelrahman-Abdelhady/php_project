@@ -15,8 +15,23 @@ class Auth
 
     public static function logout()
     {
-        unset($_SESSION['user']);
-        unset($_SESSION['redirect_after_login']);
+        $_SESSION = [];
+
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params["path"],
+                $params["domain"],
+                $params["secure"],
+                $params["httponly"]
+            );
+        }
+
+        session_destroy();
     }
 
     public static function user()
@@ -26,7 +41,7 @@ class Auth
 
     public static function check()
     {
-        return isset($_SESSION['user']);
+        return isset($_SESSION['user']) && is_array($_SESSION['user']);
     }
 
     public static function role($requiredRole)
@@ -44,9 +59,54 @@ class Auth
         }
     }
 
-    public static function forbidIfNotRole($role) {
+    public static function forbidIfNotRole($role)
+    {
+        if (!self::check()) {
+            header("Location: " . BASE_URL . "Auth/login");
+            exit;
+        }
+
         if (!self::role($role)) {
-            header("Location: " . BASE_URL . "User/index");
+            header("Location: " . BASE_URL . "Error/error403");
+            exit;
+        }
+    }
+
+    public static function forbidIfNotAdmin()
+    {
+        if (!self::check()) {
+            header("Location: " . BASE_URL . "Auth/adminLogin");
+            exit;
+        }
+
+        if (!self::role('admin')) {
+            header("Location: " . BASE_URL . "Error/error403");
+            exit;
+        }
+    }
+
+    public static function forbidIfNotDriver()
+    {
+        if (!self::check()) {
+            header("Location: " . BASE_URL . "Auth/login");
+            exit;
+        }
+
+        if (!self::role('driver')) {
+            header("Location: " . BASE_URL . "Error/error403");
+            exit;
+        }
+    }
+
+    public static function forbidIfNotOwner()
+    {
+        if (!self::check()) {
+            header("Location: " . BASE_URL . "Auth/login");
+            exit;
+        }
+
+        if (!self::role('space_owner')) {
+            header("Location: " . BASE_URL . "Error/error403");
             exit;
         }
     }
