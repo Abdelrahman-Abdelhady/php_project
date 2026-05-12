@@ -1,77 +1,62 @@
 <?php
-
-// Using __DIR__ ensures the path is absolute and won't break 
-// regardless of where the file is called from.
-require_once __DIR__ . "/../models/WalletModel.php";
-require_once __DIR__ . "/../helpers/Auth.php";
+require_once "../app/models/WalletModel.php";
+require_once "../app/models/TransactionModel.php";
+require_once "../app/helpers/Auth.php";
 
 class WalletController extends Controller
 {
     private $walletModel;
+    private $transactionModel;
 
     public function __construct()
     {
-        $this->walletModel = new WalletModel();
+        $this->walletModel      = new WalletModel();
+        $this->transactionModel = new TransactionModel();
     }
 
+    // Show wallet page
     public function index()
     {
         Auth::redirectIfNotLogged();
         Auth::forbidIfNotRole('driver');
 
-        $userID = Auth::user()['id'];
-        $wallet = $this->walletModel->getWalletByUserId($userID);
-
-        // Auto-create wallet if one doesn't exist for this driver
-        if (!$wallet) {
-            $this->walletModel->createWalletForUser($userID);
-            $wallet = $this->walletModel->getWalletByUserId($userID);
-        }
+        $userID  = Auth::user()['id'];
+        $balance = $this->walletModel->getBalance($userID);
 
         $this->view("users/Driver/wallet", [
-            'wallet' => $wallet,
-            'errors' => [],
-            'old'    => []
+            'balance' => $balance,
         ]);
     }
 
-    public function doTopUp()
+    // Handle Add Funds form submission
+    public function addFunds()
     {
         Auth::redirectIfNotLogged();
         Auth::forbidIfNotRole('driver');
 
-        $amount = $_POST['amount'] ?? '';
         $userID = Auth::user()['id'];
-        $errors = [];
+        $amount = isset($_POST['amount']) ? floatval($_POST['amount']) : 0;
 
-        if (!is_numeric($amount) || $amount <= 0) {
-            $errors['amount'] = 'Please enter a valid amount.';
+        if ($amount <= 0) {
+            $_SESSION['wallet_error'] = "Please enter a valid amount greater than 0.";
+            header("Location: " . BASE_URL . "Wallet/index");
+            exit;
         }
 
-        if (!empty($errors)) {
-            $wallet = $this->walletModel->getWalletByUserId($userID);
-            $this->view("users/Driver/wallet", [
-                'wallet' => $wallet,
-                'errors' => $errors,
-                'old'    => $_POST
-            ]);
-            return;
-        }
+        // Add funds to wallet
+        $this->walletModel->addFunds($userID, $amount);
 
-        $topped = $this->walletModel->topUp($userID, (float)$amount);
+        // Log the transaction
+        $this->transactionModel->logTransaction(
+            $userID,
+            'topup',
+            $amount,
+            'Wallet top-up'
+        );
 
-        if (!$topped) {
-            $wallet = $this->walletModel->getWalletByUserId($userID);
-            $this->view("users/Driver/wallet", [
-                'wallet' => $wallet,
-                'errors' => ['topup' => 'Something went wrong. Please try again.'],
-                'old'    => $_POST
-            ]);
-            return;
-        }
-
-        // After successful top-up, send them back to the index to see the new balance
+        $_SESSION['wallet_success'] = "EGP " . number_format($amount, 2) . " added successfully!";
         header("Location: " . BASE_URL . "Wallet/index");
         exit;
     }
 }
+?>
