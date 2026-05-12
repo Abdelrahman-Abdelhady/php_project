@@ -1,12 +1,27 @@
 <?php
-require_once "../app/helpers/Validator.php";
-require_once "../app/models/User.php";
+// app/controllers/UserController.php
+
+// Use __DIR__ to ensure paths are absolute and stable
+require_once __DIR__ . "/../helpers/Validator.php";
+
+
+require_once __DIR__ . '/../helpers/Auth.php';
+
+require_once __DIR__ . "/../models/UserModel.php";
 
 class UserController extends Controller
 {
+    private $userModel;
+
     public function __construct()
     {
-        $this->userModel = new User();
+        // Start the session if it hasn't been started
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // FIX: Using 'new UserModel()' to match the filename
+        $this->userModel = new UserModel();
     }
 
     // READ ALL
@@ -34,12 +49,11 @@ class UserController extends Controller
     {
         $validator = new Validator();
 
-        $name  = $_POST['name'];
-        $email = $_POST['email'];
-        $phone_num   = $_POST['phone_num'];
-        $role   = $_POST['role'];
+        $name      = $_POST['name'] ?? '';
+        $email     = $_POST['email'] ?? '';
+        $phone_num = $_POST['phone_num'] ?? '';
+        $role      = $_POST['role'] ?? '';
 
-        // Validation rules
         $validator->required('name', $name);
         $validator->required('email', $email);
         $validator->email('email', $email);
@@ -47,11 +61,10 @@ class UserController extends Controller
         $validator->required('role', $role);
 
         if ($validator->passes()) {
-            // Save to DB
             $this->userModel->createUser($name, $phone_num, $email, '', $role);
             header("Location: " . BASE_URL . "User/index");
+            exit;
         } else {
-            // Return errors to view
             $this->view("users/create", [
                 'errors' => $validator->getErrors(),
                 'old'    => $_POST
@@ -59,31 +72,29 @@ class UserController extends Controller
         }
     }
 
-    // EDIT FORM
     public function edit($id)
     {
         $user = $this->userModel->getUserById($id);
         $this->view("users/edit", ['user' => $user]);
     }
 
-    // UPDATE USER
     public function update($id)
     {
-        $name  = $_POST['name'];
-        $email = $_POST['email'];
-        $phone_num   = $_POST['phone_num'];
-        $role   = $_POST['role'];
+        $name      = $_POST['name'];
+        $email     = $_POST['email'];
+        $phone_num = $_POST['phone_num'];
+        $role      = $_POST['role'];
 
         $this->userModel->updateUser($id, $name, $phone_num, $email, $role, null);
 
         header("Location: " . BASE_URL . "User/index");
+        exit;
     }
 
-    // DELETE USER
     public function delete($id)
     {
         $this->userModel->deleteUser($id);
-
         header("Location: " . BASE_URL . "User/index");
+        exit;
     }
 }

@@ -20,13 +20,16 @@ class RequestController extends Controller
         $requests = $this->requestModel->getRequestsByUserId($userID);
         $role     = Auth::user()['role'];
 
-        $this->view("users/requests/index", [
+        $this->view("users/Driver/requests", [
             'requests' => $requests,
             'role'     => $role,
         ]);
     }
 
     // Driver/Owner: submit new request
+    public function create() {
+    $this->view("users/Driver/create_request");
+}
     public function store()
     {
         Auth::redirectIfNotLogged();

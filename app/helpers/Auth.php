@@ -1,58 +1,42 @@
 <?php
+class Auth {
+    public static function init() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+    }
 
-class Auth
-{
-    
-    public static function login($user)
-    {
+    public static function login($user) {
+        self::init();
         $_SESSION['user'] = [
-            'id'    => $user['id'],
+            'id'    => $user['userID'], 
             'name'  => $user['name'],
-            'age'  => $user['age'],
-            'email' => $user['email'],
-            'role'  => $user['role'],
-            'profile_pic'  => $user['profile_pic']?? null
+            'role'  => $user['role']
         ];
     }
 
-    public static function logout()
-    {
-        unset($_SESSION['user']);
-    }
-
-    public static function user()
-    {
+    public static function user() {
+        self::init();
         return $_SESSION['user'] ?? null;
     }
 
-    public static function check()
-    {
-        return isset($_SESSION['user']);
+    public static function role($role) {
+        self::init();
+        return (isset($_SESSION['user']) && $_SESSION['user']['role'] === $role);
     }
 
-    public static function role($requiredRole)
-    {
-        return self::check() && $_SESSION['user']['role'] === $requiredRole;
-    }
-
-   public static function redirectIfNotLogged()
-{
-    if (!self::check()) {
-
-        // Save the page the user was trying to access
-        $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
-
-        header("Location: " . BASE_URL . "Auth/login");
-        exit;
-    }
-}
-
-    public static function forbidIfNotRole($role)
-    {
-        if (!self::role($role)) {
-            header("Location: " . BASE_URL . "Error/error403");
+    public static function redirectIfNotLogged() {
+        self::init();
+        if (!isset($_SESSION['user'])) {
+            header("Location: " . BASE_URL . "Auth/login");
             exit;
         }
     }
 
+    public static function forbidIfNotRole($role) {
+        if (!self::role($role)) {
+            header("Location: " . BASE_URL . "User/index");
+            exit;
+        }
+    }
 }

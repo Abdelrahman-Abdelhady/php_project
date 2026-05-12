@@ -1,11 +1,13 @@
 <?php
 // Controllers/AdminController.php
-require_once "../Models/SpotModel.php";
-require_once "../Models/ReservationModel.php";
-require_once "../Models/SensorModel.php";
-require_once "../Models/AdminModel.php";
 
-class AdminController
+// Using __DIR__ ensures these paths work correctly regardless of the URL
+require_once __DIR__ . "/../models/SpotModel.php";
+require_once __DIR__ . "/../models/ReservationModel.php";
+require_once __DIR__ . "/../models/SensorModel.php";
+require_once __DIR__ . "/../models/AdminModel.php";
+
+class AdminController extends Controller
 {
     private $spotModel;
     private $reservationModel;
@@ -14,13 +16,19 @@ class AdminController
     
     public function __construct()
     {
+        // Start the session if it hasn't been started
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         
         // Check if user is admin
+        // Redirecting to User/index prevents the 404 error from direct file access
         if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'municipal_admin') {
-            header("Location: ../simple_login.php");
+            header("Location: " . BASE_URL . "User/index");
             exit;
         }
         
+        // Moving instantiation inside the constructor fixes the Parse Error on line 11
         $this->spotModel = new SpotModel();
         $this->reservationModel = new ReservationModel();
         $this->sensorModel = new SensorModel();
@@ -36,7 +44,15 @@ class AdminController
         $sensors = $this->sensorModel->getAllSensors();
         $stats = $this->sensorModel->getSensorStats();
         
-        require_once "../Views/admin/dashboard.php";
+        // Loads the dashboard view
+        $this->view("admin/dashboard", [
+            'totalSpots' => $totalSpots,
+            'occupiedSpots' => $occupiedSpots,
+            'violations' => $violations,
+            'recentReservations' => $recentReservations,
+            'sensors' => $sensors,
+            'stats' => $stats
+        ]);
     }
     
     public function verifyOwner()
@@ -47,24 +63,13 @@ class AdminController
             $spotID = $_POST['spotID'];
             $status = $_POST['status'];
             $this->spotModel->updateSpotStatus($spotID, $status);
+            
             $_SESSION['message'] = "Owner verification updated";
-            header("Location: ../index.php?controller=admin&action=verifyOwner");
+            
+            header("Location: " . BASE_URL . "Admin/verifyOwner");
             exit;
         }
         
-        require_once "../Views/admin/verify_owner.php";
-    }
-    
-    // Add more actions as needed...
-}
-
-// Router logic
-if (isset($_GET['action'])) {
-    $controller = new AdminController();
-    $action = $_GET['action'];
-    
-    if (method_exists($controller, $action)) {
-        $controller->$action();
+        $this->view("admin/verify_owner", ['pendingSpots' => $pendingSpots]);
     }
 }
-?>
