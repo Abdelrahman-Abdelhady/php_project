@@ -1,5 +1,6 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/php_project/core/Database.php';
+require_once __DIR__ . '/../../core/Database.php';
+
 class SensorModel {
     private $db;
     
@@ -9,16 +10,16 @@ class SensorModel {
     
     public function getAllSensors() {
         $result = $this->db->query(
-            "SELECT i.*, s.location, s.zone 
-             FROM iot_sensor i 
-             LEFT JOIN spot s ON i.spotID = s.spotID"
+            "SELECT s.*, sp.location 
+             FROM sensors s
+             LEFT JOIN spot sp ON s.spotID = sp.spotID"
         );
         return $result->fetch_all(MYSQLI_ASSOC);
     }
     
     public function getInactiveSensors() {
         $result = $this->db->query(
-            "SELECT * FROM iot_sensor 
+            "SELECT * FROM sensors 
              WHERE last_Heartbeat < DATE_SUB(NOW(), INTERVAL 5 MINUTE) 
              OR last_Heartbeat IS NULL"
         );
@@ -26,7 +27,7 @@ class SensorModel {
     }
     
     public function resetSensor($sensorID) {
-        $stmt = $this->db->prepare("UPDATE iot_sensor SET isActive = 1, last_Heartbeat = NOW() WHERE sensorID = ?");
+        $stmt = $this->db->prepare("UPDATE sensors SET isActive = 1, last_Heartbeat = NOW() WHERE sensorID = ?");
         $stmt->bind_param("i", $sensorID);
         return $stmt->execute();
     }

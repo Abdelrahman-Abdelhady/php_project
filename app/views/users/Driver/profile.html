@@ -8,7 +8,32 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/app/views/home/styles.css">
+    <style>
+
+
+body{font-family:Arial,sans-serif;background:#f4f8fc;margin:0;padding:0}
+.profile-page{max-width:1100px;margin:auto;padding:40px 20px}
+.profile-card{background:#fff;padding:25px;border-radius:16px;margin-bottom:25px;box-shadow:0 5px 15px rgba(0,0,0,.08)}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.btn-add{background:#0F2854;color:#fff;border:none;padding:10px 18px;border-radius:30px;cursor:pointer;font-weight:700} 
+.vehicles-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.vehicle-card{background:#f9fbff;border:1px solid #dce6f0;border-radius:16px;padding:20px;display:flex;gap:15px;transition:.3s}
+.vehicle-card:hover{transform:translateY(-4px)}
+.vehicle-icon{width:60px;height:60px;border-radius:12px;background:#0F2854;display:flex;justify-content:center;align-items:center;font-size:28px;color:#fff;flex-shrink:0}
+.vehicle-body{flex:1}.vehicle-top{display:flex;align-items:center;gap:10px;margin-bottom:5px}.vehicle-top h3{margin:0;color:#0F2854}
+.badge-default{background:orange;color:#fff;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700}.vehicle-sub{color:#666;margin-bottom:8px}
+.vehicle-plate{display:inline-block;background:#0F2854;color:#fff;padding:6px 12px;border-radius:8px;font-weight:700}
+.vehicle-actions{display:flex;flex-direction:column;gap:8px}
+.btn-icon{width:35px;height:35px;border:none;border-radius:8px;cursor:pointer;background:#e9eef7;display:grid;place-items:center}
+.danger{background:#ffdddd}.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;justify-content:center;align-items:center;z-index:100}
+.modal-overlay[hidden]{display:none}.modal{background:#fff;width:100%;max-width:500px;border-radius:20px;padding:25px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.btn-close{border:none;background:none;font-size:25px;cursor:pointer}
+.modal-body{display:flex;flex-direction:column;gap:15px}.form-row{display:flex;flex-direction:column;gap:5px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}input,select{padding:10px;border-radius:10px;border:1px solid #ccc;font-family:inherit}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:10px}.btn-primary{background:#0F2854;color:#fff;border:none;padding:10px 18px;border-radius:25px;cursor:pointer}
+.btn-ghost-bordered{background:#fff;border:1px solid #ccc;padding:10px 18px;border-radius:25px;cursor:pointer}
+</style>
+
 </head>
 <body>
   <header class="header">

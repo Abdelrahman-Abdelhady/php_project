@@ -1,6 +1,6 @@
 <?php
 
-require_once "C:/xampp/htdocs/php_project/core/Database.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . '/php_project/core/Database.php';
 
 class ReservationModel {
     private $db;
@@ -28,7 +28,7 @@ class ReservationModel {
     // Get reservations that have exceeded the end time by more than 30 minutes (overstay violations)
     public function getOverstayViolations() {
         $result = $this->db->query(
-            "SELECT r.*, u.name as user_name, u.phone_num, s.location, s.zone 
+            "SELECT r.*, u.name as user_name, u.phone_num, s.location, s.area
              FROM reservation r 
              JOIN users u ON r.userID = u.userID 
              JOIN spot s ON r.spotID = s.spotID 
@@ -41,7 +41,7 @@ class ReservationModel {
     // Get current active reservations (not yet ended)
     public function getActiveReservations() {
         $result = $this->db->query(
-            "SELECT r.*, u.name as user_name, u.phone_num, s.location, s.zone 
+            "SELECT r.*, u.name as user_name, u.phone_num, s.location, s.area
              FROM reservation r 
              JOIN users u ON r.userID = u.userID 
              JOIN spot s ON r.spotID = s.spotID 
@@ -88,7 +88,7 @@ class ReservationModel {
     // Get violations that are eligible for fines (ended but still active)
     public function getViolationsForFines() {
         $result = $this->db->query(
-            "SELECT r.*, u.name as user_name, u.email, s.location, s.zone,
+            "SELECT r.*, u.name as user_name, u.email, s.location, s.area,
                     TIMESTAMPDIFF(MINUTE, r.endTime, NOW()) as overstay_minutes
              FROM reservation r 
              JOIN users u ON r.userID = u.userID 
@@ -143,7 +143,7 @@ class ReservationModel {
                 JOIN reservation r ON f.reservationID = r.reservationID
                 JOIN users u ON r.userID = u.userID
                 JOIN spot s ON r.spotID = s.spotID
-                ORDER BY f.generated_at DESC";
+                ORDER BY f.fineID DESC";
         $result = $this->db->query($sql);
         return $result->fetch_all(MYSQLI_ASSOC);
     }
