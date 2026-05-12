@@ -16,6 +16,9 @@ class HistoryController {
     }
 
     public function index() {
+        
+        Auth::redirectIfNotLogged();
+        Auth::forbidIfNotRole('driver');
 
         $reservations = $this->getReservationHistory();
 
@@ -24,10 +27,8 @@ class HistoryController {
 
     public function getReservationHistory(){
         
-        if (!isset($_SESSION['user_id'])) {
-            header("Location: /php_project/public/login.php");
-            exit;
-        }
+        Auth::redirectIfNotLogged();
+        Auth::forbidIfNotRole('driver');
 
         $userId = $_SESSION['user_id'];
 

@@ -1,12 +1,16 @@
 <?php
 require_once "../app/helpers/Validator.php";
-require_once "../app/models/UserModel.php";
+require_once "../app/models/UserModel.php"; // اتأكدنا إن المسار مطابق لاسم الملف
 
 class UserController extends Controller
 {
+    // تعريف البروبرتي بيخلي الـ IDE (زي VS Code) يفهم إن الكلاس ده موجود
+    public $userModel;
+
     public function __construct()
     {
-         $this->userModel = new UserModel(); 
+        // نداء الموديل بالاسم الصحيح
+        $this->userModel = new UserModel(); 
     }
 
     // READ ALL
@@ -33,13 +37,11 @@ class UserController extends Controller
     public function store()
     {
         $validator = new Validator();
+        $name = $_POST['name'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $phone_num = $_POST['phone_num'] ?? '';
+        $role = $_POST['role'] ?? '';
 
-        $name  = $_POST['name'];
-        $email = $_POST['email'];
-        $phone_num   = $_POST['phone_num'];
-        $role   = $_POST['role'];
-
-        // Validation rules
         $validator->required('name', $name);
         $validator->required('email', $email);
         $validator->email('email', $email);
@@ -47,14 +49,13 @@ class UserController extends Controller
         $validator->required('role', $role);
 
         if ($validator->passes()) {
-            // Save to DB
+            // بعتنا الـ 5 باراميترز الأساسية (الترتيب: name, phone, email, password, role)
             $this->userModel->createUser($name, $phone_num, $email, '', $role);
             header("Location: " . BASE_URL . "User/index");
         } else {
-            // Return errors to view
             $this->view("users/create", [
                 'errors' => $validator->getErrors(),
-                'old'    => $_POST
+                'old' => $_POST
             ]);
         }
     }
@@ -69,12 +70,13 @@ class UserController extends Controller
     // UPDATE USER
     public function update($id)
     {
-        $name  = $_POST['name'];
+        $name = $_POST['name'];
         $email = $_POST['email'];
-        $phone_num   = $_POST['phone_num'];
-        $role   = $_POST['role'];
+        $phone_num = $_POST['phone_num'];
+        $role = $_POST['role'];
 
-        $this->userModel->updateUser($id, $name, $phone_num, $email, $role, null);
+        // مطابقة لـ updateUser($id, $name, $phone_num, $email, $role) في الموديل
+        $this->userModel->updateUser($id, $name, $phone_num, $email, $role);
 
         header("Location: " . BASE_URL . "User/index");
     }
@@ -83,7 +85,6 @@ class UserController extends Controller
     public function delete($id)
     {
         $this->userModel->deleteUser($id);
-
         header("Location: " . BASE_URL . "User/index");
     }
 }
