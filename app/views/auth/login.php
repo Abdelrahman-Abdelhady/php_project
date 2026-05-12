@@ -65,9 +65,9 @@
         <div class="mb-3">
             <label class="form-label">Email Address</label>
 
-            <input 
-                type="email" 
-                name="email" 
+            <input
+                type="email"
+                name="email"
                 class="form-control"
                 value="<?= htmlspecialchars($old['email'] ?? '') ?>"
             >
@@ -80,9 +80,9 @@
         <div class="mb-4">
             <label class="form-label">Password</label>
 
-            <input 
-                type="password" 
-                name="password" 
+            <input
+                type="password"
+                name="password"
                 class="form-control"
             >
 
@@ -99,6 +99,13 @@
             Don't have an account?
             <a href="<?= BASE_URL ?>Auth/register" class="text-decoration-none fw-bold" style="color: #4F5D95;">
                 Sign Up
+            </a>
+        </p>
+
+        <p class="small text-muted mt-2">
+            Are you an admin?
+            <a href="<?= BASE_URL ?>Auth/adminLogin" class="text-decoration-none fw-bold" style="color: #4F5D95;">
+                Login as Admin
             </a>
         </p>
     </div>

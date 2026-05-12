@@ -1,11 +1,12 @@
 <?php
 
-require_once "../app/models/walletModel.php";
-require_once "../app/helpers/Auth.php";
+// Using __DIR__ ensures the path is absolute and won't break 
+// regardless of where the file is called from.
+require_once __DIR__ . "/../models/WalletModel.php";
+require_once __DIR__ . "/../helpers/Auth.php";
 
 class WalletController extends Controller
 {
-    // rest stays the same...
     private $walletModel;
 
     public function __construct()
@@ -21,8 +22,16 @@ class WalletController extends Controller
         $userID = Auth::user()['id'];
         $wallet = $this->walletModel->getWalletByUserId($userID);
 
+        // Auto-create wallet if one doesn't exist for this driver
+        if (!$wallet) {
+            $this->walletModel->createWalletForUser($userID);
+            $wallet = $this->walletModel->getWalletByUserId($userID);
+        }
+
         $this->view("users/Driver/wallet", [
             'wallet' => $wallet,
+            'errors' => [],
+            'old'    => []
         ]);
     }
 
@@ -61,6 +70,7 @@ class WalletController extends Controller
             return;
         }
 
+        // After successful top-up, send them back to the index to see the new balance
         header("Location: " . BASE_URL . "Wallet/index");
         exit;
     }

@@ -3,21 +3,23 @@ require_once "../app/helpers/Validator.php";
 require_once "../app/helpers/Auth.php";
 require_once "../app/models/UserModel.php";
 require_once "../app/models/WalletModel.php";
+require_once "../app/models/AdminModel.php";
 
 class AuthController extends Controller
 {
     private $userModel;
     private $walletModel;
+    private $adminModel;
 
     public function __construct()
     {
         $this->userModel = new UserModel();
         $this->walletModel = new WalletModel();
+        $this->adminModel = new AdminModel();
     }
 
     public function index()
     {
-        // CHANGED: Keep index as a clean redirect to login
         header("Location: " . BASE_URL . "Auth/login");
         exit;
     }
@@ -31,14 +33,12 @@ class AuthController extends Controller
     {
         $validator = new Validator();
 
-        // CHANGED: Added ?? '' to prevent undefined index warnings
         $name      = $_POST['name'] ?? '';
         $phone_num = $_POST['phone_num'] ?? '';
         $email     = $_POST['email'] ?? '';
         $password  = $_POST['password'] ?? '';
         $role      = $_POST['role'] ?? '';
 
-        // Validation rules
         $validator->required('name', $name);
         $validator->minLength('name', $name, 3);
         $validator->maxLength('name', $name, 50);
@@ -57,12 +57,10 @@ class AuthController extends Controller
 
         $photoUrl = null;
 
-        // Handle file upload
         if (!empty($_FILES['profile_pic']['name'])) {
             require_once "../app/helpers/Upload.php";
 
             try {
-                // CHANGED: Added jpeg as an accepted extension
                 $upload = new Upload(
                     $_FILES['profile_pic'],
                     ['jpg', 'png', 'jpeg'],
@@ -71,7 +69,6 @@ class AuthController extends Controller
                 );
 
                 $photoUrl = $upload->save();
-
             } catch (Exception $e) {
                 $validator->errors['profile_pic'] = $e->getMessage();
             }
@@ -79,56 +76,49 @@ class AuthController extends Controller
             $photoUrl = "uploads/img/default.png";
         }
 
-        if ($validator->passes()) {
-
-            // CHANGED: Added duplicate email check before inserting user
-            if ($this->userModel->emailExists($email)) {
-                $this->view("auth/register", [
-                    'errors' => ['email' => 'Email already exists'],
-                    'old'    => $_POST
-                ]);
-                return;
-            }
-
-          
-            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-
-            // Save to DB through model only
-            $created = $this->userModel->createUser(
-                $name,
-                $phone_num,
-                $email,
-                $hashedPassword,
-                $role,
-                $photoUrl
-            );
-
-         
-                if (!$created) {
-                    $this->view("auth/register", [
-                        'errors' => ['register' => 'Something went wrong. Please try again.'],
-                        'old'    => $_POST
-                    ]);
-                    return;
-                }
-
-                // ADDED: Get newly created user using email
-                $newUser = $this->userModel->findByEmail($email);
-
-                // ADDED: Create wallet record for the new user
-                if ($newUser && isset($newUser['id'])) {
-                    $this->walletModel->createWalletForUser($newUser['id']);
-                }
-
-                header("Location: " . BASE_URL . "Auth/login");
-                exit;
-        } else {
-            // Return errors to view
+        if (!$validator->passes()) {
             $this->view("auth/register", [
                 'errors' => $validator->getErrors(),
                 'old'    => $_POST
             ]);
+            return;
         }
+
+        if ($this->userModel->emailExists($email)) {
+            $this->view("auth/register", [
+                'errors' => ['email' => 'Email already exists'],
+                'old'    => $_POST
+            ]);
+            return;
+        }
+
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
+        $created = $this->userModel->createUser(
+            $name,
+            $phone_num,
+            $email,
+            $hashedPassword,
+            $role,
+            $photoUrl
+        );
+
+        if (!$created) {
+            $this->view("auth/register", [
+                'errors' => ['register' => 'Something went wrong. Please try again.'],
+                'old'    => $_POST
+            ]);
+            return;
+        }
+
+        $newUser = $this->userModel->findByEmail($email);
+
+        if ($newUser && isset($newUser['id'])) {
+            $this->walletModel->createWalletForUser($newUser['id']);
+        }
+
+        header("Location: " . BASE_URL . "Auth/login");
+        exit;
     }
 
     public function login()
@@ -140,11 +130,9 @@ class AuthController extends Controller
     {
         $validator = new Validator();
 
-      
         $email    = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
 
-        // Validation rules
         $validator->required('email', $email);
         $validator->email('email', $email);
 
@@ -171,8 +159,6 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        // If user was redirected to login from a protected page,
-        // send them back to that original page.
         if (isset($_SESSION['redirect_after_login'])) {
             $redirectUrl = $_SESSION['redirect_after_login'];
             unset($_SESSION['redirect_after_login']);
@@ -181,12 +167,7 @@ class AuthController extends Controller
             exit;
         }
 
-        
         switch ($user['role']) {
-            case 'admin':
-                header("Location: " . BASE_URL . "Admin/index");
-                break;
-
             case 'driver':
                 header("Location: " . BASE_URL . "Home/index");
                 break;
@@ -200,6 +181,47 @@ class AuthController extends Controller
                 break;
         }
 
+        exit;
+    }
+
+    public function adminLogin()
+    {
+        $this->view("auth/adminlogin");
+    }
+
+    public function doAdminLogin()
+    {
+        $validator = new Validator();
+
+        $email    = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
+
+        $validator->required('email', $email);
+        $validator->email('email', $email);
+
+        $validator->required('password', $password);
+
+        if (!$validator->passes()) {
+            $this->view("auth/adminlogin", [
+                'errors' => $validator->getErrors(),
+                'old'    => $_POST
+            ]);
+            return;
+        }
+
+        $admin = $this->adminModel->findAdminByEmail($email);
+
+        if (!$admin || !password_verify($password, $admin['password'])) {
+            $this->view("auth/adminlogin", [
+                'errors' => ['login' => 'Invalid admin credentials'],
+                'old'    => $_POST
+            ]);
+            return;
+        }
+
+        Auth::login($admin);
+
+        header("Location: " . BASE_URL . "Admin/index");
         exit;
     }
 
