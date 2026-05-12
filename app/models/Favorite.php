@@ -9,7 +9,7 @@ class Favorite{
     }
 
     public function addFavorite($userId, $spotId) {
-        $query = "INSERT INTO favorites (user_id, spot_id) VALUES (?, ?)";
+        $query = "INSERT INTO favorites (userID, spotID) VALUES (?, ?)";
 
         $stmt = $this->db->prepare($query);
 
@@ -19,7 +19,7 @@ class Favorite{
     }
 
     public function removeFavorite($userId, $spotId) {
-        $query = "DELETE FROM favorites WHERE user_id = ? AND spot_id = ?";
+        $query = "DELETE FROM favorites WHERE userID = ? AND spotID = ?";
 
         $stmt = $this->db->prepare($query);
 
@@ -29,7 +29,7 @@ class Favorite{
     }
     
     public function getUserFavorites($userId) {
-        $query = "SELECT spot_id FROM favorites WHERE user_id = ?";
+        $query = "SELECT spotID FROM favorites WHERE userID = ?";
 
         $stmt = $this->db->prepare($query);
 
