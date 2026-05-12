@@ -10,10 +10,6 @@ class AdminModel
         $this->db = Database::getInstance()->getConnection();
     }
 
-    // =========================
-    // ADMIN AUTHENTICATION
-    // =========================
-
     public function findAdminByEmail($email)
     {
         $sql = "SELECT adminID, name, email, password, role, created_at
@@ -67,9 +63,50 @@ class AdminModel
         return $result->fetch_assoc() ?: null;
     }
 
-    // =========================
-    // USER MANAGEMENT
-    // =========================
+    public function getTotalUsers()
+    {
+        $sql = "SELECT COUNT(*) AS total FROM users";
+
+        $result = $this->db->query($sql);
+
+        if (!$result) {
+            return 0;
+        }
+
+        $row = $result->fetch_assoc();
+
+        return $row['total'] ?? 0;
+    }
+
+    public function countUsersByRole($role)
+    {
+        $sql = "SELECT COUNT(*) AS total
+                FROM users
+                WHERE role = ?";
+
+        $stmt = $this->db->prepare($sql);
+
+        if (!$stmt) {
+            return 0;
+        }
+
+        $stmt->bind_param("s", $role);
+        $stmt->execute();
+
+        $row = $stmt->get_result()->fetch_assoc();
+
+        return $row['total'] ?? 0;
+    }
+
+    public function getDriverCount()
+    {
+        return $this->countUsersByRole('driver');
+    }
+
+    public function getOwnerCount()
+    {
+        return $this->countUsersByRole('space_owner');
+    }
 
     public function getAllUsers()
     {
@@ -101,9 +138,7 @@ class AdminModel
         $stmt->bind_param("i", $id);
         $stmt->execute();
 
-        $result = $stmt->get_result();
-
-        return $result->fetch_assoc() ?: null;
+        return $stmt->get_result()->fetch_assoc() ?: null;
     }
 
     public function getUsersByRole($role)
@@ -122,30 +157,7 @@ class AdminModel
         $stmt->bind_param("s", $role);
         $stmt->execute();
 
-        $result = $stmt->get_result();
-
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }
-
-    public function countUsersByRole($role)
-    {
-        $sql = "SELECT COUNT(*) AS total
-                FROM users
-                WHERE role = ?";
-
-        $stmt = $this->db->prepare($sql);
-
-        if (!$stmt) {
-            return 0;
-        }
-
-        $stmt->bind_param("s", $role);
-        $stmt->execute();
-
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-
-        return $row['total'] ?? 0;
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
     public function updateUser($id, $name, $phone_num, $email, $role)
@@ -198,66 +210,7 @@ class AdminModel
         $stmt->bind_param("ss", $searchTerm, $searchTerm);
         $stmt->execute();
 
-        $result = $stmt->get_result();
-
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }
-
-    // =========================
-    // STATISTICS
-    // =========================
-
-    public function getTotalUsers()
-    {
-        $sql = "SELECT COUNT(*) AS total FROM users";
-        $result = $this->db->query($sql);
-
-        if (!$result) {
-            return 0;
-        }
-
-        $row = $result->fetch_assoc();
-
-        return $row['total'] ?? 0;
-    }
-
-    public function getDriverCount()
-    {
-        return $this->countUsersByRole('driver');
-    }
-
-    public function getOwnerCount()
-    {
-        return $this->countUsersByRole('space_owner');
-    }
-
-    // =========================
-    // VIOLATIONS / FINES
-    // =========================
-
-    public function getUsersWithViolations()
-    {
-        $sql = "SELECT 
-                    u.userID,
-                    u.name,
-                    u.email,
-                    u.phone_num,
-                    u.role,
-                    u.profile_pic,
-                    COUNT(r.reservationID) AS violation_count
-                FROM users u
-                JOIN reservation r ON u.userID = r.userID
-                WHERE r.status = 'active'
-                  AND r.endTime < DATE_SUB(NOW(), INTERVAL 30 MINUTE)
-                GROUP BY u.userID";
-
-        $result = $this->db->query($sql);
-
-        if (!$result) {
-            return [];
-        }
-
-        return $result->fetch_all(MYSQLI_ASSOC);
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
     public function getDriversWithUnpaidFines()
@@ -287,9 +240,30 @@ class AdminModel
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    // =========================
-    // BLACKLIST
-    // =========================
+    public function getUsersWithViolations()
+    {
+        $sql = "SELECT 
+                    u.userID,
+                    u.name,
+                    u.email,
+                    u.phone_num,
+                    u.role,
+                    u.profile_pic,
+                    COUNT(r.reservationID) AS violation_count
+                FROM users u
+                JOIN reservation r ON u.userID = r.userID
+                WHERE r.status = 'active'
+                  AND r.endTime < DATE_SUB(NOW(), INTERVAL 30 MINUTE)
+                GROUP BY u.userID";
+
+        $result = $this->db->query($sql);
+
+        if (!$result) {
+            return [];
+        }
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
 
     public function getBlacklistedUsers()
     {
@@ -340,10 +314,6 @@ class AdminModel
         return $stmt->execute();
     }
 
-    // =========================
-    // OWNER / SPOT VERIFICATION
-    // =========================
-
     public function getPendingSpaceOwners()
     {
         $sql = "SELECT DISTINCT 
@@ -355,7 +325,7 @@ class AdminModel
                     u.role,
                     'pending' AS verification_status
                 FROM users u
-                JOIN spot s ON u.userID = s.ownerID
+                JOIN spot s ON u.userID = s.ownerid
                 WHERE (s.status = 'pending' OR s.status = 'under_review')
                   AND u.role = 'space_owner'
                 GROUP BY u.userID";
@@ -381,7 +351,7 @@ class AdminModel
 
         $sql = "UPDATE spot
                 SET status = ?
-                WHERE ownerID = ?
+                WHERE ownerid = ?
                   AND (status = 'pending' OR status = 'under_review')";
 
         $stmt = $this->db->prepare($sql);
@@ -403,9 +373,10 @@ class AdminModel
                     u.email,
                     u.phone_num
                 FROM spot s
-                JOIN users u ON s.ownerID = u.userID
+                JOIN users u ON s.ownerid = u.userID
                 WHERE s.status = 'pending'
-                   OR s.status = 'under_review'";
+                   OR s.status = 'under_review'
+                ORDER BY s.created_at DESC";
 
         $result = $this->db->query($sql);
 
@@ -418,6 +389,19 @@ class AdminModel
 
     public function updateSpotStatus($spotID, $status)
     {
+        $allowedStatuses = [
+            'available',
+            'rejected',
+            'pending',
+            'under_review',
+            'occupied',
+            'locked'
+        ];
+
+        if (!in_array($status, $allowedStatuses, true)) {
+            return false;
+        }
+
         $sql = "UPDATE spot
                 SET status = ?
                 WHERE spotID = ?";

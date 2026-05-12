@@ -1,61 +1,67 @@
 <?php
+require_once "../app/helpers/Auth.php";
+require_once "../app/models/Review.php";
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+class ReviewController extends Controller
+{
+    private $reviewModel;
 
-require_once __DIR__ . '/../../core/Database.php';
-require_once __DIR__ . '/../models/Reviews.php';
-require_once __DIR__ . '/../helpers/Auth.php';
-
-class ReviewController {
-
-    private $db;
-
-    public function __construct() {
-        $database = Database::getInstance();
-        $this->db = $database->getConnection();
+    public function __construct()
+    {
+        $this->reviewModel = new Review();
     }
 
-    public function add() {
-
+    public function store()
+    {
         Auth::redirectIfNotLogged();
         Auth::forbidIfNotRole('driver');
 
-        $userId = $_SESSION['user_id'];
-        $spotId = $_POST['spot_id'];
-        $rating = $_POST['rating'];
-        $comment = $_POST['comment'];
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: " . BASE_URL . "Home/index");
+            exit;
+        }
 
-        $review = new Review($this->db);
-        $review->addReview($userId, $spotId, $rating, $comment);
+        $userID = Auth::user()['id'];
+        $spotID = $_POST['spotID'] ?? $_POST['spot_id'] ?? null;
+        $rating = $_POST['rating'] ?? null;
+        $comment = trim($_POST['comment'] ?? '');
 
-        header("Location: /php_project/public/history.php");
+        if (!$spotID || !$rating || $comment === '') {
+            header("Location: " . BASE_URL . "Home/index");
+            exit;
+        }
+
+        $rating = (int)$rating;
+
+        if ($rating < 1 || $rating > 5) {
+            header("Location: " . BASE_URL . "Home/index");
+            exit;
+        }
+
+        $this->reviewModel->addReview($userID, (int)$spotID, $rating, $comment);
+
+        header("Location: " . BASE_URL . "Home/index");
         exit;
     }
 
-    public function delete() {
-
+    public function delete()
+    {
         Auth::redirectIfNotLogged();
         Auth::forbidIfNotRole('driver');
 
-        $userId = $_SESSION['user_id'];
-        $reviewId = $_POST['review_id'];
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: " . BASE_URL . "Home/index");
+            exit;
+        }
 
-        $review = new Review($this->db);
-        $review->deleteReview($reviewId, $userId);
+        $userID = Auth::user()['id'];
+        $reviewID = $_POST['reviewID'] ?? $_POST['review_id'] ?? null;
 
-        header("Location: /php_project/public/history.php");
+        if ($reviewID) {
+            $this->reviewModel->deleteReview((int)$reviewID, $userID);
+        }
+
+        header("Location: " . BASE_URL . "Home/index");
         exit;
-    }
-
-    public function getReviewsBySpot($spotId) {
-
-        Auth::redirectIfNotLogged();
-        Auth::forbidIfNotRole('driver');
-
-        $review = new Review($this->db);
-
-        return $review->getSpotReviews($spotId);
     }
 }

@@ -1,52 +1,166 @@
 <?php
 require_once __DIR__ . '/../../core/Database.php';
-class SpotModel {
+
+class SpotModel
+{
     private $db;
-    
-    public function __construct() {
+
+    public function __construct()
+    {
         $this->db = Database::getInstance()->getConnection();
     }
-    
-    public function getAllSpots() {
-        $result = $this->db->query("SELECT s.*, u.name as owner_name FROM spot s LEFT JOIN users u ON s.ownerID = u.userID ORDER BY s.spotID DESC");
+
+    public function getAllSpots()
+    {
+        $sql = "SELECT 
+                    s.*, 
+                    u.name AS owner_name
+                FROM spot s
+                LEFT JOIN users u ON s.ownerid = u.userID
+                ORDER BY s.spotID DESC";
+
+        $result = $this->db->query($sql);
+
+        if (!$result) {
+            return [];
+        }
+
         return $result->fetch_all(MYSQLI_ASSOC);
     }
-    
-    public function getTotalSpots() {
-        $result = $this->db->query("SELECT COUNT(*) as total FROM spot");
-        return $result->fetch_assoc()['total'];
+
+    public function getTotalSpots()
+    {
+        $sql = "SELECT COUNT(*) AS total FROM spot";
+
+        $result = $this->db->query($sql);
+
+        if (!$result) {
+            return 0;
+        }
+
+        $row = $result->fetch_assoc();
+
+        return $row['total'] ?? 0;
     }
-    
-    public function getOccupiedSpots() {
-        $result = $this->db->query("SELECT COUNT(*) as total FROM spot WHERE status = 'occupied'");
-        return $result->fetch_assoc()['total'];
+
+    public function getOccupiedSpots()
+    {
+        $sql = "SELECT COUNT(*) AS total 
+                FROM spot 
+                WHERE status = 'occupied'";
+
+        $result = $this->db->query($sql);
+
+        if (!$result) {
+            return 0;
+        }
+
+        $row = $result->fetch_assoc();
+
+        return $row['total'] ?? 0;
     }
-    
-    public function getPendingSpots() {
-        $result = $this->db->query("SELECT s.*, u.name as owner_name, u.email, u.phone_num FROM spot s JOIN users u ON s.ownerID = u.userID WHERE s.status = 'pending' OR s.status = 'under_review'");
+
+    public function getAvailableSpots()
+    {
+        $sql = "SELECT 
+                    s.*, 
+                    u.name AS owner_name
+                FROM spot s
+                LEFT JOIN users u ON s.ownerid = u.userID
+                WHERE s.status = 'available'
+                ORDER BY s.spotID DESC";
+
+        $result = $this->db->query($sql);
+
+        if (!$result) {
+            return [];
+        }
+
         return $result->fetch_all(MYSQLI_ASSOC);
     }
-    
-    public function updateSpotStatus($spotID, $status) {
-        $stmt = $this->db->prepare("UPDATE spot SET status = ? WHERE spotID = ?");
+
+    public function getPendingSpots()
+    {
+        $sql = "SELECT 
+                    s.*,
+                    u.name AS owner_name,
+                    u.email,
+                    u.phone_num
+                FROM spot s
+                JOIN users u ON s.ownerid = u.userID
+                WHERE s.status = 'pending'
+                   OR s.status = 'under_review'
+                ORDER BY s.created_at DESC";
+
+        $result = $this->db->query($sql);
+
+        if (!$result) {
+            return [];
+        }
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function updateSpotStatus($spotID, $status)
+    {
+        $allowedStatuses = [
+            'available',
+            'rejected',
+            'pending',
+            'under_review',
+            'occupied',
+            'locked'
+        ];
+
+        if (!in_array($status, $allowedStatuses, true)) {
+            return false;
+        }
+
+        $sql = "UPDATE spot 
+                SET status = ? 
+                WHERE spotID = ?";
+
+        $stmt = $this->db->prepare($sql);
+
+        if (!$stmt) {
+            return false;
+        }
+
         $stmt->bind_param("si", $status, $spotID);
+
         return $stmt->execute();
     }
-    
-    public function lockZone($zone) {
-        $stmt = $this->db->prepare("UPDATE spot SET status = 'locked' WHERE zone = ?");
-        $stmt->bind_param("s", $zone);
+
+    public function lockArea($area)
+    {
+        $sql = "UPDATE spot 
+                SET status = 'locked' 
+                WHERE area = ?";
+
+        $stmt = $this->db->prepare($sql);
+
+        if (!$stmt) {
+            return false;
+        }
+
+        $stmt->bind_param("s", $area);
+
         return $stmt->execute();
     }
-    
-    public function getZones() {
-        $result = $this->db->query("SELECT DISTINCT zone FROM spot WHERE zone IS NOT NULL AND zone != ''");
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }
-    
-    public function getAvailableSpots() {
-        $result = $this->db->query("SELECT s.*, u.name as owner_name FROM spot s LEFT JOIN users u ON s.ownerID = u.userID WHERE s.status = 'available'");
+
+    public function getAreas()
+    {
+        $sql = "SELECT DISTINCT area 
+                FROM spot 
+                WHERE area IS NOT NULL 
+                  AND area != ''";
+
+        $result = $this->db->query($sql);
+
+        if (!$result) {
+            return [];
+        }
+
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 }
-?>

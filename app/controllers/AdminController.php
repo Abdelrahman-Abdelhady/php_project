@@ -1,4 +1,4 @@
-<<?php
+<?php
 require_once "../app/helpers/Auth.php";
 require_once "../app/models/SpotModel.php";
 require_once "../app/models/ReservationModel.php";
@@ -21,6 +21,7 @@ class AdminController extends Controller
         $this->sensorModel = new SensorModel();
         $this->adminModel = new AdminModel();
     }
+
     public function index()
     {
         $adminID = Auth::user()['id'];
@@ -80,11 +81,24 @@ class AdminController extends Controller
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $spotID = $_POST['spotID'] ?? null;
-            $status = $_POST['status'] ?? null;
+            $action = $_POST['action'] ?? null;
+
+            if ($action === 'approve') {
+                $status = 'available';
+            } elseif ($action === 'reject') {
+                $status = 'rejected';
+            } else {
+                $status = null;
+            }
 
             if ($spotID && $status) {
-                $this->adminModel->updateSpotStatus($spotID, $status);
-                $_SESSION['message'] = "Owner verification updated successfully.";
+                $updated = $this->adminModel->updateSpotStatus((int)$spotID, $status);
+
+                $_SESSION['message'] = $updated
+                    ? "Spot status updated successfully."
+                    : "Could not update spot status.";
+            } else {
+                $_SESSION['message'] = "Invalid approval request.";
             }
 
             header("Location: " . BASE_URL . "Admin/verifyOwner");
@@ -94,6 +108,15 @@ class AdminController extends Controller
         $pendingSpots = $this->adminModel->getPendingSpots();
 
         $this->view("admin/verify_owner", [
+            'pendingSpots' => $pendingSpots
+        ]);
+    }
+
+    public function requests()
+    {
+        $pendingSpots = $this->adminModel->getPendingSpots();
+
+        $this->view("admin/requests", [
             'pendingSpots' => $pendingSpots
         ]);
     }
@@ -145,14 +168,5 @@ class AdminController extends Controller
     public function settings()
     {
         $this->view("admin/settings");
-    }
-
-    public function requests()
-    {
-        $pendingSpots = $this->adminModel->getPendingSpots();
-
-        $this->view("admin/requests", [
-            'pendingSpots' => $pendingSpots
-        ]);
     }
 }

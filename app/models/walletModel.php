@@ -10,62 +10,72 @@ class WalletModel
         $this->db = Database::getInstance()->getConnection();
     }
 
-    // Get wallet row for a user (creates one if missing)
-    public function getWallet($userID)
+    public function createWalletForUser($userID)
     {
-        $stmt = $this->db->prepare("SELECT * FROM wallet WHERE userID = ?");
-        $stmt->bind_param("i", $userID);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
+        $sql = "INSERT INTO wallet (userID, balance, currency, lastUpdated)
+                VALUES (?, 0, 'EGP', NOW())";
 
-        if (!$result) {
-            $this->createWallet($userID);
-            return ['userID' => $userID, 'balance' => 0.00];
+        $stmt = $this->db->prepare($sql);
+
+        if (!$stmt) {
+            return false;
         }
 
-        return $result;
-    }
-
-    // Create a wallet row for a new user
-    public function createWallet($userID)
-    {
-        $stmt = $this->db->prepare(
-            "INSERT IGNORE INTO wallet (userID, balance, currency, lastUpdated)
-             VALUES (?, 0.00, 'EGP', NOW())"
-        );
         $stmt->bind_param("i", $userID);
-        $stmt->execute();
-    }
 
-    // Get balance only
-    public function getBalance($userID)
-    {
-        $wallet = $this->getWallet($userID);
-        return $wallet['balance'] ?? 0.00;
-    }
-
-    // Add funds to wallet
-    public function addFunds($userID, $amount)
-    {
-        $stmt = $this->db->prepare(
-            "UPDATE wallet SET balance = balance + ?, lastUpdated = NOW() WHERE userID = ?"
-        );
-        $stmt->bind_param("di", $amount, $userID);
         return $stmt->execute();
     }
 
-    // Deduct funds from wallet (returns false if insufficient balance)
-    public function deductFunds($userID, $amount)
+    public function getBalance($userID)
     {
-        $balance = $this->getBalance($userID);
-        if ($balance < $amount) {
+        $sql = "SELECT walletID, userID, balance, currency, lastUpdated
+                FROM wallet
+                WHERE userID = ?";
+
+        $stmt = $this->db->prepare($sql);
+
+        if (!$stmt) {
+            return [
+                'balance' => 0,
+                'currency' => 'EGP'
+            ];
+        }
+
+        $stmt->bind_param("i", $userID);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        if ($row = $result->fetch_assoc()) {
+            return $row;
+        }
+
+        $this->createWalletForUser($userID);
+
+        return [
+            'balance' => 0,
+            'currency' => 'EGP'
+        ];
+    }
+
+    public function deposit($userID, $amount)
+    {
+        $amount = (float)$amount;
+
+        $this->getBalance($userID);
+
+        $sql = "UPDATE wallet
+                SET balance = balance + ?, lastUpdated = NOW()
+                WHERE userID = ?";
+
+        $stmt = $this->db->prepare($sql);
+
+        if (!$stmt) {
             return false;
         }
-        $stmt = $this->db->prepare(
-            "UPDATE wallet SET balance = balance - ?, lastUpdated = NOW() WHERE userID = ?"
-        );
+
         $stmt->bind_param("di", $amount, $userID);
+
         return $stmt->execute();
     }
 }
-?>

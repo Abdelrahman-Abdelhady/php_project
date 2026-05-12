@@ -43,7 +43,11 @@
         
     
 
-    
+    <?php if (empty($listings)): ?>
+    <p style="padding: 30px; text-align:center;">
+        No available parking spots yet.
+    </p>
+<?php endif; ?>
     <!-- display all active listings by  -->
     <?php foreach ($listings as $listing): ?>
         <?php require "../app/views/layout/listingCard.php"; ?>
@@ -55,10 +59,10 @@
     <?php if (Auth::check()): ?>
     <h2>Welcome back, <?= htmlspecialchars(Auth::user()['name']) ?>!</h2>
     <p>Your role is: <?= htmlspecialchars(Auth::user()['role']) ?></p>
-    <a href="<?= BASE_URL ?>Auth/logout">Logout</a>
+   
 <?php else: ?>
     <h2>Welcome, Guest!</h2>
-    <p>Please <a href="<?= BASE_URL ?>Auth/login">Login</a> or <a href="<?= BASE_URL ?>Auth/register">Register</a>.</p>
+   
 <?php endif; ?>
 
     

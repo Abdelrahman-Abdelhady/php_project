@@ -1,15 +1,15 @@
 <?php
-// Safety defaults in case some values are missing
-$spotID      = $listing['spotID'] ?? $listing['id'] ?? 0;
-$title       = $listing['title'] ?? $listing['location'] ?? 'Parking Space';
-$image       = $listing['image'] ?? $listing['photo'] ?? 'assets/images/default-spot.jpg';
-$price       = $listing['price_per_hour'] ?? $listing['price'] ?? 0;
-$rating      = $listing['rating'] ?? 'New';
-$distance    = $listing['distance'] ?? 'Nearby';
-$status      = $listing['status'] ?? 'available';
-$features    = $listing['features'] ?? ['SUV Fit', 'CCTV'];
+$spotID   = $listing['spotID'] ?? 0;
+$title    = $listing['title'] ?? 'Parking Space';
+$area     = $listing['area'] ?? '';
+$location = $listing['location'] ?? '';
+$address  = $listing['address'] ?? '';
+$image    = $listing['image'] ?? 'uploads/img/default_spot.png';
+$price    = $listing['price_per_hour'] ?? 0;
+$rating   = $listing['rating'] ?? 'New';
+$status   = $listing['status'] ?? 'available';
+$features = $listing['features'] ?? ['Standard Parking'];
 
-// Handle image path
 $imageSrc = str_starts_with($image, 'http')
     ? $image
     : BASE_URL . $image;
@@ -23,7 +23,7 @@ $imageSrc = str_starts_with($image, 'http')
         >
 
         <div class="price-tag">
-            $<?= htmlspecialchars(number_format((float)$price, 2)) ?>/hr
+            <?= htmlspecialchars(number_format((float)$price, 2)) ?> EGP/hr
         </div>
     </div>
 
@@ -37,8 +37,18 @@ $imageSrc = str_starts_with($image, 'http')
         </div>
 
         <span class="distance-text">
-            📍 <?= htmlspecialchars($distance) ?>
+            📍 <?= htmlspecialchars($area) ?>
         </span>
+
+        <p style="margin: 8px 0; color: #555; font-size: 0.9rem;">
+            <?= htmlspecialchars($location) ?>
+        </p>
+
+        <?php if (!empty($address)): ?>
+            <p style="margin: 4px 0; color: #777; font-size: 0.85rem;">
+                <?= htmlspecialchars($address) ?>
+            </p>
+        <?php endif; ?>
 
         <div class="specs-container">
             <?php foreach ($features as $feature): ?>
