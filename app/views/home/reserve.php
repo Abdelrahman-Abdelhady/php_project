@@ -56,6 +56,11 @@ $pricePerHour = isset($spot['price_per_hour']) ? (float)$spot['price_per_hour'] 
 $success = false;
 $reservationID = null;
 
+if (isset($_GET['success']) && $_GET['success'] === '1') {
+    $success = true;
+    $reservationID = isset($_GET['reservationID']) ? (int)$_GET['reservationID'] : null;
+}
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fullName    = trim($_POST['full_name'] ?? '');
@@ -110,7 +115,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         @$db->query("INSERT INTO reservation_details (reservationID, full_name, plate_number)
                                      VALUES ($reservationID, '" . $db->real_escape_string($fullName) . "',
                                                             '" . $db->real_escape_string($plateNumber) . "')");
-                        $success = true;
+                        header("Location: reserve.php?spotID=" . urlencode($spotID) . "&success=1&reservationID=" . urlencode($reservationID));
+                        exit;
                     } else {
                         $errors[] = "Failed to create reservation. Please try again.";
                     }
