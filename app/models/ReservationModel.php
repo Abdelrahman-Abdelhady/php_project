@@ -41,7 +41,7 @@ class ReservationModel {
     // Get current active reservations (not yet ended)
     public function getActiveReservations() {
         $result = $this->db->query(
-            "SELECT r.*, u.name as user_name, u.phone_num, s.location, s.zone 
+            "SELECT r.*, u.name as user_name, u.phone_num, s.location, s.area
              FROM reservation r 
              JOIN users u ON r.userID = u.userID 
              JOIN spot s ON r.spotID = s.spotID 
