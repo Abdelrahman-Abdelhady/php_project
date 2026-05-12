@@ -1,12 +1,12 @@
 <?php
 require_once "../app/helpers/Validator.php";
-require_once "../app/models/User.php";
+require_once "../app/models/UserModel.php";
 
 class UserController extends Controller
 {
     public function __construct()
     {
-        $this->userModel = new User();
+         $this->userModel = new UserModel(); 
     }
 
     // READ ALL
