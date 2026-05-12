@@ -29,4 +29,5 @@ class Vehicle {
         $stmt->bind_param("isssssdi", $userID, $plate, $type, $model, $color, $height, $width, $is_default);
         return $stmt->execute();
     }
+    
 }
