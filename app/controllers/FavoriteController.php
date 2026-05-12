@@ -18,10 +18,8 @@
 
         public function index(){
 
-            if (!isset($_SESSION['user_id'])) {
-                header("Location: /php_project/public/login.php");
-                exit;
-            }
+            Auth::redirectIfNotLogged();
+            Auth::forbidIfNotRole('driver');
 
             $userId = $_SESSION['user_id'];
 
@@ -34,10 +32,8 @@
 
         public function add(){
 
-            if (!isset($_SESSION['user_id'])) {
-                header("Location: /php_project/public/login.php");
-                exit;
-            }
+            Auth::redirectIfNotLogged();
+            Auth::forbidIfNotRole('driver');
 
             $userId = $_SESSION['user_id'];
             $spotId = $_POST['spot_id'];
@@ -51,10 +47,8 @@
 
         public function remove(){
 
-            if (!isset($_SESSION['user_id'])) {
-                header("Location: /php_project/public/login.php");
-                exit;
-            }
+            Auth::redirectIfNotLogged();
+            Auth::forbidIfNotRole('driver');
 
             $userId = $_SESSION['user_id'];
             $spotId = $_POST['spot_id'];
