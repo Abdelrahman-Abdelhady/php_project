@@ -8,9 +8,9 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'municipal_admin') {
     exit;
 }
 
-require_once "../../models/SpotModel.php";
-require_once "../../models/ReservationModel.php";
-require_once "../../models/SensorModel.php";
+require_once __DIR__ . '/../../models/SpotModel.php";
+require_once __DIR__ . '/../../models/ReservationModel.php";
+require_once __DIR__ . '/../../models/SensorModel.php";
 $spotModel = new SpotModel();
 $reservationModel = new ReservationModel();
 $sensorModel = new SensorModel();
