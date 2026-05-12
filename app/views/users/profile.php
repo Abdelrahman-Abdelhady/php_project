@@ -16,8 +16,8 @@ if (!defined('BASE_URL')) define('BASE_URL', '/php_project/');
 
 $user_id = $_SESSION['userID'];
 
-$controller = new UserController();
-$user = $controller->userModel->getUserById($user_id);
+$userModel = new UserModel();
+$user = $userModel->getUserById($user_id);
 
 if (!$user) {
     session_destroy();
@@ -39,13 +39,6 @@ $resCount = (int)$stmt->get_result()->fetch_assoc()['c'];
 
 // --- Member since (optional) ---
 $memberSince = '';
-$stmt = $db->prepare("SELECT created_at FROM users WHERE userID = ?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$row = $stmt->get_result()->fetch_assoc();
-if ($row && !empty($row['created_at'])) {
-    $memberSince = date('M Y', strtotime($row['created_at']));
-}
 
 // --- Delete vehicle handler ---
 if (isset($_GET['delete_vehicle'])) {
