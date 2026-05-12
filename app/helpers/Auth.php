@@ -1,34 +1,45 @@
 <?php
-class Auth {
-    public static function init() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-    }
 
-    public static function login($user) {
-        self::init();
+class Auth
+{
+    public static function login($user)
+    {
         $_SESSION['user'] = [
-            'id'    => $user['userID'], 
-            'name'  => $user['name'],
-            'role'  => $user['role']
+            'id'          => $user['id'] ?? null,
+            'name'        => $user['name'] ?? '',
+            'email'       => $user['email'] ?? '',
+            'role'        => $user['role'] ?? '',
+            'profile_pic' => $user['profile_pic'] ?? null
         ];
     }
 
-    public static function user() {
-        self::init();
+    public static function logout()
+    {
+        unset($_SESSION['user']);
+        unset($_SESSION['redirect_after_login']);
+    }
+
+    public static function user()
+    {
         return $_SESSION['user'] ?? null;
     }
 
-    public static function role($role) {
-        self::init();
-        return (isset($_SESSION['user']) && $_SESSION['user']['role'] === $role);
+    public static function check()
+    {
+        return isset($_SESSION['user']);
     }
 
-    public static function redirectIfNotLogged() {
-        self::init();
-        if (!isset($_SESSION['user'])) {
-            header("Location: " . BASE_URL . "Auth/login");
+    public static function role($requiredRole)
+    {
+        return self::check() && ($_SESSION['user']['role'] ?? null) === $requiredRole;
+    }
+
+    public static function redirectIfNotLogged($loginRoute = "Auth/login")
+    {
+        if (!self::check()) {
+            $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
+
+            header("Location: " . BASE_URL . $loginRoute);
             exit;
         }
     }

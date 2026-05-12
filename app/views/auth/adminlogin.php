@@ -1,60 +1,12 @@
-<?php
-session_start();
-
-$host = "localhost";
-$user = "root";
-$pass = "";
-$dbname = "parking_system";
-
-$conn = new mysqli($host, $user, $pass, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-$error = "";
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
-    
-    // Check for admin only (municipal_admin role)
-    $sql = "SELECT * FROM users WHERE email = ? AND role = 'municipal_admin'";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($row = $result->fetch_assoc()) {
-        if (password_verify($password, $row['password'])) {
-            $_SESSION['user'] = $row['name'];
-            $_SESSION['user_id'] = $row['userID'];
-            $_SESSION['role'] = $row['role'];
-            $_SESSION['email'] = $row['email'];
-            $_SESSION['phone'] = $row['phone_num'];
-            $_SESSION['profile_pic'] = $row['profile_pic'];
-            
-            // Redirect to admin dashboard
-            header("Location: ../admin/dashboard.php");
-            exit;
-        } else {
-            $error = "Invalid password";
-        }
-    } else {
-        $error = "Admin account not found";
-    }
-    $stmt->close();
-}
-$conn->close();
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CitySlot - Admin Login</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
         body {
             background: #f4f7f6;
@@ -62,6 +14,7 @@ $conn->close();
             display: flex;
             align-items: center;
         }
+
         .login-card {
             width: 100%;
             max-width: 400px;
@@ -72,6 +25,7 @@ $conn->close();
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             border-top: 5px solid #4F5D95;
         }
+
         .btn-primary {
             background: #4F5D95;
             border: none;
@@ -79,9 +33,11 @@ $conn->close();
             padding: 10px;
             width: 100%;
         }
+
         .btn-primary:hover {
             background: #3b4675;
         }
+
         .admin-badge {
             background: #4F5D95;
             color: white;
@@ -91,8 +47,16 @@ $conn->close();
             display: inline-block;
             margin-bottom: 10px;
         }
+
+        .error-text {
+            color: #d93025;
+            font-size: 0.85rem;
+            margin-top: 4px;
+            display: block;
+        }
     </style>
 </head>
+
 <body>
 
 <div class="login-card">
@@ -102,25 +66,52 @@ $conn->close();
         <p class="text-muted">Welcome back Admin! Please login</p>
     </div>
 
-    <?php if ($error): ?>
-        <div class="alert alert-danger text-center"><?php echo htmlspecialchars($error); ?></div>
+    <?php if (!empty($errors['login'])): ?>
+        <div class="alert alert-danger text-center">
+            <?= htmlspecialchars($errors['login']) ?>
+        </div>
     <?php endif; ?>
 
-    <form method="POST">
+    <form action="<?= BASE_URL ?>Auth/doAdminLogin" method="POST">
         <div class="mb-3">
             <label class="form-label">Email Address</label>
-            <input type="email" name="email" class="form-control" placeholder="admin@cityslot.com" required>
+
+            <input
+                type="email"
+                name="email"
+                class="form-control"
+                placeholder="admin@cityslot.com"
+                value="<?= htmlspecialchars($old['email'] ?? '') ?>"
+            >
+
+            <?php if (!empty($errors['email'])): ?>
+                <small class="error-text"><?= htmlspecialchars($errors['email']) ?></small>
+            <?php endif; ?>
         </div>
 
         <div class="mb-4">
             <label class="form-label">Password</label>
-            <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+
+            <input
+                type="password"
+                name="password"
+                class="form-control"
+                placeholder="Enter password"
+            >
+
+            <?php if (!empty($errors['password'])): ?>
+                <small class="error-text"><?= htmlspecialchars($errors['password']) ?></small>
+            <?php endif; ?>
         </div>
 
         <button type="submit" class="btn btn-primary shadow">Admin Login</button>
     </form>
 
-    
+    <div class="mt-4 text-center">
+        <a href="<?= BASE_URL ?>Auth/login" class="text-decoration-none fw-bold" style="color: #4F5D95;">
+            User Login
+        </a>
+    </div>
 </div>
 
 </body>

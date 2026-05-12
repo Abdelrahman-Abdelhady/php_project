@@ -1,16 +1,6 @@
 <?php
-session_start();
 
-// ============= تعديل مؤقت للتجربة (شيليه بعد ما تخلصي) =============
-if (!isset($_SESSION['user_id'])) {
-    $_SESSION['user'] = 'Admin Test';
-    $_SESSION['role'] = 'municipal_admin';
-    $_SESSION['email'] = 'admin@cityslot.com';
-    $_SESSION['user_id'] = 1;
-    $_SESSION['phone'] = '01000000000';
-    $_SESSION['profile_pic'] = null;
-}
-// ================================================================
+
 
 // Check if user is logged in and is admin
 if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'municipal_admin') {
@@ -18,10 +8,9 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'municipal_admin') {
     exit;
 }
 
-require_once "../../Models/SpotModel.php";
-require_once "../../Models/ReservationModel.php";
-require_once "../../Models/SensorModel.php";
-
+require_once __DIR__ . '/../../models/SpotModel.php';
+require_once __DIR__ . '/../../models/ReservationModel.php';
+require_once __DIR__ . '/../../models/SensorModel.php';
 $spotModel = new SpotModel();
 $reservationModel = new ReservationModel();
 $sensorModel = new SensorModel();
@@ -32,7 +21,7 @@ $violations = $reservationModel->getOverstayViolations();
 $recentReservations = $reservationModel->getRecentReservations(10);
 $sensors = $sensorModel->getAllSensors();
 $stats = $sensorModel->getSensorStats();
-?>
+?> 
 
 <!DOCTYPE html>
 <html lang="en">

@@ -1,75 +1,125 @@
 <?php
-// Controllers/AdminController.php
-
-// Using __DIR__ ensures these paths work correctly regardless of the URL
-require_once __DIR__ . "/../models/SpotModel.php";
-require_once __DIR__ . "/../models/ReservationModel.php";
-require_once __DIR__ . "/../models/SensorModel.php";
-require_once __DIR__ . "/../models/AdminModel.php";
+require_once "../app/helpers/Auth.php";
+require_once "../app/models/SpotModel.php";
+require_once "../app/models/ReservationModel.php";
+require_once "../app/models/SensorModel.php";
+require_once "../app/models/AdminModel.php";
 
 class AdminController extends Controller
 {
     private $spotModel;
     private $reservationModel;
     private $sensorModel;
-    private $AdminModel;
-    
+    private $adminModel;
+
     public function __construct()
     {
-        // Start the session if it hasn't been started
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        
-        // Check if user is admin
-        // Redirecting to User/index prevents the 404 error from direct file access
-        if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'municipal_admin') {
-            header("Location: " . BASE_URL . "User/index");
-            exit;
-        }
-        
-        // Moving instantiation inside the constructor fixes the Parse Error on line 11
+        Auth::redirectIfNotLogged("Auth/adminLogin");
+        Auth::forbidIfNotRole('admin');
+
         $this->spotModel = new SpotModel();
         $this->reservationModel = new ReservationModel();
         $this->sensorModel = new SensorModel();
-        $this->AdminModel = new AdminModel();
+        $this->adminModel = new AdminModel();
     }
-    
-    public function dashboard()
+
+    public function index()
     {
-        $totalSpots = $this->spotModel->getTotalSpots();
-        $occupiedSpots = $this->spotModel->getOccupiedSpots();
-        $violations = $this->reservationModel->getOverstayViolations();
-        $recentReservations = $this->reservationModel->getRecentReservations(10);
-        $sensors = $this->sensorModel->getAllSensors();
-        $stats = $this->sensorModel->getSensorStats();
-        
-        // Loads the dashboard view
+        $adminID = Auth::user()['id'];
+
+        $stats = [
+            'total_users'       => $this->adminModel->getTotalUsers(),
+            'total_drivers'     => $this->adminModel->getDriverCount(),
+            'total_owners'      => $this->adminModel->getOwnerCount(),
+            'total_spots'       => method_exists($this->spotModel, 'getTotalSpots') ? $this->spotModel->getTotalSpots() : 0,
+            'occupied_spots'    => method_exists($this->spotModel, 'getOccupiedSpots') ? $this->spotModel->getOccupiedSpots() : 0,
+            'available_spots'   => method_exists($this->spotModel, 'getAvailableSpots') ? $this->spotModel->getAvailableSpots() : 0,
+            'active_violations' => method_exists($this->reservationModel, 'getOverstayViolations') ? count($this->reservationModel->getOverstayViolations()) : 0,
+            'total_fines'       => method_exists($this->reservationModel, 'getAllFines') ? count($this->reservationModel->getAllFines()) : 0,
+            'unpaid_fines'      => count($this->adminModel->getDriversWithUnpaidFines()),
+            'system_health'     => method_exists($this->sensorModel, 'getSensorStats') ? $this->sensorModel->getSensorStats() : []
+        ];
+
         $this->view("admin/dashboard", [
-            'totalSpots' => $totalSpots,
-            'occupiedSpots' => $occupiedSpots,
-            'violations' => $violations,
-            'recentReservations' => $recentReservations,
-            'sensors' => $sensors,
-            'stats' => $stats
+            'stats'   => $stats,
+            'adminID' => $adminID
         ]);
     }
-    
+
+    public function dashboard()
+    {
+        $this->index();
+    }
+
     public function verifyOwner()
     {
-        $pendingSpots = $this->spotModel->getPendingSpots();
-        
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $spotID = $_POST['spotID'];
-            $status = $_POST['status'];
-            $this->spotModel->updateSpotStatus($spotID, $status);
-            
-            $_SESSION['message'] = "Owner verification updated";
-            
+            $spotID = $_POST['spotID'] ?? null;
+            $status = $_POST['status'] ?? null;
+
+            if ($spotID && $status) {
+                $this->adminModel->updateSpotStatus($spotID, $status);
+                $_SESSION['message'] = "Owner verification updated successfully.";
+            }
+
             header("Location: " . BASE_URL . "Admin/verifyOwner");
             exit;
         }
-        
-        $this->view("admin/verify_owner", ['pendingSpots' => $pendingSpots]);
+
+        $pendingSpots = $this->adminModel->getPendingSpots();
+
+        $this->view("admin/verify_owner", [
+            'pendingSpots' => $pendingSpots
+        ]);
+    }
+
+    public function requests()
+    {
+        $pendingSpots = $this->adminModel->getPendingSpots();
+
+        $this->view("admin/requests", [
+            'pendingSpots' => $pendingSpots
+        ]);
+    }
+
+    public function systemHealth()
+    {
+        $stats = method_exists($this->sensorModel, 'getSensorStats') ? $this->sensorModel->getSensorStats() : [];
+
+        $this->view("admin/system_health", [
+            'stats' => $stats
+        ]);
+    }
+
+    public function sensors()
+    {
+        $sensors = method_exists($this->sensorModel, 'getAllSensors') ? $this->sensorModel->getAllSensors() : [];
+
+        $this->view("admin/sensors", [
+            'sensors' => $sensors
+        ]);
+    }
+
+    public function eventLocking()
+    {
+        $this->view("admin/event_zone");
+    }
+
+    public function fines()
+    {
+        $driversWithFines = $this->adminModel->getDriversWithUnpaidFines();
+
+        $this->view("admin/fines", [
+            'driversWithFines' => $driversWithFines
+        ]);
+    }
+
+    public function blacklist()
+    {
+        $blacklistedUsers = $this->adminModel->getBlacklistedUsers();
+
+        $this->view("admin/blacklist", [
+            'blacklistedUsers' => $blacklistedUsers
+        ]);
     }
 }

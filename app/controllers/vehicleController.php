@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../../core/Database.php';
-require_once __DIR__ . '/../../models/Vehicle.php';
+require_once __DIR__ . '/../models/vehicleModel.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['userID'])) {
     $vModel = new Vehicle();
@@ -18,7 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['userID'])) {
     );
 
     if ($success) {
-        header("Location: profile.php"); // يرجعك لصفحة البروفايل
+        $redirect = $_SERVER['HTTP_REFERER'] ?? '/php_project/app/views/users/profile.php';
+        header("Location: " . $redirect);
     } else {
         echo "Error saving data!";
     }

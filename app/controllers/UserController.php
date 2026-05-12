@@ -1,13 +1,7 @@
 <?php
-// app/controllers/UserController.php
-
-// Use __DIR__ to ensure paths are absolute and stable
-require_once __DIR__ . "/../helpers/Validator.php";
-
-
-require_once __DIR__ . '/../helpers/Auth.php';
-
-require_once __DIR__ . "/../models/UserModel.php";
+require_once __DIR__ . '/../../core/Controller.php';
+require_once __DIR__ . '/../helpers/Validator.php';
+require_once __DIR__ . '/../models/UserModel.php';
 
 class UserController extends Controller
 {

@@ -6,6 +6,7 @@
 
     require_once __DIR__ . '/../../core/Database.php';
     require_once __DIR__ . '/../models/Favorite.php';
+    require_once __DIR__ . '/../helpers/Auth.php';
 
     class FavoriteController {
 
