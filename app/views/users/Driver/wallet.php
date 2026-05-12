@@ -29,9 +29,9 @@
             background: #4F5D95;
             color: white;
             border-radius: 12px;
-            padding: 25px 20px 20px;
+            padding: 25px 20px;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .balance-display .label {
@@ -51,27 +51,6 @@
             font-size: 0.78rem;
             opacity: 0.7;
             margin-top: 6px;
-        }
-
-        .btn-add-funds {
-            background: white;
-            color: #4F5D95;
-            border: none;
-            border-radius: 25px;
-            padding: 8px 28px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            margin-top: 15px;
-            cursor: pointer;
-        }
-
-        .btn-add-funds:hover {
-            background: #eef0f8;
-        }
-
-        .topup-form {
-            display: none;
-            margin-top: 10px;
         }
 
         .btn-primary {
@@ -102,7 +81,13 @@
     </style>
 </head>
 <body>
+<div class="divider"></div>
 
+<div class="text-center d-flex flex-column gap-2">
+    <a href="<?= BASE_URL ?>Transaction/index" class="btn btn-outline-secondary btn-sm">📋 View Transactions</a>
+    <a href="<?= BASE_URL ?>Request/index" class="btn btn-outline-secondary btn-sm">📩 My Requests</a>
+    <a href="<?= BASE_URL ?>Home/index" class="btn btn-outline-secondary btn-sm">← Back to Home</a>
+</div>
 <div class="wallet-card">
 
     <div class="text-center mb-4">
@@ -110,7 +95,7 @@
         <p class="text-muted">My Wallet</p>
     </div>
 
-    <!-- Balance Display -->
+    <!-- Balance -->
     <div class="balance-display">
         <div class="label">Current Balance</div>
         <div class="amount">
@@ -122,42 +107,37 @@
                 Last updated: <?= htmlspecialchars($wallet['lastUpdated']) ?>
             </div>
         <?php endif; ?>
-
-        <button class="btn-add-funds" id="addFundsBtn">+ Add Funds</button>
     </div>
 
-    <!-- General error -->
+    <!-- Error -->
     <?php if (!empty($errors['topup'])): ?>
         <div class="alert alert-danger py-2 text-center" style="border-radius: 10px; font-size: 0.9rem;">
             <?= htmlspecialchars($errors['topup']) ?>
         </div>
     <?php endif; ?>
 
-    <!-- Top-Up Form -->
-    <div id="topupForm" class="topup-form">
-        <form action="<?= BASE_URL ?>Wallet/doTopUp" method="POST">
-            <div class="mb-3">
-                <label class="form-label fw-semibold">
-                    Amount (<?= htmlspecialchars($wallet['currency'] ?? 'EGP') ?>)
-                </label>
-                <input
-                    type="number"
-                    name="amount"
-                    class="form-control"
-                    placeholder="e.g. 100"
-                    min="1"
-                    step="0.01"
-                    value="<?= htmlspecialchars($old['amount'] ?? '') ?>"
-                >
-                <?php if (!empty($errors['amount'])): ?>
-                    <small class="error-text"><?= htmlspecialchars($errors['amount']) ?></small>
-                <?php endif; ?>
-            </div>
+    <!-- Top-Up Form — always visible -->
+    <form action="<?= BASE_URL ?>Wallet/doTopUp" method="POST">
 
-            <button type="submit" class="btn btn-primary shadow mb-2">Confirm Top-Up</button>
-            <button type="button" class="btn btn-outline-secondary mt-1" id="cancelBtn">Cancel</button>
-        </form>
-    </div>
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Add Funds (<?= htmlspecialchars($wallet['currency'] ?? 'EGP') ?>)</label>
+            <input
+                type="number"
+                name="amount"
+                class="form-control"
+                placeholder="Enter amount e.g. 100"
+                min="1"
+                step="0.01"
+                value="<?= htmlspecialchars($old['amount'] ?? '') ?>"
+            >
+            <?php if (!empty($errors['amount'])): ?>
+                <small class="error-text"><?= htmlspecialchars($errors['amount']) ?></small>
+            <?php endif; ?>
+        </div>
+
+        <button type="submit" class="btn btn-primary shadow">+ Add Funds</button>
+
+    </form>
 
     <div class="divider"></div>
 
@@ -166,27 +146,6 @@
     </div>
 
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var addBtn   = document.getElementById('addFundsBtn');
-        var cancelBtn = document.getElementById('cancelBtn');
-        var form     = document.getElementById('topupForm');
-
-        // Keep form open if there were validation errors on return
-        <?php if (!empty($errors) || !empty($old)): ?>
-            form.style.display = 'block';
-        <?php endif; ?>
-
-        addBtn.addEventListener('click', function () {
-            form.style.display = 'block';
-        });
-
-        cancelBtn.addEventListener('click', function () {
-            form.style.display = 'none';
-        });
-    });
-</script>
 
 </body>
 </html>

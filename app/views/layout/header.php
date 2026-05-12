@@ -39,25 +39,7 @@
     </nav>
 </div>
 
-
 <script>
-function toggleSidebar() {
-    var drawer = document.getElementById("sideDrawer");
-
-    if (drawer.style.width === "250px") {
-        drawer.style.width = "0";
-    } else {
-        drawer.style.width = "250px";
-    }
-}
-
-                <div class="menu-icon" onclick="">🔔</div>
-                <div class="menu-icon" onclick="">💵</div>
-                <div class="menu-icon" onclick="toggleSidebar()">☰</div>
-            </div>
-        </nav>
-    </div>
-    <script>
     function toggleSidebar() {
         const drawer = document.getElementById("sideDrawer");
 
@@ -65,5 +47,4 @@ function toggleSidebar() {
             drawer.style.width = (drawer.style.width === "250px") ? "0" : "250px";
         }
     }
-
 </script>

@@ -2,14 +2,17 @@
 require_once "../app/helpers/Validator.php";
 require_once "../app/helpers/Auth.php";
 require_once "../app/models/UserModel.php";
+require_once "../app/models/WalletModel.php";
 
 class AuthController extends Controller
 {
     private $userModel;
+    private $walletModel;
 
     public function __construct()
     {
         $this->userModel = new UserModel();
+        $this->walletModel = new WalletModel();
     }
 
     public function index()
@@ -101,17 +104,24 @@ class AuthController extends Controller
             );
 
          
-            if (!$created) {
-                $this->view("auth/register", [
-                    'errors' => ['register' => 'Something went wrong. Please try again.'],
-                    'old'    => $_POST
-                ]);
-                return;
-            }
+                if (!$created) {
+                    $this->view("auth/register", [
+                        'errors' => ['register' => 'Something went wrong. Please try again.'],
+                        'old'    => $_POST
+                    ]);
+                    return;
+                }
 
-            header("Location: " . BASE_URL . "Auth/login");
-            exit;
+                // ADDED: Get newly created user using email
+                $newUser = $this->userModel->findByEmail($email);
 
+                // ADDED: Create wallet record for the new user
+                if ($newUser && isset($newUser['id'])) {
+                    $this->walletModel->createWalletForUser($newUser['id']);
+                }
+
+                header("Location: " . BASE_URL . "Auth/login");
+                exit;
         } else {
             // Return errors to view
             $this->view("auth/register", [
