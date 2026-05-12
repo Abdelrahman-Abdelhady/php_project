@@ -1,5 +1,5 @@
 <?php
-require_once "C:/xampp/htdocs/php_project/core/Database.php";
+require_once __DIR__ . '/../../core/Database.php';
 class SpotModel {
     private $db;
     
