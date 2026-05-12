@@ -119,16 +119,16 @@ $stats = $sensorModel->getSensorStats();
 <body>
     <div class="sidebar">
         <h2>🚘 CitySlot</h2>
-        <a href="dashboard.php" class="active">Dashboard</a>
-        <a href="verify_owner.php">Owner Verification</a>
-        <a href="dispatch.php">Enforcement Dispatch</a>
-        <a href="event_zone.php">Event Zone Lock</a>
-        <a href="emergency.php">Emergency Override</a>
-        <a href="fines.php">Fines & Appeals</a>
-        <a href="blacklist.php">Blacklist</a>
-        <a href="system_health.php">System Health</a>
-        <a href="settings.php">Settings</a>
-        <a href="../../auth/logout.php" style="margin-top: 50px;">🚪 Logout</a>
+       <a href="<?= BASE_URL ?>Admin/index" class="active">Dashboard</a>
+        <a href="<?= BASE_URL ?>Admin/verifyOwner">Owner Verification</a>
+        <a href="<?= BASE_URL ?>Admin/dispatch">Enforcement Dispatch</a>
+        <a href="<?= BASE_URL ?>Admin/eventLocking">Event Zone Lock</a>
+        <a href="<?= BASE_URL ?>Admin/emergency">Emergency Override</a>
+        <a href="<?= BASE_URL ?>Admin/fines">Fines & Appeals</a>
+        <a href="<?= BASE_URL ?>Admin/blacklist">Blacklist</a>
+        <a href="<?= BASE_URL ?>Admin/systemHealth">System Health</a>
+        <a href="<?= BASE_URL ?>Admin/settings">Settings</a>
+        <a href="<?= BASE_URL ?>Auth/logout" style="margin-top: 50px;">🚪 Logout</a>
     </div>
     <div class="main">
         <div class="navbar">
