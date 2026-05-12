@@ -81,7 +81,13 @@
     </style>
 </head>
 <body>
+<div class="divider"></div>
 
+<div class="text-center d-flex flex-column gap-2">
+    <a href="<?= BASE_URL ?>Transaction/index" class="btn btn-outline-secondary btn-sm">📋 View Transactions</a>
+    <a href="<?= BASE_URL ?>Request/index" class="btn btn-outline-secondary btn-sm">📩 My Requests</a>
+    <a href="<?= BASE_URL ?>Home/index" class="btn btn-outline-secondary btn-sm">← Back to Home</a>
+</div>
 <div class="wallet-card">
 
     <div class="text-center mb-4">
