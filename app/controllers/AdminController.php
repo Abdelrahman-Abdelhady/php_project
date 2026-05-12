@@ -5,7 +5,7 @@ require_once "../Models/ReservationModel.php";
 require_once "../Models/SensorModel.php";
 require_once "../Models/AdminModel.php";
 
-class AdminController
+class AdminController extends Controller
 {
     private $spotModel;
     private $reservationModel;
@@ -25,6 +25,32 @@ class AdminController
         $this->reservationModel = new ReservationModel();
         $this->sensorModel = new SensorModel();
         $this->AdminModel = new AdminModel();
+    }
+    public function index()
+    {
+        Auth::redirectIfNotLogged();
+        Auth::forbidIfNotRole('municipal_admin');
+
+        $adminID = Auth::user()['id'];
+        
+        // Get admin statistics data
+        $stats = [
+            'total_users' => $this->AdminModel->getTotalUsers(),
+            'total_drivers' => $this->AdminModel->getDriverCount(),
+            'total_owners' => $this->AdminModel->getOwnerCount(),
+            'total_spots' => $this->spotModel->getTotalSpots(),
+            'occupied_spots' => $this->spotModel->getOccupiedSpots(),
+            'available_spots' => $this->spotModel->getAvailableSpots(),
+            'active_violations' => count($this->reservationModel->getOverstayViolations()),
+            'total_fines' => count($this->reservationModel->getAllFines()),
+            'unpaid_fines' => count($this->AdminModel->getDriversWithUnpaidFines()),
+            'system_health' => $this->sensorModel->getSensorStats()
+        ];
+
+        $this->view("admin/dashboard", [
+            'stats' => $stats,
+            'adminID' => $adminID
+        ]);
     }
     
     public function dashboard()
