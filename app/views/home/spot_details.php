@@ -6,7 +6,7 @@ $id = intval($_GET['id']);
 $query = "SELECT * FROM spot WHERE spotID = $id";
 $result = mysqli_query($conn, $query);
 $spot = mysqli_fetch_assoc($result);
-require_once __DIR__ . '/../../../app/models/Reviews.php';
+require_once __DIR__ . '/../../../app/models/Review.php';
 $reviewObj = new Review($conn);
 $allReviews = $reviewObj->getSpotReviews($spot['spotID']);
 ?>
@@ -163,7 +163,7 @@ img{width:100%;display:block;}
         <div class="price">
             <?php echo $spot['price_per_hour']; ?> <small>EGP/hr</small>
         </div>
-            <a href="reserve.php?id=<?= $spot['spotID'] ?>" class="btn btn-primary">
+            <a href="reserve.php?spotID=<?= $spot['spotID'] ?>" class="btn btn-primary">
                 Reserve Now
             </a>
     </div>

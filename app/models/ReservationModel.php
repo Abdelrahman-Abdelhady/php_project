@@ -150,8 +150,8 @@ class ReservationModel {
     
     // Create a new reservation
     public function createReservation($userID, $spotID, $startTime, $endTime, $totalCost) {
-        $sql = "INSERT INTO reservation (userID, spotID, startTime, endTime, total_cost, status, created_at) 
-                VALUES (?, ?, ?, ?, ?, 'active', NOW())";
+        $sql = "INSERT INTO reservation (userID, spotID, startTime, endTime, total_cost, status) 
+                VALUES (?, ?, ?, ?, ?, 'active')";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("iissd", $userID, $spotID, $startTime, $endTime, $totalCost);
         
@@ -160,19 +160,6 @@ class ReservationModel {
             
             // Update spot status to occupied
             $this->db->query("UPDATE spot SET status = 'occupied' WHERE spotID = $spotID");
-            
-            // Get spot location for notification
-            $result = $this->db->query("SELECT location FROM spot WHERE spotID = $spotID");
-            $spot = $result->fetch_assoc();
-            
-            // Send notification to the user
-            $this->notificationModel->create(
-                $userID,
-                'booking',
-                'Booking Confirmed',
-                "Your booking at {$spot['location']} has been confirmed from {$startTime} to {$endTime}. Total: $${totalCost}",
-                "/php_project/app/views/driver/reservations.php"
-            );
             
             return $reservationID;
         }
