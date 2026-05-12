@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CitySlot - Requests</title>
+    <title>CitySlot - My Requests</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background: #f4f7f6; padding: 30px; }
@@ -27,18 +27,39 @@
             text-transform: uppercase;
         }
 
-        select.form-select { font-size: 0.85rem; border-radius: 20px; }
-
-        .btn-sm {
-            border-radius: 20px;
-            font-size: 0.82rem;
-            background: #4F5D95;
-            color: white;
+        .btn-add {
+            border-radius: 25px;
+            padding: 8px 20px;
             border: none;
-            padding: 5px 15px;
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            background: #4F5D95;
+            transition: all 0.2s;
+            display: inline-block;
         }
 
-        .btn-sm:hover { background: #3b4675; }
+        .btn-add:hover {
+            background: #3b4675;
+            color: white;
+        }
+
+        .btn-home {
+            border-radius: 25px;
+            padding: 8px 20px;
+            border: 1.5px solid #ccc;
+            color: #444;
+            text-decoration: none;
+            font-size: 0.9rem;
+            background: white;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+
+        .btn-home:hover {
+            border-color: #4F5D95;
+            color: #4F5D95;
+        }
     </style>
 </head>
 <body>
@@ -47,7 +68,7 @@
 
     <div class="text-center mb-4">
         <h2 class="fw-bold" style="color: #4F5D95;">CitySlot 🚘</h2>
-        <p class="text-muted">Manage Requests</p>
+        <p class="text-muted">My Requests</p>
     </div>
 
     <?php if (!empty($requests)): ?>
@@ -56,19 +77,16 @@
                 <thead style="background: #f0f2ff;">
                     <tr>
                         <th>#</th>
-                        <th>User</th>
                         <th>Type</th>
                         <th>Description</th>
                         <th>Status</th>
                         <th>Date</th>
-                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($requests as $req): ?>
+                    <?php $i = 1; foreach ($requests as $req): ?>
                         <tr>
-                            <td><?= $req['id'] ?></td>
-                            <td><?= htmlspecialchars($req['name']) ?></td>
+                            <td><?= $i++ ?></td>
                             <td><span class="type-label"><?= htmlspecialchars(str_replace('_', ' ', $req['type'])) ?></span></td>
                             <td><?= htmlspecialchars($req['description']) ?></td>
                             <td>
@@ -83,28 +101,18 @@
                                 <span class="<?= $badge ?>"><?= htmlspecialchars($req['status']) ?></span>
                             </td>
                             <td style="font-size: 0.82rem;"><?= htmlspecialchars($req['created_at']) ?></td>
-                            <td>
-                                <form action="<?= BASE_URL ?>Request/updateStatus" method="POST" class="d-flex gap-1">
-                                    <input type="hidden" name="id" value="<?= $req['id'] ?>">
-                                    <select name="status" class="form-select form-select-sm">
-                                        <option value="Pending"  <?= $req['status'] === 'Pending'  ? 'selected' : '' ?>>Pending</option>
-                                        <option value="Accepted" <?= $req['status'] === 'Accepted' ? 'selected' : '' ?>>Accepted</option>
-                                        <option value="Rejected" <?= $req['status'] === 'Rejected' ? 'selected' : '' ?>>Rejected</option>
-                                    </select>
-                                    <button type="submit" class="btn btn-sm">Save</button>
-                                </form>
-                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
     <?php else: ?>
-        <p class="text-center text-muted">No requests yet.</p>
+        <p class="text-center text-muted">📋 No requests yet.</p>
     <?php endif; ?>
 
-    <div class="text-center mt-3">
-        <a href="<?= BASE_URL ?>Admin/index" class="btn btn-outline-secondary" style="border-radius: 25px; padding: 8px 20px;">← Back to Dashboard</a>
+    <div class="text-center mt-3 d-flex justify-content-center gap-2">
+        <a href="<?= BASE_URL ?>Request/create" class="btn-add">+ New Request</a>
+        <a href="<?= BASE_URL ?>Wallet/index"   class="btn-home">← Back to Wallet</a>
     </div>
 
 </div>

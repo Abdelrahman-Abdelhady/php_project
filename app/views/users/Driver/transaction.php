@@ -16,11 +16,11 @@
 
         .tx-card {
             width: 100%;
-            max-width: 550px;
+            max-width: 560px;
             margin: auto;
             background: white;
-            padding: 30px;
-            border-radius: 15px;
+            padding: 35px 30px;
+            border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             border-top: 5px solid #4F5D95;
         }
@@ -29,46 +29,53 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 15px;
+            padding: 14px 16px;
             margin-bottom: 10px;
             background: #f8f9ff;
-            border-radius: 10px;
-            font-size: 0.88rem;
-        }
-
-        .tx-type {
-            font-weight: 600;
-            text-transform: capitalize;
+            border-radius: 12px;
         }
 
         .tx-date {
             font-size: 0.78rem;
             color: #999;
-            margin-top: 3px;
+            margin-top: 4px;
         }
 
         .tx-amount {
             font-weight: 700;
-            font-size: 0.95rem;
+            font-size: 1rem;
+            white-space: nowrap;
         }
 
-        .credit  { color: #2e7d32; }
-        .debit   { color: #c62828; }
+        .credit { color: #2e7d32; }
+        .debit  { color: #c62828; }
+        .refund { color: #1565c0; }
 
-        .badge-topup   { background: #e8f5e9; color: #2e7d32; padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; }
-        .badge-payment { background: #ffebee; color: #c62828; padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; }
-        .badge-refund  { background: #e3f2fd; color: #1565c0; padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; }
-
-        .btn-outline-secondary {
-            border-radius: 25px;
-            padding: 8px 20px;
-            font-size: 0.9rem;
-        }
+        .badge-topup   { background: #e8f5e9; color: #2e7d32;  padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+        .badge-payment { background: #ffebee; color: #c62828;  padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+        .badge-refund  { background: #e3f2fd; color: #1565c0;  padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
 
         .empty-state {
             text-align: center;
             color: #aaa;
-            padding: 30px 0;
+            padding: 35px 0;
+        }
+
+        .btn-nav {
+            display: inline-block;
+            padding: 9px 22px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            border: 1.5px solid #ccc;
+            color: #444;
+            text-decoration: none;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .btn-nav:hover {
+            border-color: #4F5D95;
+            color: #4F5D95;
         }
     </style>
 </head>
@@ -77,31 +84,38 @@
 <div class="tx-card">
 
     <div class="text-center mb-4">
-        <h2 class="fw-bold" style="color: #4F5D95;">CitySlot 🚘</h2>
-        <p class="text-muted">Transaction History</p>
+        <h2 class="fw-bold" style="color:#4F5D95;">CitySlot 🚘</h2>
+        <p class="text-muted mb-0">Transaction History</p>
     </div>
 
     <?php if (!empty($transactions)): ?>
-        <div style="max-height: 450px; overflow-y: auto;">
+        <div style="max-height: 460px; overflow-y: auto; padding-right: 4px;">
             <?php foreach ($transactions as $tx): ?>
                 <div class="tx-row">
                     <div>
-                        <div>
-                            <?php if ($tx['type'] === 'topup'): ?>
-                                <span class="badge-topup">🟢 Top-up</span>
-                            <?php elseif ($tx['type'] === 'payment'): ?>
-                                <span class="badge-payment">🔴 Payment</span>
-                            <?php else: ?>
-                                <span class="badge-refund">🔵 Refund</span>
-                            <?php endif; ?>
-                        </div>
-                        <?php if (!empty($tx['description'])): ?>
-                            <div class="text-muted mt-1"><?= htmlspecialchars($tx['description']) ?></div>
+                        <!-- Type badge -->
+                        <?php if ($tx['type'] === 'topup'): ?>
+                            <span class="badge-topup">🟢 Top-up</span>
+                        <?php elseif ($tx['type'] === 'payment'): ?>
+                            <span class="badge-payment">🔴 Payment</span>
+                        <?php else: ?>
+                            <span class="badge-refund">🔵 Refund</span>
                         <?php endif; ?>
+
+                        <!-- Description -->
+                        <?php if (!empty($tx['description'])): ?>
+                            <div class="text-muted mt-1" style="font-size:0.83rem;">
+                                <?= htmlspecialchars($tx['description']) ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <!-- Date -->
                         <div class="tx-date"><?= htmlspecialchars($tx['created_at']) ?></div>
                     </div>
-                    <div class="tx-amount <?= $tx['type'] === 'payment' ? 'debit' : 'credit' ?>">
-                        <?= $tx['type'] === 'payment' ? '-' : '+' ?>
+
+                    <!-- Amount -->
+                    <div class="tx-amount <?= $tx['type'] === 'payment' ? 'debit' : ($tx['type'] === 'refund' ? 'refund' : 'credit') ?>">
+                        <?= $tx['type'] === 'payment' ? '−' : '+' ?>
                         EGP <?= number_format($tx['amount'], 2) ?>
                     </div>
                 </div>
@@ -113,9 +127,10 @@
         </div>
     <?php endif; ?>
 
-    <div style="border-top: 1px solid #eee; margin-top: 20px; padding-top: 15px;" class="text-center">
-        <a href="<?= BASE_URL ?>Wallet/index" class="btn btn-outline-secondary me-2">← My Wallet</a>
-        <a href="<?= BASE_URL ?>Home/index" class="btn btn-outline-secondary">🏠 Home</a>
+    <!-- Navigation -->
+    <div style="border-top:1px solid #eee; margin-top:22px; padding-top:16px;" class="text-center">
+        <a href="<?= BASE_URL ?>Wallet/index" class="btn-nav me-2">← My Wallet</a>
+        <a href="<?= BASE_URL ?>Home/index"   class="btn-nav">🏠 Home</a>
     </div>
 
 </div>

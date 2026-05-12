@@ -19,7 +19,7 @@ class TransactionController extends Controller
         $userID       = Auth::user()['id'];
         $transactions = $this->transactionModel->getTransactionsByUserId($userID);
 
-        $this->view("users/Driver/transactions", [
+        $this->view("users/Driver/transaction", [
             'transactions' => $transactions,
         ]);
     }

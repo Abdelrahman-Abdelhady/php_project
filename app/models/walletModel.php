@@ -10,37 +10,61 @@ class WalletModel
         $this->db = Database::getInstance()->getConnection();
     }
 
-    public function getWalletByUserId($userID)
+    // Get wallet row for a user (creates one if missing)
+    public function getWallet($userID)
     {
-        $sql  = "SELECT * FROM wallet WHERE userID = ?";
-        $stmt = $this->db->prepare($sql);
+        $stmt = $this->db->prepare("SELECT * FROM wallet WHERE userID = ?");
         $stmt->bind_param("i", $userID);
         $stmt->execute();
-        return $stmt->get_result()->fetch_assoc();
+        $result = $stmt->get_result()->fetch_assoc();
+
+        if (!$result) {
+            $this->createWallet($userID);
+            return ['userID' => $userID, 'balance' => 0.00];
+        }
+
+        return $result;
     }
 
-    public function topUp($userID, $amount)
+    // Create a wallet row for a new user
+    public function createWallet($userID)
     {
-        $sql  = "UPDATE wallet 
-                 SET balance = balance + ?, lastUpdated = NOW() 
-                 WHERE userID = ?";
-        $stmt = $this->db->prepare($sql);
+        $stmt = $this->db->prepare(
+            "INSERT IGNORE INTO wallet (userID, balance, currency, lastUpdated)
+             VALUES (?, 0.00, 'EGP', NOW())"
+        );
+        $stmt->bind_param("i", $userID);
+        $stmt->execute();
+    }
+
+    // Get balance only
+    public function getBalance($userID)
+    {
+        $wallet = $this->getWallet($userID);
+        return $wallet['balance'] ?? 0.00;
+    }
+
+    // Add funds to wallet
+    public function addFunds($userID, $amount)
+    {
+        $stmt = $this->db->prepare(
+            "UPDATE wallet SET balance = balance + ?, lastUpdated = NOW() WHERE userID = ?"
+        );
         $stmt->bind_param("di", $amount, $userID);
         return $stmt->execute();
     }
-    public function createWalletForUser($userID)
+
+    // Deduct funds from wallet (returns false if insufficient balance)
+    public function deductFunds($userID, $amount)
     {
-        $sql = "INSERT INTO wallet (userID, balance, currency, lastUpdated)
-                VALUES (?, 0, 'EGP', NOW())";
-
-        $stmt = $this->db->prepare($sql);
-
-        if (!$stmt) {
+        $balance = $this->getBalance($userID);
+        if ($balance < $amount) {
             return false;
         }
-
-        $stmt->bind_param("i", $userID);
-
+        $stmt = $this->db->prepare(
+            "UPDATE wallet SET balance = balance - ?, lastUpdated = NOW() WHERE userID = ?"
+        );
+        $stmt->bind_param("di", $amount, $userID);
         return $stmt->execute();
     }
 }
